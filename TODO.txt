@@ -2,7 +2,7 @@
 
 *Add extra sum display for all/included accounts
 
-*Mac OS X cannot open nonexisting file (Creat new menu option)
+*Mac OS X cannot open nonexisting file (Create new menu option)
 
 *Refactor code base for GUI
 
