@@ -1,6 +1,9 @@
 package se.freedrikp.econview.database;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,10 +12,11 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Database extends Observable {
 	private Connection c;
@@ -36,7 +40,8 @@ public class Database extends Observable {
 			c.setAutoCommit(false);
 			String sql = "CREATE TABLE Accounts("
 					+ "accountName TEXT PRIMARY KEY,"
-					+ "accountBalance REAL DEFAULT 0.0" + ")";
+					+ "accountBalance REAL DEFAULT 0.0,"
+					+ "accountIncluded INTEGER DEFAULT '1'" + ")";
 			c.prepareStatement(sql).executeUpdate();
 			sql = "CREATE TABLE Transactions("
 					+ "transactionID INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -51,12 +56,14 @@ public class Database extends Observable {
 		}
 	}
 
-	public void addAccount(String accountName, double accountBalance) {
+	public void addAccount(String accountName, double accountBalance,boolean accountIncluded) {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("INSERT INTO Accounts VALUES (?,?)");
+					.prepareStatement("INSERT INTO Accounts VALUES (?,?,?)");
 			ps.setString(1, accountName);
 			ps.setDouble(2, accountBalance);
+			int included = accountIncluded ? 1 : 0;
+			ps.setInt(3, included);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -66,13 +73,15 @@ public class Database extends Observable {
 	}
 
 	public void editAccount(String oldAccountName, String accountName,
-			double accountBalance) {
+			double accountBalance, boolean accountIncluded) {
 		PreparedStatement ps;
 		try {
-			ps = c.prepareStatement("UPDATE Accounts SET accountName=?, accountBalance=? WHERE accountName=?");
+			ps = c.prepareStatement("UPDATE Accounts SET accountName=?, accountBalance=?, accountIncluded = ? WHERE accountName=?");
 			ps.setString(1, accountName);
 			ps.setDouble(2, accountBalance);
-			ps.setString(3, oldAccountName);
+			int included = accountIncluded ? 1 : 0;
+			ps.setInt(3, included);
+			ps.setString(4, oldAccountName);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -182,12 +191,13 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,accountBalance FROM Accounts");
+					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts");
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[2];
+				String[] row = new String[3];
 				row[0] = results.getString("accountName");
 				row[1] = results.getString("accountBalance");
+				row[2] = Integer.toString(results.getInt("accountIncluded"));
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -238,7 +248,7 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions GROUP BY transactionYear,transactionMonth");
+					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY transactionYear,transactionMonth");
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[3];
@@ -257,7 +267,7 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions GROUP BY transactionMonth");
+					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY transactionYear");
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[2];
@@ -271,65 +281,100 @@ public class Database extends Observable {
 		return list;
 	}
 
+	public List<String[]> getMonthlyAccountRevenues() {
+		ArrayList<String[]> list = new ArrayList<String[]>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY accountName,transactionYear,transactionMonth");
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				String[] row = new String[4];
+				row[0] = results.getString("transactionYear");
+				row[1] = results.getString("transactionMonth");
+				row[2] = results.getString("accountName");
+				row[3] = results.getString("revenue");
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	public List<String[]> getYearlyAccountRevenues() {
+		ArrayList<String[]> list = new ArrayList<String[]>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY accountName,transactionYear");
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				String[] row = new String[3];
+				row[0] = results.getString("transactionYear");
+				row[1] = results.getString("accountName");
+				row[2] = results.getString("revenue");
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 	public String getTotalRevenue() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions");
+					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0");
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				return results.getString("revenue");
+				String res = results.getString("revenue");
+				return res != null ? res : "0";
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "<PLACEHOLDER>";
+		return "0";
 	}
 
-	public String getRevenue(Date from, Date to) {
-		SimpleDateFormat year = new SimpleDateFormat("yyyy");
-		SimpleDateFormat month = new SimpleDateFormat("MM");
-		SimpleDateFormat day = new SimpleDateFormat("dd");
-		String toy = year.format(to);
-		String tom = month.format(to);
-		String tod = day.format(to);
-		String foy = year.format(from);
-		String fom = month.format(from);
-		String fod = day.format(from);
-		String sqlYears = "(SELECT transactionYear,transactionMonth,transactionDay,transactionAmount FROM Transactions WHERE transactionYear <= ? AND transactionYear >= ?)";
-		String sqlMonths = "(SELECT transactionYear,transactionMonth,transactionDay,transactionAmount FROM "
-				+ sqlYears
-				+ " WHERE NOT (transactionYear == ? AND transactionMonth > ? OR transactionYear == ?  AND transactionmonth < ?))";
-		String sqlDays = "(SELECT transactionYear,transactionMonth,transactionDay,transactionAmount FROM "
-				+ sqlMonths
-				+ " WHERE NOT (transactionYear == ? AND transactionMonth == ? AND transactionDay > ? OR transactionYear == ? AND transactionMonth == ? AND transactionDay < ?))";
+	public List<String[]> getTotalAccountRevenues() {
+		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("Select SUM(transactionAmount) as revenue FROM "
-							+ sqlDays);
-
-			ps.setString(1, toy);
-			ps.setString(2, foy);
-
-			ps.setString(3, toy);
-			ps.setString(4, tom);
-			ps.setString(5, foy);
-			ps.setString(6, fom);
-
-			ps.setString(7, toy);
-			ps.setString(8, tom);
-			ps.setString(9, tod);
-			ps.setString(10, foy);
-			ps.setString(11, fom);
-			ps.setString(12, fod);
-
+					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY accountName");
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				return results.getString("revenue");
+				String[] row = new String[2];
+				row[0] = results.getString("accountName");
+				row[1] = results.getString("revenue");
+				list.add(row);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "<PLACEHOLDER>";
+		return list;
+	}
+
+	public String getRevenue(Date from, Date to, String account) {
+		try {
+			PreparedStatement ps;
+			if (account.isEmpty()) {
+				ps = selectBetweenDates(
+						"Select SUM(transactionAmount) as revenue FROM", "",
+						from, to);
+			} else {
+				ps = selectBetweenDates(
+						"Select SUM(transactionAmount) as revenue FROM",
+						"WHERE accountName = ?", from, to);
+				ps.setString(13, account);
+			}
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				String res = results.getString("revenue");
+				return res != null ? res : "0";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
 	}
 
 	public Map<String, Map<String, Double>> getCustomDiagramData(Date from,
@@ -337,86 +382,199 @@ public class Database extends Observable {
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
+		String foy = year.format(from);
+		String fom = month.format(from);
+		String fod = day.format(from);
+		// System.out.println(foy + "-" + fom + "-" + fod + "<->" + toy + "-" +
+		// tom + "-" + tod);
+		Map<String, Map<String, Double>> dataset = new TreeMap<String, Map<String, Double>>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded > 0");
+			ResultSet accounts = ps.executeQuery();
+			double totalStartBalance = 0;
+			while (accounts.next()) {
+				double startBalance = accounts.getDouble("accountBalance");
+				totalStartBalance += startBalance;
+				String accountName = accounts.getString("accountName");
+				buildDiagramDataset(from, to, dataset, startBalance,
+						accountName);
+			}
+			buildDiagramDataset(from, to, dataset, totalStartBalance, "Total");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dataset;
+	}
+
+	private void buildDiagramDataset(Date from, Date to,
+			Map<String, Map<String, Double>> dataset, double startBalance,
+			String accountName) throws SQLException {
+		Map<String, Double> datapoints = new TreeMap<String, Double>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		datapoints.put(sdf.format(to), startBalance);
+		PreparedStatement ps;
+		if (accountName.equals("Total")) {
+			ps = selectBetweenDates("SELECT transactionAmount FROM", "", from,
+					new Date());
+		} else {
+			ps = selectBetweenDates("SELECT transactionAmount FROM",
+					"WHERE accountName = ?", from, new Date());
+			ps.setString(13, accountName);
+		}
+		ResultSet transactions = ps.executeQuery();
+		while (transactions.next()) {
+			startBalance -= transactions.getDouble("transactionAmount");
+		}
+		datapoints.put(sdf.format(from), startBalance);
+		if (accountName.equals("Total")) {
+			ps = selectBetweenDates(
+					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
+					"", from, to);
+		} else {
+			ps = selectBetweenDates(
+					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
+					"WHERE accountName = ?", from, to);
+			ps.setString(13, accountName);
+		}
+		transactions = ps.executeQuery();
+		while (transactions.next()) {
+			String date = transactions.getString("transactionYear") + "-"
+					+ transactions.getString("transactionMonth") + "-"
+					+ transactions.getString("transactionDay");
+			startBalance += transactions.getDouble("transactionAmount");
+			datapoints.put(date, startBalance);
+		}
+		dataset.put(accountName, datapoints);
+	}
+
+	private PreparedStatement selectBetweenDates(String sqlSelect,
+			String sqlWhere, Date from, Date to) throws SQLException {
+		SimpleDateFormat year = new SimpleDateFormat("yyyy");
+		SimpleDateFormat month = new SimpleDateFormat("MM");
+		SimpleDateFormat day = new SimpleDateFormat("dd");
 		String toy = year.format(to);
 		String tom = month.format(to);
 		String tod = day.format(to);
 		String foy = year.format(from);
 		String fom = month.format(from);
 		String fod = day.format(from);
-		//System.out.println(foy + "-" + fom + "-" + fod + "<->" + toy + "-" + tom + "-" + tod);
-		Map<String, Map<String, Double>> dataset = new HashMap<String, Map<String, Double>>();
+		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded > 0 AND transactionYear <= ? AND transactionYear >= ?)";
+		String sqlMonths = "(SELECT * FROM "
+				+ sqlYears
+				+ " WHERE NOT (transactionYear == ? AND transactionMonth > ? OR transactionYear == ?  AND transactionmonth < ?))";
+		String sqlDays = "(SELECT * FROM "
+				+ sqlMonths
+				+ " WHERE NOT (transactionYear == ? AND transactionMonth == ? AND transactionDay > ? OR transactionYear == ? AND transactionMonth == ? AND transactionDay < ?))";
+		PreparedStatement ps = c.prepareStatement(sqlSelect + " " + sqlDays
+				+ " " + sqlWhere);
+		ps.setString(1, toy);
+		ps.setString(2, foy);
+
+		ps.setString(3, toy);
+		ps.setString(4, tom);
+		ps.setString(5, foy);
+		ps.setString(6, fom);
+
+		ps.setString(7, toy);
+		ps.setString(8, tom);
+		ps.setString(9, tod);
+		ps.setString(10, foy);
+		ps.setString(11, fom);
+		ps.setString(12, fod);
+		return ps;
+	}
+
+	public String getAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("Select accountName,accountBalance FROM Accounts");
-			ResultSet accounts = ps.executeQuery();
-			while (accounts.next()) {
-				double startBalance = accounts.getDouble("accountBalance");
-				ps = c.prepareStatement("SELECT transactionAmount FROM Transactions WHERE accountName = ? AND transactionYear >= ? AND transactionMonth >= ? AND transactionDay >= ?");
-				String accountName = accounts.getString("accountName");
-				ps.setString(1, accountName);
-				ps.setString(2, foy);
-				ps.setString(3, fom);
-				ps.setString(4, fod);
-				ResultSet transactions = ps.executeQuery();
-				while (transactions.next()) {
-					startBalance -= transactions.getDouble("transactionAmount");
-				}
-				String sqlYears = "(SELECT * FROM Transactions WHERE transactionYear <= ? AND transactionYear >= ?)";
-				String sqlMonths = "(SELECT * FROM "
-						+ sqlYears
-						+ " WHERE NOT (transactionYear == ? AND transactionMonth > ? OR transactionYear == ?  AND transactionmonth < ?))";
-				String sqlDays = "(SELECT * FROM "
-						+ sqlMonths
-						+ " WHERE NOT (transactionYear == ? AND transactionMonth == ? AND transactionDay > ? OR transactionYear == ? AND transactionMonth == ? AND transactionDay < ?))";
-				ps = c.prepareStatement("Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM "
-						+ sqlDays + "WHERE accountName = ?");
-
-				ps.setString(1, toy);
-				ps.setString(2, foy);
-
-				ps.setString(3, toy);
-				ps.setString(4, tom);
-				ps.setString(5, foy);
-				ps.setString(6, fom);
-
-				ps.setString(7, toy);
-				ps.setString(8, tom);
-				ps.setString(9, tod);
-				ps.setString(10, foy);
-				ps.setString(11, fom);
-				ps.setString(12, fod);
-				ps.setString(13, accountName);
-				transactions = ps.executeQuery();
-				Map<String, Double> datapoints = new HashMap<String, Double>();
-				while (transactions.next()) {
-					String date = transactions.getString("transactionYear")
-							+ "-" + transactions.getString("transactionMonth")
-							+ "-" + transactions.getString("transactionDay");
-					startBalance += transactions.getDouble("transactionAmount");
-					datapoints.put(date, startBalance);
-				}
-				dataset.put(accountName, datapoints);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return dataset;
-	}
-	
-	private PreparedStatment selectBetweenDates(String  sql){
-		
-	}
-	
-	public String getAccountBalanceSum(){
-		try {
-			PreparedStatement ps = c.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts");
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts");
 			ResultSet result = ps.executeQuery();
-			while (result.next()){
-				return result.getString("balanceSum");
+			while (result.next()) {
+				String res = result.getString("balanceSum");
+				return res != null ? res : "0";
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "<PLACEHOLDER>";
+		return "0";
+	}
+
+	public void exportDatabase(OutputStream out) {
+		PrintWriter pw = new PrintWriter(out);
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT name,type FROM sqlite_master WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%'");
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				pw.println(rs.getString("name"));
+				// ps = c.prepareStatement("SELECT COUNT(*) FROM " +
+				// rs.getString("name"));
+				// ResultSet row = ps.executeQuery();
+				// while(row.next()){
+				// pw.println(row.getString(1));
+				// }
+				ps = c.prepareStatement("SELECT * FROM " + rs.getString("name"));
+				ResultSet row = ps.executeQuery();
+				for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
+					pw.print(row.getMetaData().getColumnLabel(i));
+					if (i < row.getMetaData().getColumnCount()) {
+						pw.print(",");
+					}
+				}
+				pw.println();
+				while (row.next()) {
+					for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
+						if (row.getMetaData().isAutoIncrement(i)) {
+							pw.print("NULL");
+						} else {
+							pw.print(row.getString(i));
+						}
+						if (i < row.getMetaData().getColumnCount()) {
+							pw.print(",");
+						}
+					}
+					pw.println();
+				}
+				pw.println();
+			}
+			pw.flush();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void importDatabase(InputStream in) {
+		try {
+			Scanner scan = new Scanner(in);
+			while (scan.hasNextLine()) {
+				String name = scan.nextLine();
+				String header = scan.nextLine();
+				String line;
+				while (scan.hasNextLine()
+						&& !(line = scan.nextLine()).isEmpty()) {
+					String sql = "INSERT INTO " + name + " (" + header + ")"
+							+ " VALUES (";
+					String[] row = line.split(",");
+					for (int i = 0; i < row.length; i++) {
+						if (row[i].equals("NULL")) {
+							sql += row[i];
+						} else {
+							sql += "'" + row[i] + "'";
+						}
+						if (i < row.length - 1) {
+							sql += ",";
+						}
+					}
+					sql += ")";
+					PreparedStatement ps = c.prepareStatement(sql);
+					ps.executeUpdate();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
 	}
 }

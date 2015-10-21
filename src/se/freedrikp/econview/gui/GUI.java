@@ -7,10 +7,17 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
@@ -18,8 +25,11 @@ import java.util.Observer;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -34,6 +44,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ProgressMonitor;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -42,8 +53,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnit;
-import org.jfree.chart.axis.DateTickUnitType;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
@@ -59,19 +69,25 @@ public class GUI extends JFrame implements Observer {
 	private JPanel contentPane;
 	private JTable accountsTable;
 	private JTable transactionsTable;
-	private static final String[] accountHeader = { "Account", "Balance" };
+	private static final String[] accountHeader = { "Account", "Balance", "Included" };
 	private static final String[] transactionHeader = { "ID", "Account",
 			"Amount", "Date", "Comment" };
 	private static final String[] monthlyRevHeader = { "Year", "Month",
 			"Revenue" };
 	private static final String[] yearlyRevHeader = { "Year", "Revenue" };
+	private static final String[] monthlyAccountRevHeader = { "Year", "Month",
+			"Account", "Revenue" };
+	private static final String[] yearlyAccountRevHeader = { "Year", "Account",
+			"Revenue" };
+	private static final String[] totalAccountRevHeader = { "Account",
+			"Revenue" };
 	private JTable yearlyRevTable;
 	private JTable monthlyRevTable;
 	private JLabel totalRevLabel;
 	private JLabel customRevLabel;
 	private JDateChooser revDateFromField;
 	private JDateChooser revDateToField;
-	private JLabel revDateLabel;
+	// private JLabel revDateLabel;
 	private JScrollPane transactionsPane;
 	private JScrollPane accountsPane;
 	private JPanel diagramsLastYearPanel;
@@ -82,6 +98,11 @@ public class GUI extends JFrame implements Observer {
 	private JPanel diagramsThisMonthPanel;
 	private JPanel customDiagPanel;
 	private JLabel totalBalanceLabel;
+	private String dbfile;
+	private JTable yearlyAccountRevTable;
+	private JTable monthlyAccountRevTable;
+	private JTable totalAccountRevTable;
+	private JComboBox accountRevBox;
 
 	/**
 	 * Launch the application.
@@ -95,8 +116,7 @@ public class GUI extends JFrame implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Database db = new Database("econview.db");
-					GUI frame = new GUI(db);
+					GUI frame = new GUI("econview.db");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -108,9 +128,10 @@ public class GUI extends JFrame implements Observer {
 	/**
 	 * Create the frame.
 	 */
-	public GUI(final Database db) {
+	public GUI(String dbfile) {
 		setResizable(false);
-		this.db = db;
+		this.dbfile = dbfile;
+		this.db = new Database(dbfile);
 		db.addObserver(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1280, 430);
@@ -122,10 +143,53 @@ public class GUI extends JFrame implements Observer {
 		menuBar.add(mnFile);
 
 		JMenuItem mntmOpenDatabase = new JMenuItem("Open Database");
+		mntmOpenDatabase.addActionListener(new OpenDatabaseListener(this));
 		mnFile.add(mntmOpenDatabase);
 
 		JMenuItem mntmSaveDatabaseAs = new JMenuItem("Save Database as");
+		mntmSaveDatabaseAs.addActionListener(new SaveDatabaseListener(this));
 		mnFile.add(mntmSaveDatabaseAs);
+
+		JMenu mnImportExport = new JMenu("Import/Export");
+		menuBar.add(mnImportExport);
+
+		JMenuItem mntmImport = new JMenuItem("Import");
+		mntmImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser(System
+						.getProperty("user.dir"));
+				int result = fc.showOpenDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					try {
+						FileInputStream fis = new FileInputStream(fc
+								.getSelectedFile());
+						db.importDatabase(fis);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		mnImportExport.add(mntmImport);
+
+		JMenuItem mntmExport = new JMenuItem("Export");
+		mntmExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser(System
+						.getProperty("user.dir"));
+				int result = fc.showSaveDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					try {
+						FileOutputStream fos = new FileOutputStream(fc
+								.getSelectedFile());
+						db.exportDatabase(fos);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		mnImportExport.add(mntmExport);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -167,10 +231,11 @@ public class GUI extends JFrame implements Observer {
 				// }
 				// db.addAccount(accountName,
 				// Double.parseDouble(accountBalance));
-				String[] accountDetails = askUserAccount(null, null);
+				String[] accountDetails = askUserAccount(null, null, Boolean.toString(true));
 				if (accountDetails != null) {
 					db.addAccount(accountDetails[0],
-							Double.parseDouble(accountDetails[1]));
+							parseAmount(accountDetails[1]),
+							Boolean.parseBoolean(accountDetails[2]));
 				}
 			}
 		});
@@ -206,12 +271,14 @@ public class GUI extends JFrame implements Observer {
 						(String) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 0),
 						(String) accountsTable.getModel().getValueAt(
-								accountsTable.getSelectedRow(), 1));
+								accountsTable.getSelectedRow(), 1),
+						(String) accountsTable.getModel().getValueAt(
+								accountsTable.getSelectedRow(), 2));
 				if (accountDetails != null) {
 					db.editAccount((String) accountsTable.getModel()
 							.getValueAt(accountsTable.getSelectedRow(), 0),
-							accountDetails[0], Double
-									.parseDouble(accountDetails[1]));
+							accountDetails[0], parseAmount(accountDetails[1]),
+							Boolean.parseBoolean(accountDetails[2]));
 				}
 			}
 		});
@@ -293,8 +360,8 @@ public class GUI extends JFrame implements Observer {
 
 				if (transactionDetails != null) {
 					try {
-						db.addTransaction(transactionDetails[0], Double
-								.parseDouble(transactionDetails[1]),
+						db.addTransaction(transactionDetails[0],
+								parseAmount(transactionDetails[1]),
 								new SimpleDateFormat("yyyy-MM-dd")
 										.parse(transactionDetails[2]),
 								transactionDetails[3]);
@@ -377,8 +444,8 @@ public class GUI extends JFrame implements Observer {
 										.getModel().getValueAt(
 												transactionsTable
 														.getSelectedRow(), 0)),
-								transactionDetails[0], Double
-										.parseDouble(transactionDetails[1]),
+								transactionDetails[0],
+								parseAmount(transactionDetails[1]),
 								new SimpleDateFormat("yyyy-MM-dd")
 										.parse(transactionDetails[2]),
 								transactionDetails[3]);
@@ -402,71 +469,92 @@ public class GUI extends JFrame implements Observer {
 		});
 		transactionsButtonPanel.add(btnRemoveTransaction);
 
-		JPanel statisticsPanel = new JPanel();
-		tabbedPane.addTab("Statistics", null, statisticsPanel, null);
-		statisticsPanel.setLayout(new GridLayout(1, 0, 0, 0));
+		JPanel revenuePanel = new JPanel();
+		tabbedPane.addTab("Revenue", null, revenuePanel, null);
+		revenuePanel.setLayout(new GridLayout(1, 0, 0, 0));
 
 		JScrollPane yearlyRevPane = new JScrollPane();
-		statisticsPanel.add(yearlyRevPane);
+		revenuePanel.add(yearlyRevPane);
 
 		yearlyRevTable = new JTable();
 		yearlyRevTable.setEnabled(false);
 		yearlyRevPane.setViewportView(yearlyRevTable);
 
 		JScrollPane monthlyRevPane = new JScrollPane();
-		statisticsPanel.add(monthlyRevPane);
+		revenuePanel.add(monthlyRevPane);
 
 		monthlyRevTable = new JTable();
 		monthlyRevTable.setEnabled(false);
 		monthlyRevPane.setViewportView(monthlyRevTable);
 
-		JPanel sideStatisticsPanel = new JPanel();
-		statisticsPanel.add(sideStatisticsPanel);
-		sideStatisticsPanel.setLayout(new BoxLayout(sideStatisticsPanel,
+		JScrollPane yearlyAccountRevPane = new JScrollPane();
+		revenuePanel.add(yearlyAccountRevPane);
+
+		yearlyAccountRevTable = new JTable();
+		yearlyAccountRevTable.setEnabled(false);
+		yearlyAccountRevPane.setViewportView(yearlyAccountRevTable);
+
+		JScrollPane monthlyAccountRevPane = new JScrollPane();
+		revenuePanel.add(monthlyAccountRevPane);
+
+		monthlyAccountRevTable = new JTable();
+		monthlyAccountRevTable.setEnabled(false);
+		monthlyAccountRevPane.setViewportView(monthlyAccountRevTable);
+
+		JScrollPane totalAccountRevPane = new JScrollPane();
+		revenuePanel.add(totalAccountRevPane);
+
+		totalAccountRevTable = new JTable();
+		totalAccountRevTable.setEnabled(false);
+		totalAccountRevPane.setViewportView(totalAccountRevTable);
+
+		JPanel sideRevenuePanel = new JPanel();
+		revenuePanel.add(sideRevenuePanel);
+		sideRevenuePanel.setLayout(new BoxLayout(sideRevenuePanel,
 				BoxLayout.Y_AXIS));
 
 		JLabel lblTotalRevenue = new JLabel("Total Revenue:");
 		lblTotalRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(lblTotalRevenue);
+		sideRevenuePanel.add(lblTotalRevenue);
+
+		totalRevLabel = new JLabel("");
+		totalRevLabel.setForeground(Color.RED);
+		totalRevLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		sideRevenuePanel.add(totalRevLabel);
 
 		JSeparator totCustomRevSep = new JSeparator();
-		sideStatisticsPanel.add(totCustomRevSep);
+		sideRevenuePanel.add(totCustomRevSep);
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 		JLabel lblCustomRevenue = new JLabel("Custom Revenue:");
 		lblCustomRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(lblCustomRevenue);
+		sideRevenuePanel.add(lblCustomRevenue);
 
-		revDateLabel = new JLabel("");
-		revDateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(revDateLabel);
+		// revDateLabel = new JLabel("");
+		// revDateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		// sideRevenuePanel.add(revDateLabel);
 
 		customRevLabel = new JLabel("");
 		customRevLabel.setForeground(Color.RED);
 		customRevLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(customRevLabel);
+		sideRevenuePanel.add(customRevLabel);
 
 		JSeparator customRevSep = new JSeparator();
-		sideStatisticsPanel.add(customRevSep);
+		sideRevenuePanel.add(customRevSep);
 
 		// revDateFromField = new JTextField(df.format(new Date()));
 		revDateFromField = new JDateChooser(new Date(), "yyyy-MM-dd");
-		sideStatisticsPanel.add(revDateFromField);
+		sideRevenuePanel.add(revDateFromField);
 		// revDateFromField.setColumns(7);
 
-		JLabel revDateSepLabel = new JLabel("-");
+		JLabel revDateSepLabel = new JLabel("<->");
 		revDateSepLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(revDateSepLabel);
-
-		totalRevLabel = new JLabel("");
-		totalRevLabel.setForeground(Color.RED);
-		totalRevLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(totalRevLabel);
+		sideRevenuePanel.add(revDateSepLabel);
 
 		// revDateToField = new JTextField(df.format(new Date()));
 		revDateToField = new JDateChooser(new Date(), "yyyy-MM-dd");
-		sideStatisticsPanel.add(revDateToField);
+		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
 		JButton customRevButton = new JButton("Custom Revenue");
@@ -475,11 +563,14 @@ public class GUI extends JFrame implements Observer {
 				update(db, null);
 			}
 		});
+
+		accountRevBox = new JComboBox();
+		sideRevenuePanel.add(accountRevBox);
 		customRevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		sideStatisticsPanel.add(customRevButton);
+		sideRevenuePanel.add(customRevButton);
 
 		Component verticalStrut = Box.createVerticalStrut(2000);
-		sideStatisticsPanel.add(verticalStrut);
+		sideRevenuePanel.add(verticalStrut);
 
 		JPanel diagramsPanel = new JPanel();
 		tabbedPane.addTab("Diagrams", null, diagramsPanel, null);
@@ -537,9 +628,22 @@ public class GUI extends JFrame implements Observer {
 		update(db, null);
 	}
 
+	private double parseAmount(String amount) throws NumberFormatException {
+		double result;
+		try {
+			result = NumberFormat.getCurrencyInstance().parse(amount)
+					.doubleValue();
+		} catch (ParseException e) {
+			amount = amount.replace(',', '.');
+			result = Double.parseDouble(amount);
+		}
+		return result;
+	}
+
 	public void update(Observable o, Object arg) {
 		updateAccountList();
-		totalBalanceLabel.setText(db.getAccountBalanceSum());
+		totalBalanceLabel.setText((NumberFormat.getCurrencyInstance()
+				.format(Double.parseDouble(db.getAccountBalanceSum()))));
 		updateTransactionList();
 		accountsPane.getVerticalScrollBar().setValue(
 				accountsPane.getVerticalScrollBar().getMaximum());
@@ -549,7 +653,10 @@ public class GUI extends JFrame implements Observer {
 		// transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		updateYearlyRevList();
 		updateMonthlyRevList();
+		updateYearlyAccountRevList();
+		updateMonthlyAccountRevList();
 		updateTotalRevLabel();
+		updateTotalAccountRevList();
 		updateCustomRevLabel();
 		updateDiagrams();
 		// pack();
@@ -611,12 +718,27 @@ public class GUI extends JFrame implements Observer {
 		TimeSeriesCollection collection = new TimeSeriesCollection();
 		for (Map.Entry<String, Map<String, Double>> dataset : diagramData
 				.entrySet()) {
+			double previousAmount = 0;
+			Date previousDate = from;
 			TimeSeries series = new TimeSeries(dataset.getKey());
 			for (Map.Entry<String, Double> datapoint : dataset.getValue()
 					.entrySet()) {
 				try {
+
+					Calendar start = Calendar.getInstance();
+					start.setTime(previousDate);
+					start.add(Calendar.DATE, 1);
+					Calendar end = Calendar.getInstance();
+					end.setTime(df.parse(datapoint.getKey()));
+
+					for (Date date = start.getTime(); start.before(end); start
+							.add(Calendar.DATE, 1), date = start.getTime()) {
+						series.add(new Day(date), previousAmount);
+					}
 					series.add(new Day(df.parse(datapoint.getKey())),
 							datapoint.getValue());
+					previousAmount = datapoint.getValue();
+					previousDate = df.parse(datapoint.getKey());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -632,7 +754,9 @@ public class GUI extends JFrame implements Observer {
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
 		daxis.setRange(from, to);
-		//daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,1));
+		// daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,1));
+		NumberAxis naxis = (NumberAxis) xyPlot.getRangeAxis();
+		naxis.setNumberFormatOverride(NumberFormat.getCurrencyInstance());
 		ChartPanel diagram = new ChartPanel(chart);
 		diagram.setPreferredSize(new Dimension(width, height));
 		panel.add(diagram);
@@ -641,6 +765,9 @@ public class GUI extends JFrame implements Observer {
 	private void updateAccountList() {
 		Model m = new Model(accountHeader, 0);
 		for (String[] row : db.getAccounts()) {
+			row[1] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[1]));
+			row[2] = Boolean.toString(row[2].equals("1"));
 			m.addRow(row);
 		}
 		accountsTable.setModel(m);
@@ -649,6 +776,8 @@ public class GUI extends JFrame implements Observer {
 	private void updateTransactionList() {
 		Model m = new Model(transactionHeader, 0);
 		for (String[] row : db.getTransactions()) {
+			row[2] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[2]));
 			m.addRow(row);
 		}
 		transactionsTable.setModel(m);
@@ -657,13 +786,26 @@ public class GUI extends JFrame implements Observer {
 	private void updateYearlyRevList() {
 		Model m = new Model(yearlyRevHeader, 0);
 		for (String[] row : db.getYearlyRevenues()) {
+			row[1] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[1]));
 			m.addRow(row);
 		}
 		yearlyRevTable.setModel(m);
 	}
 
+	private void updateYearlyAccountRevList() {
+		Model m = new Model(yearlyAccountRevHeader, 0);
+		for (String[] row : db.getYearlyAccountRevenues()) {
+			row[2] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[2]));
+			m.addRow(row);
+		}
+		yearlyAccountRevTable.setModel(m);
+	}
+
 	private void updateTotalRevLabel() {
-		totalRevLabel.setText(db.getTotalRevenue());
+		totalRevLabel.setText(NumberFormat.getCurrencyInstance().format(
+				Double.parseDouble(db.getTotalRevenue())));
 	}
 
 	private void updateCustomRevLabel() {
@@ -674,10 +816,24 @@ public class GUI extends JFrame implements Observer {
 		// customRevLabel.setText(db.getRevenue(
 		// df.parse(revDateFromField.getText()),
 		// df.parse(revDateToField.getText())));
-		revDateLabel.setText("(" + df.format(revDateFromField.getDate())
-				+ " <-> " + df.format(revDateToField.getDate()) + "):");
-		customRevLabel.setText(db.getRevenue(revDateFromField.getDate(),
-				revDateToField.getDate()));
+		// revDateLabel.setText("(" + df.format(revDateFromField.getDate())
+		// + " <-> " + df.format(revDateToField.getDate()) + "):");
+		List<String> accountNames = db.getAccountNames();
+		accountNames.add(0, ("All accounts"));
+		String selectedAccount = (String) accountRevBox.getModel()
+				.getSelectedItem();
+		accountRevBox
+				.setModel(new DefaultComboBoxModel(accountNames.toArray()));
+		accountRevBox.getModel().setSelectedItem(selectedAccount);
+		if (selectedAccount == null) {
+			selectedAccount = "";
+			accountRevBox.setSelectedIndex(0);
+		} else if (selectedAccount.equals("All accounts")) {
+			selectedAccount = "";
+		}
+		customRevLabel.setText(NumberFormat.getCurrencyInstance().format(
+				Double.parseDouble(db.getRevenue(revDateFromField.getDate(),
+						revDateToField.getDate(), selectedAccount))));
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }
@@ -692,9 +848,37 @@ public class GUI extends JFrame implements Observer {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+			row[2] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[2]));
 			m.addRow(row);
 		}
 		monthlyRevTable.setModel(m);
+	}
+
+	private void updateMonthlyAccountRevList() {
+		Model m = new Model(monthlyAccountRevHeader, 0);
+		for (String[] row : db.getMonthlyAccountRevenues()) {
+			try {
+				row[1] = new SimpleDateFormat("MMMM")
+						.format(new SimpleDateFormat("MM").parse(row[1]));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			row[3] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[3]));
+			m.addRow(row);
+		}
+		monthlyAccountRevTable.setModel(m);
+	}
+
+	private void updateTotalAccountRevList() {
+		Model m = new Model(totalAccountRevHeader, 0);
+		for (String[] row : db.getTotalAccountRevenues()) {
+			row[1] = NumberFormat.getCurrencyInstance().format(
+					Double.parseDouble(row[1]));
+			m.addRow(row);
+		}
+		totalAccountRevTable.setModel(m);
 	}
 
 	// private String askUser(String title, String question, String
@@ -723,7 +907,8 @@ public class GUI extends JFrame implements Observer {
 	// return result;
 	// }
 
-	private String[] askUserAccount(String selectedName, String selectedBalance) {
+	private String[] askUserAccount(String selectedName,
+			String selectedBalance, String selectedIncluded) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		JTextField nameField = new JTextField("", 15);
@@ -739,16 +924,19 @@ public class GUI extends JFrame implements Observer {
 		balancePanel.add(new JLabel("Balance:"));
 		balancePanel.add(balanceField);
 		panel.add(balancePanel);
+		JCheckBox includedBox = new JCheckBox("Include in statistics? ",Boolean.parseBoolean(selectedIncluded));
+		panel.add(includedBox);
 
 		int result = JOptionPane.showConfirmDialog(null, panel,
 				"Account Details", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null);
 
 		if (result == JOptionPane.OK_OPTION) {
-			String[] details = new String[4];
+			String[] details = new String[3];
 			details[0] = nameField.getText();
 			details[1] = balanceField.getText();
-			return details;
+			details[2] = Boolean.toString(includedBox.isSelected());
+ 			return details;
 		}
 		return null;
 	}
@@ -822,5 +1010,72 @@ public class GUI extends JFrame implements Observer {
 			return false;
 		}
 
+	}
+
+	private class OpenDatabaseListener implements ActionListener {
+		private GUI gui;
+
+		public OpenDatabaseListener(GUI gui) {
+			this.gui = gui;
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+			int result = fc.showOpenDialog(gui);
+			if (result == JFileChooser.APPROVE_OPTION) {
+				db = new Database(fc.getSelectedFile().getAbsolutePath());
+				gui.setDatabase(db, fc.getSelectedFile().getAbsolutePath());
+			}
+		}
+	}
+
+	private class SaveDatabaseListener implements ActionListener {
+		private GUI gui;
+
+		public SaveDatabaseListener(GUI gui) {
+			this.gui = gui;
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+			int result = fc.showSaveDialog(gui);
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File toFile = fc.getSelectedFile();
+				File fromFile = new File(dbfile);
+				try {
+					FileInputStream fis = new FileInputStream(fromFile);
+					FileOutputStream fos = new FileOutputStream(toFile);
+					ProgressMonitor pm = new ProgressMonitor(gui, null,
+							"Copying Database...", 0, (int) fromFile.length());
+					pm.setMillisToPopup(0);
+					pm.setMillisToDecideToPopup(0);
+					byte[] buffer = new byte[1024];
+					int bytesRead = 0;
+					long totalRead = 0;
+					while ((bytesRead = fis.read(buffer)) > -1) {
+						totalRead += bytesRead;
+						fos.write(buffer, 0, bytesRead);
+						pm.setProgress((int) totalRead);
+					}
+					fos.flush();
+					fos.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public String getDBFile() {
+		return dbfile;
+	}
+
+	public void setDatabase(Database db, String dbfile) {
+		this.dbfile = dbfile;
+		this.db = db;
+		db.addObserver(this);
+		update(db, null);
 	}
 }
