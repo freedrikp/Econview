@@ -20,13 +20,14 @@ import java.util.TreeMap;
 
 public class Database extends Observable {
 	private Connection c;
+	private File dbfile;
 
 	public Database(String dbfile) {
-		boolean initdb = !new File(dbfile).exists();
+		this.dbfile = new File(dbfile);
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-			if (initdb) {
+			if (!this.dbfile.exists() || this.dbfile.length() == 0) {
 				initdb();
 			}
 		} catch (Exception e) {
@@ -56,7 +57,8 @@ public class Database extends Observable {
 		}
 	}
 
-	public void addAccount(String accountName, double accountBalance,boolean accountIncluded) {
+	public void addAccount(String accountName, double accountBalance,
+			boolean accountIncluded) {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("INSERT INTO Accounts VALUES (?,?,?)");
@@ -576,5 +578,25 @@ public class Database extends Observable {
 		}
 		setChanged();
 		notifyObservers();
+	}
+
+	public void openFile(File dbfile) {
+		this.dbfile = dbfile;
+		try {
+			c.close();
+			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+			if (!this.dbfile.exists() || this.dbfile.length() == 0){//!this.dbfile.exists()) {
+				initdb();
+			}
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public File getFile() {
+		return dbfile;
 	}
 }
