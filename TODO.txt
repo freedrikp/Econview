@@ -13,7 +13,7 @@
 
 
 === BETWEEN ===
-*Mac OS X cannot open nonexisting file (Create new menu option) ---- Works, but unsure on language
+*Mac OS X cannot open nonexisting file (Create new menu option) ---- Works, but unsure on language, maybe fixed now.
 
 *Refactor code base for GUI ---- v1.0
 
