@@ -86,7 +86,8 @@ public class MenuBar extends JMenuBar {
 
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-			int result = fc.showDialog(menuBar,fc.getUI().getDefaultButton(fc).getText());
+			fc.setDialogTitle("Open");
+			int result = fc.showDialog(menuBar,"Open");
 			if (result == JFileChooser.APPROVE_OPTION) {
 				db.openFile(fc.getSelectedFile());
 			}
@@ -102,7 +103,8 @@ public class MenuBar extends JMenuBar {
 
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-			int result = fc.showSaveDialog(menuBar);
+			fc.setDialogTitle("Save");
+			int result = fc.showDialog(menuBar,"Save");
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File toFile = fc.getSelectedFile();
 				File fromFile = db.getFile();
