@@ -1,23 +1,26 @@
 === TODO ===
 
 
-*Fix bug so that when removing an account, all transactions will follow the removing.
 
 *Set better tick count, star of weeks/months.
 
-*Fix bug so that when renaming an account, all transactions will follow the renaming.
 
-*Add extra sum display for all/included accounts
 
 
 
 
 === BETWEEN ===
-*Mac OS X cannot open nonexisting file (Create new menu option) ---- Works, but unsure on language, maybe fixed now.
 
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Add extra sum display for all/included accounts ---- v1.0
+
+*Fix bug so that when renaming an account, all transactions will follow the renaming. ---- v1.0
+
+*Fix bug so that when removing an account, all transactions will follow the removing. ---- v1.0
+
+*Mac OS X cannot open nonexisting file (Changed to open another filechooser) ---- v1.0
 
 *Add popups to the remove buttons ---- v1.0
 

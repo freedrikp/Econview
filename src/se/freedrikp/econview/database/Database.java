@@ -78,6 +78,11 @@ public class Database extends Observable {
 			double accountBalance, boolean accountIncluded) {
 		PreparedStatement ps;
 		try {
+			c.setAutoCommit(false);
+			ps = c.prepareStatement("UPDATE Transactions SET accountName=? WHERE accountName=?");
+			ps.setString(1, accountName);
+			ps.setString(2,oldAccountName);
+			ps.executeUpdate();
 			ps = c.prepareStatement("UPDATE Accounts SET accountName=?, accountBalance=?, accountIncluded = ? WHERE accountName=?");
 			ps.setString(1, accountName);
 			ps.setDouble(2, accountBalance);
@@ -85,6 +90,8 @@ public class Database extends Observable {
 			ps.setInt(3, included);
 			ps.setString(4, oldAccountName);
 			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -94,10 +101,15 @@ public class Database extends Observable {
 
 	public void removeAccount(String accountName) {
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("DELETE FROM Accounts where accountName=?");
+			c.setAutoCommit(false);
+			PreparedStatement ps = c.prepareStatement("DELETE FROM Transactions WHERE accountName=?");
 			ps.setString(1, accountName);
 			ps.executeUpdate();
+			ps = c.prepareStatement("DELETE FROM Accounts WHERE accountName=?");
+			ps.setString(1, accountName);
+			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -199,7 +211,8 @@ public class Database extends Observable {
 				String[] row = new String[3];
 				row[0] = results.getString("accountName");
 				row[1] = results.getString("accountBalance");
-				row[2] = Boolean.toString(results.getInt("accountIncluded") == 1);
+				row[2] = Boolean
+						.toString(results.getInt("accountIncluded") == 1);
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -487,10 +500,12 @@ public class Database extends Observable {
 		return ps;
 	}
 
-	public String getAccountBalanceSum() {
+	public String getAccountBalanceSum(boolean onlyIncluded) {
 		try {
+			int incl = onlyIncluded ? 1 : 0;
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts");
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,incl);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				String res = result.getString("balanceSum");
@@ -585,7 +600,8 @@ public class Database extends Observable {
 		try {
 			c.close();
 			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-			if (!this.dbfile.exists() || this.dbfile.length() == 0){//!this.dbfile.exists()) {
+			if (!this.dbfile.exists() || this.dbfile.length() == 0) {// !this.dbfile.exists())
+																		// {
 				initdb();
 			}
 		} catch (Exception e) {

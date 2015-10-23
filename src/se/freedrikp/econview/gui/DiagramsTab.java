@@ -24,15 +24,17 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
-import com.toedter.calendar.JDateChooser;
-
 import se.freedrikp.econview.database.Database;
+
+import com.toedter.calendar.JDateChooser;
 
 public class DiagramsTab extends JPanel implements Observer{
 	private Database db;
@@ -199,7 +201,7 @@ public class DiagramsTab extends JPanel implements Observer{
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
 		daxis.setRange(from, to);
-		// daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,1));
+		//daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,1));
 		NumberAxis naxis = (NumberAxis) xyPlot.getRangeAxis();
 		naxis.setNumberFormatOverride(NumberFormat.getCurrencyInstance());
 		ChartPanel diagram = new ChartPanel(chart);

@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -29,6 +30,7 @@ public class AccountsTab extends JPanel implements Observer{
 	private JScrollPane accountsPane;
 	private JTable accountsTable;
 	private JLabel totalBalanceLabel;
+	private JLabel totalIncludedBalanceLabel;
 	private static final String[] accountHeader = { "Account", "Balance", "Included" };
 
 	public AccountsTab(final Database db){
@@ -132,11 +134,24 @@ public class AccountsTab extends JPanel implements Observer{
 			}
 		});
 		accountsButtonPanel.add(btnRemoveAccount);
-
+		
+		accountsButtonPanel.add(new JSeparator());
+		
+		JLabel totalIncludedBalanceLabelText = new JLabel("Total Included Balance:");
+		accountsButtonPanel.add(totalIncludedBalanceLabelText);
+		totalIncludedBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		totalIncludedBalanceLabel = new JLabel("");
+		totalIncludedBalanceLabel.setForeground(Color.RED);
+		accountsButtonPanel.add(totalIncludedBalanceLabel);
+		totalIncludedBalanceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		accountsButtonPanel.add(new JSeparator());
+		
 		JLabel totalBalanceLabelText = new JLabel("Total Balance:");
 		accountsButtonPanel.add(totalBalanceLabelText);
 		totalBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+		
 		totalBalanceLabel = new JLabel("");
 		totalBalanceLabel.setForeground(Color.RED);
 		accountsButtonPanel.add(totalBalanceLabel);
@@ -181,8 +196,10 @@ public class AccountsTab extends JPanel implements Observer{
 	
 	public void update(Observable o, Object arg) {
 		updateAccountList();
+		totalIncludedBalanceLabel.setText((NumberFormat.getCurrencyInstance()
+				.format(Double.parseDouble(db.getAccountBalanceSum(true)))));
 		totalBalanceLabel.setText((NumberFormat.getCurrencyInstance()
-				.format(Double.parseDouble(db.getAccountBalanceSum()))));
+				.format(Double.parseDouble(db.getAccountBalanceSum(false)))));
 		accountsPane.getVerticalScrollBar().setValue(
 				accountsPane.getVerticalScrollBar().getMaximum());
 		repaint();
