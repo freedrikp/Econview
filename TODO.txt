@@ -1,25 +1,28 @@
 === TODO ===
 
-*Add popups to the remove buttons.
 
 *Fix bug so that when removing an account, all transactions will follow the removing.
 
-*Set better tick count, star of weeks/years.
+*Set better tick count, star of weeks/months.
 
 *Fix bug so that when renaming an account, all transactions will follow the renaming.
 
 *Add extra sum display for all/included accounts
 
-*Mac OS X cannot open nonexisting file (Create new menu option)
 
-*Refactor code base for GUI
 
 
 === BETWEEN ===
+*Mac OS X cannot open nonexisting file (Create new menu option) ---- Maybe works now but not sure
 
-*Alter database so one can select if an account is to be considered in transactions/revenues/diagrams ---- needs cleanup (maintain consistent "bool" interface with the database)
+*Refactor code base for GUI ---- v1.0
 
 === DONE ===
+
+*Add popups to the remove buttons ---- v1.0
+
+*Alter database so one can select if an account is to be considered in transactions/revenues/diagrams 
+	---- needs cleanup (maintain consistent "bool" interface with the database) ---- v1.0
 
 *Add Import/Export for database (should be in CSV format) ---- v0.9
 

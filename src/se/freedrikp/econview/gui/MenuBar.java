@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.ProgressMonitor;
+import javax.swing.UIManager;
 
 import se.freedrikp.econview.database.Database;
 
@@ -85,7 +86,7 @@ public class MenuBar extends JMenuBar {
 
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-			int result = fc.showOpenDialog(menuBar);
+			int result = fc.showDialog(menuBar,fc.getUI().getDefaultButton(fc).getText());
 			if (result == JFileChooser.APPROVE_OPTION) {
 				db.openFile(fc.getSelectedFile());
 			}

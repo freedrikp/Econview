@@ -27,15 +27,15 @@ import com.toedter.calendar.JDateChooser;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
 
-public class TransactionsTab extends JPanel implements Observer{
+public class TransactionsTab extends JPanel implements Observer {
 
 	private Database db;
 	private JScrollPane transactionsPane;
 	private JTable transactionsTable;
 	private static final String[] transactionHeader = { "ID", "Account",
-		"Amount", "Date", "Comment" };
-	
-	public TransactionsTab(final Database db){
+			"Amount", "Date", "Comment" };
+
+	public TransactionsTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);
@@ -94,8 +94,8 @@ public class TransactionsTab extends JPanel implements Observer{
 
 				if (transactionDetails != null) {
 					try {
-						db.addTransaction(transactionDetails[0],
-								GUI.parseAmount(transactionDetails[1]),
+						db.addTransaction(transactionDetails[0], GUI
+								.parseAmount(transactionDetails[1]),
 								new SimpleDateFormat("yyyy-MM-dd")
 										.parse(transactionDetails[2]),
 								transactionDetails[3]);
@@ -178,8 +178,8 @@ public class TransactionsTab extends JPanel implements Observer{
 										.getModel().getValueAt(
 												transactionsTable
 														.getSelectedRow(), 0)),
-								transactionDetails[0],
-								GUI.parseAmount(transactionDetails[1]),
+								transactionDetails[0], GUI
+										.parseAmount(transactionDetails[1]),
 								new SimpleDateFormat("yyyy-MM-dd")
 										.parse(transactionDetails[2]),
 								transactionDetails[3]);
@@ -196,23 +196,33 @@ public class TransactionsTab extends JPanel implements Observer{
 		btnRemoveTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				db.removeTransaction(Long.parseLong((String) transactionsTable
-						.getModel().getValueAt(
-								transactionsTable.getSelectedRow(), 0)));
+				if (JOptionPane.showConfirmDialog(
+						null,
+						"Are you sure you want to remove this transaction -- "
+								+ (String) transactionsTable.getModel()
+										.getValueAt(
+												transactionsTable
+														.getSelectedRow(), 0),
+						"Remove transaction", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+					db.removeTransaction(Long
+							.parseLong((String) transactionsTable.getModel()
+									.getValueAt(
+											transactionsTable.getSelectedRow(),
+											0)));
+				}
 			}
 		});
 		transactionsButtonPanel.add(btnRemoveTransaction);
-		update(db,null);
+		update(db, null);
 	}
 
-	
 	public void update(Observable o, Object arg) {
 		updateTransactionList();
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
 		repaint();
 	}
-	
+
 	private String[] askUserTransaction(Object[] accountValues,
 			String selectedAccount, String selectedAmount, String selectedDate,
 			String selectedComment) {
@@ -271,7 +281,7 @@ public class TransactionsTab extends JPanel implements Observer{
 		}
 		return null;
 	}
-	
+
 	private void updateTransactionList() {
 		Model m = new Model(transactionHeader, 0);
 		for (String[] row : db.getTransactions()) {

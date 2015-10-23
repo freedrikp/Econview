@@ -199,7 +199,7 @@ public class Database extends Observable {
 				String[] row = new String[3];
 				row[0] = results.getString("accountName");
 				row[1] = results.getString("accountBalance");
-				row[2] = Integer.toString(results.getInt("accountIncluded"));
+				row[2] = Boolean.toString(results.getInt("accountIncluded") == 1);
 				list.add(row);
 			}
 		} catch (SQLException e) {

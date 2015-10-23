@@ -120,8 +120,15 @@ public class AccountsTab extends JPanel implements Observer{
 		btnRemoveAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if (JOptionPane.showConfirmDialog(
+						null,
+						"Are you sure you want to remove this account -- "
+								+ (String) accountsTable.getModel().getValueAt(
+										accountsTable.getSelectedRow(), 0),
+						"Remove account", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 				db.removeAccount((String) accountsTable.getModel().getValueAt(
 						accountsTable.getSelectedRow(), 0));
+				}
 			}
 		});
 		accountsButtonPanel.add(btnRemoveAccount);
@@ -186,7 +193,6 @@ public class AccountsTab extends JPanel implements Observer{
 		for (String[] row : db.getAccounts()) {
 			row[1] = NumberFormat.getCurrencyInstance().format(
 					Double.parseDouble(row[1]));
-			row[2] = Boolean.toString(row[2].equals("1"));
 			m.addRow(row);
 		}
 		accountsTable.setModel(m);
