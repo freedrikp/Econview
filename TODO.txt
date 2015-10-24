@@ -1,5 +1,6 @@
 === TODO ===
 
+*Implement better feedback during import/export
 *Improve included functionality (global show/hide option)
 *Implement config file (database file and language)
 *Set better tick count, star of weeks/months.
