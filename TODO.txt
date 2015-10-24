@@ -1,7 +1,6 @@
 === TODO ===
 
 *Improve included functionality (global show/hide option)
-*Implement auto resize of columns in JTables
 *Implement config file (database file and language)
 *Set better tick count, star of weeks/months.
 
@@ -15,6 +14,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Implement auto resize of columns in JTables ---- v1.0
+
 *Add extra sum display for all/included accounts ---- v1.0
 
 *Fix bug so that when renaming an account, all transactions will follow the renaming. ---- v1.0

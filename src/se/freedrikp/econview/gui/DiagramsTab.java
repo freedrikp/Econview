@@ -45,6 +45,10 @@ public class DiagramsTab extends JPanel implements Observer{
 	private JDateChooser diagFromDateField;
 	private JDateChooser diagToDateField;
 	private JPanel customDiagPanel;
+	private final int DIAGRAM_WIDTH = 350;
+	private final int DIAGRAM_HEIGHT = 175;
+	private final int CUSTOM_DIAGRAM_WIDTH = 480;
+	private final int CUSTOM_DIAGRAM_HEIGHT = 350;
 	
 	public DiagramsTab(final Database db){
 		super();
@@ -124,7 +128,7 @@ public class DiagramsTab extends JPanel implements Observer{
 		end.set(Calendar.DATE, start.getActualMaximum(Calendar.DATE));
 		generateDiagram(start.getTime(), end.getTime(),
 				Integer.toString(Calendar.getInstance().get(Calendar.YEAR)),
-				diagramsThisYearPanel, 300, 150);
+				diagramsThisYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.set(Calendar.DATE, start.getActualMinimum(Calendar.DATE));
@@ -134,24 +138,24 @@ public class DiagramsTab extends JPanel implements Observer{
 				end.getTime(),
 				Calendar.getInstance().getDisplayName(Calendar.MONTH,
 						Calendar.LONG, Locale.getDefault()),
-				diagramsThisMonthPanel, 300, 150);
+				diagramsThisMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.YEAR, -1);
 		generateDiagram(start.getTime(), end.getTime(), "Last Year",
-				diagramsLastYearPanel, 300, 150);
+				diagramsLastYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.MONTH, -1);
 		generateDiagram(start.getTime(), end.getTime(), "Last Month",
-				diagramsLastMonthPanel, 300, 150);
+				diagramsLastMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		// try {
 		// generateDiagram(
 		// df.parse(diagFromDateField.getText()),
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
 		generateDiagram(diagFromDateField.getDate(), diagToDateField.getDate(),
-				"Custom Diagram", customDiagPanel, 400, 300);
+				"Custom Diagram", customDiagPanel, CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT);
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }

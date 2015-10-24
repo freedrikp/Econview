@@ -172,11 +172,16 @@ private static final String[] totalAccountRevHeader = { "Account",
 	
 	public void update(Observable o, Object arg) {
 		updateYearlyRevList();
+		GUI.resizeTable(yearlyRevTable);
 		updateMonthlyRevList();
+		GUI.resizeTable(monthlyRevTable);
 		updateYearlyAccountRevList();
+		GUI.resizeTable(yearlyAccountRevTable);
 		updateMonthlyAccountRevList();
-		updateTotalRevLabel();
+		GUI.resizeTable(monthlyAccountRevTable);
 		updateTotalAccountRevList();
+		GUI.resizeTable(totalAccountRevTable);
+		updateTotalRevLabel();
 		updateCustomRevLabel();
 		repaint();
 	}

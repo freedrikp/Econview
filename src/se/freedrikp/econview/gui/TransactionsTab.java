@@ -21,11 +21,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
-import com.toedter.calendar.JDateChooser;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
+
+import com.toedter.calendar.JDateChooser;
 
 public class TransactionsTab extends JPanel implements Observer {
 
@@ -46,6 +48,7 @@ public class TransactionsTab extends JPanel implements Observer {
 
 		transactionsTable = new JTable();
 		transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		//transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		transactionsPane.setViewportView(transactionsTable);
 
 		JPanel transactionsButtonPanel = new JPanel();
@@ -220,6 +223,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		updateTransactionList();
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
+		GUI.resizeTable(transactionsTable);
 		repaint();
 	}
 

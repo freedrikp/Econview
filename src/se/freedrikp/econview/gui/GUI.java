@@ -1,17 +1,21 @@
 package se.freedrikp.econview.gui;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.database.Database;
 
@@ -45,11 +49,12 @@ public class GUI extends JFrame {// implements Observer {
 	 * Create the frame.
 	 */
 	public GUI(Database db) {
-		setResizable(false);
+		//setResizable(false);
 		// this.dbfile = dbfile;
 		// db.addObserver(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1280, 430);
+		//setBounds(100, 100, 1280, 430);
+		setBounds(100, 100, 1360, 500);
 
 		MenuBar menuBar = new MenuBar(db);
 		setJMenuBar(menuBar);
@@ -136,6 +141,33 @@ public class GUI extends JFrame {// implements Observer {
 			return false;
 		}
 
+	}
+	
+	public static void resizeTable(JTable table) {
+		for (int column = 0; column < table.getColumnCount(); column++)
+		{
+		    TableColumn tableColumn = table.getColumnModel().getColumn(column);
+		    int preferredWidth = tableColumn.getMinWidth();
+		    int maxWidth = tableColumn.getMaxWidth();
+		 
+		    for (int row = 0; row < table.getRowCount(); row++)
+		    {
+		        TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+		        Component c = table.prepareRenderer(cellRenderer, row, column);
+		        int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
+		        preferredWidth = Math.max(preferredWidth, width);
+		 
+		        //  We've exceeded the maximum width, no need to check other rows
+		 
+		        if (preferredWidth >= maxWidth)
+		        {
+		            preferredWidth = maxWidth;
+		            break;
+		        }
+		    }
+		 
+		    tableColumn.setPreferredWidth( preferredWidth );
+		}
 	}
 
 	// public String getDBFile() {

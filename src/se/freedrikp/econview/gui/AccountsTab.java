@@ -202,6 +202,7 @@ public class AccountsTab extends JPanel implements Observer{
 				.format(Double.parseDouble(db.getAccountBalanceSum(false)))));
 		accountsPane.getVerticalScrollBar().setValue(
 				accountsPane.getVerticalScrollBar().getMaximum());
+		GUI.resizeTable(accountsTable);
 		repaint();
 	}
 	
