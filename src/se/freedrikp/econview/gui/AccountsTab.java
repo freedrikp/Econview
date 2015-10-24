@@ -124,7 +124,7 @@ public class AccountsTab extends JPanel implements Observer{
 			public void actionPerformed(ActionEvent arg0) {
 				if (JOptionPane.showConfirmDialog(
 						null,
-						"Are you sure you want to remove this account -- "
+						"Are you sure you want to remove this account? -- "
 								+ (String) accountsTable.getModel().getValueAt(
 										accountsTable.getSelectedRow(), 0),
 						"Remove account", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {

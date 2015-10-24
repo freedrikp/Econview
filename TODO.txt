@@ -1,7 +1,8 @@
 === TODO ===
 
-
-
+*Improve included functionality (global show/hide option)
+*Implement auto resize of columns in JTables
+*Implement config file (database file and language)
 *Set better tick count, star of weeks/months.
 
 

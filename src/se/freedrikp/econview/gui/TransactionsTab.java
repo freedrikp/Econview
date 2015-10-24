@@ -198,7 +198,7 @@ public class TransactionsTab extends JPanel implements Observer {
 			public void actionPerformed(ActionEvent e) {
 				if (JOptionPane.showConfirmDialog(
 						null,
-						"Are you sure you want to remove this transaction -- "
+						"Are you sure you want to remove this transaction? -- "
 								+ (String) transactionsTable.getModel()
 										.getValueAt(
 												transactionsTable
