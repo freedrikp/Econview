@@ -1,7 +1,6 @@
 package se.freedrikp.econview.gui;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -36,7 +35,7 @@ public class GUI extends JFrame {// implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI frame = new GUI(new Database("econview.db"));
+					GUI frame = new GUI(new Database(Utilities.getConfig("DATABASE_FILE")));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

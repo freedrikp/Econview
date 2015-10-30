@@ -3,7 +3,7 @@
 *Implement better feedback during import/export
 *Improve included functionality (global show/hide option)
 *Implement config file (database file and language)
-*Set better tick count, star of weeks/months.
+*Set better tick count, start of weeks/months.
 
 
 

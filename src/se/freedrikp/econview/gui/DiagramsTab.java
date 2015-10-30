@@ -69,6 +69,10 @@ public class DiagramsTab extends JPanel implements Observer{
 				BoxLayout.X_AXIS));
 		diagramsLastMonthPanel.setLayout(new BoxLayout(diagramsLastMonthPanel,
 				BoxLayout.X_AXIS));
+		diagramsLastYearPanel.setLayout(new BoxLayout(diagramsLastYearPanel,
+				BoxLayout.X_AXIS));
+		diagramsThisYearPanel.setLayout(new BoxLayout(diagramsThisYearPanel,
+				BoxLayout.X_AXIS));
 		JSplitPane diagramSplitPane = new JSplitPane(
 				JSplitPane.HORIZONTAL_SPLIT, diagramYearSplitPane,
 				diagramMonthSplitPane);
@@ -198,14 +202,10 @@ public class DiagramsTab extends JPanel implements Observer{
 		}
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(title, "Date",
 				"Balance", collection);
-		diagramsLastYearPanel.setLayout(new BoxLayout(diagramsLastYearPanel,
-				BoxLayout.X_AXIS));
-		diagramsThisYearPanel.setLayout(new BoxLayout(diagramsThisYearPanel,
-				BoxLayout.X_AXIS));
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
 		daxis.setRange(from, to);
-		//daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,1));
+//		daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,7));
 		NumberAxis naxis = (NumberAxis) xyPlot.getRangeAxis();
 		naxis.setNumberFormatOverride(NumberFormat.getCurrencyInstance());
 		ChartPanel diagram = new ChartPanel(chart);
