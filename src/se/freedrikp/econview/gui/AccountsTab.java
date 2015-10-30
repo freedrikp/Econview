@@ -31,7 +31,7 @@ public class AccountsTab extends JPanel implements Observer{
 	private JTable accountsTable;
 	private JLabel totalBalanceLabel;
 	private JLabel totalIncludedBalanceLabel;
-	private static final String[] accountHeader = { "Account", "Balance", "Included" };
+	private static final String[] accountHeader = { Utilities.getString("ACCOUNT_HEADER_ACCOUNT"), Utilities.getString("ACCOUNT_HEADER_BALANCE"), Utilities.getString("ACCOUNT_HEADER_INCLUDED") };
 
 	public AccountsTab(final Database db){
 		super();
@@ -49,7 +49,7 @@ public class AccountsTab extends JPanel implements Observer{
 		JPanel accountsButtonPanel = new JPanel();
 		add(accountsButtonPanel);
 
-		JButton btnAddAccount = new JButton("Add Account");
+		JButton btnAddAccount = new JButton(Utilities.getString("ADD_ACCOUNT"));
 		btnAddAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -77,7 +77,7 @@ public class AccountsTab extends JPanel implements Observer{
 				BoxLayout.Y_AXIS));
 		accountsButtonPanel.add(btnAddAccount);
 
-		JButton btnEditAccount = new JButton("Edit Account");
+		JButton btnEditAccount = new JButton(Utilities.getString("EDIT_ACCOUNT"));
 		btnEditAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -118,16 +118,16 @@ public class AccountsTab extends JPanel implements Observer{
 		});
 		accountsButtonPanel.add(btnEditAccount);
 
-		JButton btnRemoveAccount = new JButton("Remove Account");
+		JButton btnRemoveAccount = new JButton(Utilities.getString("REMOVE_ACCOUNT"));
 		btnRemoveAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (JOptionPane.showConfirmDialog(
 						null,
-						"Are you sure you want to remove this account? -- "
+						Utilities.getString("REMOVE_ACCOUNT_PROMPT") + " -- "
 								+ (String) accountsTable.getModel().getValueAt(
 										accountsTable.getSelectedRow(), 0),
-						"Remove account", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						Utilities.getString("REMOVE_ACCOUNT"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 				db.removeAccount((String) accountsTable.getModel().getValueAt(
 						accountsTable.getSelectedRow(), 0));
 				}
@@ -137,7 +137,7 @@ public class AccountsTab extends JPanel implements Observer{
 		
 		accountsButtonPanel.add(new JSeparator());
 		
-		JLabel totalIncludedBalanceLabelText = new JLabel("Total Included Balance:");
+		JLabel totalIncludedBalanceLabelText = new JLabel(Utilities.getString("TOTAL_INCLUDED_BALANCE") + ":");
 		accountsButtonPanel.add(totalIncludedBalanceLabelText);
 		totalIncludedBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
@@ -148,7 +148,7 @@ public class AccountsTab extends JPanel implements Observer{
 		
 		accountsButtonPanel.add(new JSeparator());
 		
-		JLabel totalBalanceLabelText = new JLabel("Total Balance:");
+		JLabel totalBalanceLabelText = new JLabel(Utilities.getString("TOTAL_BALANCE") + ":");
 		accountsButtonPanel.add(totalBalanceLabelText);
 		totalBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
@@ -166,21 +166,21 @@ public class AccountsTab extends JPanel implements Observer{
 		JTextField nameField = new JTextField("", 15);
 		nameField.setText(selectedName);
 		JPanel namePanel = new JPanel();
-		namePanel.add(new JLabel("Name:"));
+		namePanel.add(new JLabel(Utilities.getString("ADD_ACCOUNT_NAME") + ":"));
 		namePanel.add(nameField);
 		panel.add(namePanel);
 
 		JTextField balanceField = new JTextField("", 7);
 		balanceField.setText(selectedBalance);
 		JPanel balancePanel = new JPanel();
-		balancePanel.add(new JLabel("Balance:"));
+		balancePanel.add(new JLabel(Utilities.getString("ADD_ACCOUNT_BALANCE") + ":"));
 		balancePanel.add(balanceField);
 		panel.add(balancePanel);
-		JCheckBox includedBox = new JCheckBox("Include in statistics? ",Boolean.parseBoolean(selectedIncluded));
+		JCheckBox includedBox = new JCheckBox(Utilities.getString("ADD_ACCOUNT_INCLUDE") + " ",Boolean.parseBoolean(selectedIncluded));
 		panel.add(includedBox);
 
 		int result = JOptionPane.showConfirmDialog(null, panel,
-				"Account Details", JOptionPane.OK_CANCEL_OPTION,
+				Utilities.getString("ACCOUNT_DETAILS"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null);
 
 		if (result == JOptionPane.OK_OPTION) {

@@ -8,12 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.ProgressMonitor;
-import javax.swing.UIManager;
 
 import se.freedrikp.econview.database.Database;
 
@@ -75,6 +75,17 @@ public class MenuBar extends JMenuBar {
 			}
 		});
 		mnImportExport.add(mntmExport);
+		
+		JMenu mnIncluded = new JMenu("Included");
+		add(mnIncluded);
+
+		final JCheckBoxMenuItem mntmShowHideIncluded = new JCheckBoxMenuItem("Show Only Included",db.getOnlyIncluded());
+		mntmShowHideIncluded.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				db.setOnlyIncluded(mntmShowHideIncluded.getState());
+			}
+		});
+		mnIncluded.add(mntmShowHideIncluded);
 	}
 	
 	private class OpenDatabaseListener implements ActionListener {

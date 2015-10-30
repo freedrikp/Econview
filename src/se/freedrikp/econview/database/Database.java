@@ -18,12 +18,18 @@ import java.util.Observable;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import javax.swing.Icon;
+
+import se.freedrikp.econview.gui.Utilities;
+
 public class Database extends Observable {
 	private Connection c;
 	private File dbfile;
+	private int onlyIncluded;
 
 	public Database(String dbfile) {
 		this.dbfile = new File(dbfile);
+		onlyIncluded = 1;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
@@ -205,7 +211,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts");
+					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[3];
@@ -225,7 +232,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM transactions");
+					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[5];
@@ -248,7 +256,8 @@ public class Database extends Observable {
 		ArrayList<String> list = new ArrayList<String>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName FROM Accounts");
+					.prepareStatement("SELECT accountName FROM Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				list.add(results.getString("accountName"));
@@ -263,7 +272,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY transactionYear,transactionMonth");
+					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear,transactionMonth");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[3];
@@ -282,7 +292,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY transactionYear");
+					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[2];
@@ -300,7 +311,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY accountName,transactionYear,transactionMonth");
+					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear,transactionMonth");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[4];
@@ -320,7 +332,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY accountName,transactionYear");
+					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[3];
@@ -338,7 +351,8 @@ public class Database extends Observable {
 	public String getTotalRevenue() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0");
+					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String res = results.getString("revenue");
@@ -354,7 +368,8 @@ public class Database extends Observable {
 		ArrayList<String[]> list = new ArrayList<String[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded > 0 GROUP BY accountName");
+					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName");
+			ps.setInt(1,onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String[] row = new String[2];
@@ -405,7 +420,8 @@ public class Database extends Observable {
 		Map<String, Map<String, Double>> dataset = new TreeMap<String, Map<String, Double>>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded > 0");
+					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
 			ResultSet accounts = ps.executeQuery();
 			double totalStartBalance = 0;
 			while (accounts.next()) {
@@ -415,7 +431,7 @@ public class Database extends Observable {
 				buildDiagramDataset(from, to, dataset, startBalance,
 						accountName);
 			}
-			buildDiagramDataset(from, to, dataset, totalStartBalance, "Total");
+			buildDiagramDataset(from, to, dataset, totalStartBalance, Utilities.getString("TOTAL_ACCOUNT_NAME"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -435,7 +451,7 @@ public class Database extends Observable {
 		} else {
 			ps = selectBetweenDates("SELECT transactionAmount FROM",
 					"WHERE accountName = ?", from, new Date());
-			ps.setString(13, accountName);
+			ps.setString(14, accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
 		while (transactions.next()) {
@@ -450,7 +466,7 @@ public class Database extends Observable {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"WHERE accountName = ?", from, to);
-			ps.setString(13, accountName);
+			ps.setString(14, accountName);
 		}
 		transactions = ps.executeQuery();
 		while (transactions.next()) {
@@ -474,7 +490,7 @@ public class Database extends Observable {
 		String foy = year.format(from);
 		String fom = month.format(from);
 		String fod = day.format(from);
-		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded > 0 AND transactionYear <= ? AND transactionYear >= ?)";
+		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionYear <= ? AND transactionYear >= ?)";
 		String sqlMonths = "(SELECT * FROM "
 				+ sqlYears
 				+ " WHERE NOT (transactionYear == ? AND transactionMonth > ? OR transactionYear == ?  AND transactionmonth < ?))";
@@ -483,20 +499,21 @@ public class Database extends Observable {
 				+ " WHERE NOT (transactionYear == ? AND transactionMonth == ? AND transactionDay > ? OR transactionYear == ? AND transactionMonth == ? AND transactionDay < ?))";
 		PreparedStatement ps = c.prepareStatement(sqlSelect + " " + sqlDays
 				+ " " + sqlWhere);
-		ps.setString(1, toy);
-		ps.setString(2, foy);
+		ps.setInt(1,onlyIncluded);
+		ps.setString(2, toy);
+		ps.setString(3, foy);
 
-		ps.setString(3, toy);
-		ps.setString(4, tom);
-		ps.setString(5, foy);
-		ps.setString(6, fom);
+		ps.setString(4, toy);
+		ps.setString(5, tom);
+		ps.setString(6, foy);
+		ps.setString(7, fom);
 
-		ps.setString(7, toy);
-		ps.setString(8, tom);
-		ps.setString(9, tod);
-		ps.setString(10, foy);
-		ps.setString(11, fom);
-		ps.setString(12, fod);
+		ps.setString(8, toy);
+		ps.setString(9, tom);
+		ps.setString(10, tod);
+		ps.setString(11, foy);
+		ps.setString(12, fom);
+		ps.setString(13, fod);
 		return ps;
 	}
 
@@ -614,5 +631,15 @@ public class Database extends Observable {
 
 	public File getFile() {
 		return dbfile;
+	}
+	
+	public void setOnlyIncluded(boolean onlyIncluded){
+		this.onlyIncluded = onlyIncluded ? 1 : 0;
+		setChanged();
+		notifyObservers();
+	}
+
+	public boolean getOnlyIncluded() {
+		return onlyIncluded > 0 ? true : false;
 	}
 }

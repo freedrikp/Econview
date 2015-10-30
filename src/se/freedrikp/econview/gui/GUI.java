@@ -48,6 +48,7 @@ public class GUI extends JFrame {// implements Observer {
 	 * Create the frame.
 	 */
 	public GUI(Database db) {
+		super("EconView");
 		//setResizable(false);
 		// this.dbfile = dbfile;
 		// db.addObserver(this);
@@ -70,16 +71,16 @@ public class GUI extends JFrame {// implements Observer {
 		// tabbedPane.addTab("Start", null, startPanel, null);
 
 		AccountsTab accountsPanel = new AccountsTab(db);
-		tabbedPane.addTab("Accounts", null, accountsPanel, null);
+		tabbedPane.addTab(Utilities.getString("ACCOUNTS_TAB_NAME"), null, accountsPanel, null);
 
 		TransactionsTab transactionsPanel = new TransactionsTab(db);
-		tabbedPane.addTab("Transactions", null, transactionsPanel, null);
+		tabbedPane.addTab(Utilities.getString("TRANSACTIONS_TAB_NAME"), null, transactionsPanel, null);
 
 		RevenueTab revenuePanel = new RevenueTab(db);
-		tabbedPane.addTab("Revenue", null, revenuePanel, null);
+		tabbedPane.addTab(Utilities.getString("REVENUES_TAB_NAME"), null, revenuePanel, null);
 
 		DiagramsTab diagramsPanel = new DiagramsTab(db);
-		tabbedPane.addTab("Diagrams", null, diagramsPanel, null);
+		tabbedPane.addTab(Utilities.getString("DIAGRAMS_TAB_NAME"), null, diagramsPanel, null);
 
 //		update(db, null);
 	}

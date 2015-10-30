@@ -17,6 +17,28 @@ public class Utilities {
 
 	private static void loadDefaultLanguage() {
 		lang = new HashMap<String, HashMap<String, String>>();
+		HashMap<String,String> lan = new HashMap<String,String>();
+		
+		lan.put("TOTAL_ACCOUNT_NAME","Total");
+		lan.put("ACCOUNTS_TAB_NAME","Accounts");
+		lan.put("TRANSACTIONS_TAB_NAME","Transactions");
+		lan.put("REVENUES_TAB_NAME","Revenue");
+		lan.put("DIAGRAMS_TAB_NAME","Diagrams");
+		lan.put("ACCOUNT_HEADER_ACCOUNT","Account");
+		lan.put("ACCOUNT_HEADER_BALANCE", "Balance");
+		lan.put("ACCOUNT_HEADER_INCLUDED", "Included");
+		lan.put("ADD_ACCOUNT", "Add Account");
+		lan.put("EDIT_ACCOUNT", "Edit Account");
+		lan.put("REMOVE_ACCOUNT", "Remove Account");
+		lan.put("REMOVE_ACCOUNT_PROMPT", "Are you sure you want to remove this account?");
+		lan.put("TOTAL_INCLUDED_BALANCE", "Total Included Balance");
+		lan.put("TOTAL_BALANCE", "Total Balance");
+		lan.put("ADD_ACCOUNT_NAME", "Name");
+		lan.put("ADD_ACCOUNT_BALANCE", "Balance");
+		lan.put("ADD_ACCOUNT_INCLUDE", "Include in statistics?");
+		lan.put("ACCOUNT_DETAILS", "Account Details");
+		
+		lang.put(getConfig("LANGUAGE"), lan);
 	}
 
 	private static void loadDefaultConfig() {
@@ -70,7 +92,7 @@ public class Utilities {
 	public static String getString(String key) {
 		if (lang == null) {
 			loadDefaultLanguage();
-			writeLanguages(true);
+			writeLanguages();
 			parseLanguages();
 		}
 		return lang.get(getConfig("LANGUAGE")).get(key);
@@ -102,10 +124,10 @@ public class Utilities {
 		}
 	}
 
-	private static void writeLanguages(boolean overwrite) {
+	private static void writeLanguages() {
 		for (Map.Entry<String, HashMap<String, String>> entry : lang.entrySet()) {
 			File langFile = new File(entry.getKey());
-			if (overwrite && (!langFile.exists() || langFile.length() == 0)) {
+			if ((!langFile.exists() || langFile.length() == 0)) {
 				FileWriter fw;
 				try {
 					fw = new FileWriter(langFile);
@@ -114,6 +136,8 @@ public class Utilities {
 
 						fw.write(e.getKey() + "=" + e.getValue() + "\n");
 					}
+					fw.flush();
+					fw.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
