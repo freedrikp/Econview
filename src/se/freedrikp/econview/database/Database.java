@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -454,7 +455,20 @@ public class Database extends Observable {
 						accountName,null);
 			}
 			if (includeTotal){
-				buildDiagramDataset(from, to, dataset, totalStartBalance, Utilities.getString("TOTAL_ACCOUNT_NAME"), selectedAccounts);				
+				buildDiagramDataset(from, to, dataset, totalStartBalance, Utilities.getString("TOTAL_ACCOUNT_NAME"), selectedAccounts);
+//				HashMap<String,Double> total = new HashMap<String,Double>();
+//				for (Map<String,Double> map : dataset.values()){
+//					for (Map.Entry<String, Double> entry : map.entrySet()){
+//						if (total.containsKey(entry.getKey())){
+//							double newValue = entry.getValue() + total.get(entry.getKey());
+//							total.put(entry.getKey(), newValue);
+//						}else{
+//							total.put(entry.getKey(), entry.getValue());
+//						}
+//					}
+//				}
+//				System.out.println(total);
+//				dataset.put(Utilities.getString("TOTAL_ACCOUNT_NAME"), total);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -470,16 +484,16 @@ public class Database extends Observable {
 		datapoints.put(sdf.format(to), startBalance);
 		PreparedStatement ps;
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
-			ps = selectBetweenDates("SELECT transactionAmount FROM", "WHERE accountName IN " + consideredAccounts, from,
+			ps = selectBetweenDates("SELECT sum(transactionAmount) as Amount FROM", "WHERE accountName IN " + consideredAccounts, from,
 					new Date());
 		} else {
-			ps = selectBetweenDates("SELECT transactionAmount FROM",
+			ps = selectBetweenDates("SELECT SUM(transactionAmount) as Amount FROM",
 					"WHERE accountName = ?", from, new Date());
 			ps.setString(14, accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
 		while (transactions.next()) {
-			startBalance -= transactions.getDouble("transactionAmount");
+			startBalance -= transactions.getDouble("Amount");
 		}
 		datapoints.put(sdf.format(from), startBalance);
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
@@ -522,7 +536,7 @@ public class Database extends Observable {
 				+ sqlMonths
 				+ " WHERE NOT (transactionYear == ? AND transactionMonth == ? AND transactionDay > ? OR transactionYear == ? AND transactionMonth == ? AND transactionDay < ?))";
 		PreparedStatement ps = c.prepareStatement(sqlSelect + " " + sqlDays
-				+ " " + sqlWhere);
+				+ " " + sqlWhere + "ORDER BY transactionYear,transactionMonth,transactionDay ASC");
 		ps.setInt(1,onlyIncluded);
 		ps.setString(2, toy);
 		ps.setString(3, foy);

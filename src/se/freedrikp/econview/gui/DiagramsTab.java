@@ -271,7 +271,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		NumberAxis naxis = (NumberAxis) xyPlot.getRangeAxis();
 		naxis.setNumberFormatOverride(NumberFormat.getCurrencyInstance());
 		ChartPanel diagram = new ChartPanel(chart);
-//		diagram.setPreferredSize(new Dimension(width, height));
+		diagram.setPreferredSize(new Dimension(width, height));
 		panel.add(diagram);
 	}
 
