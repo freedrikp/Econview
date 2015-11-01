@@ -4,11 +4,16 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
@@ -16,16 +21,16 @@ import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnit;
-import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
@@ -36,7 +41,7 @@ import se.freedrikp.econview.database.Database;
 
 import com.toedter.calendar.JDateChooser;
 
-public class DiagramsTab extends JPanel implements Observer{
+public class DiagramsTab extends JPanel implements Observer {
 	private Database db;
 	private JPanel diagramsLastYearPanel;
 	private JPanel diagramsLastMonthPanel;
@@ -44,17 +49,21 @@ public class DiagramsTab extends JPanel implements Observer{
 	private JPanel diagramsThisMonthPanel;
 	private JDateChooser diagFromDateField;
 	private JDateChooser diagToDateField;
+	private JPanel diagAccountsPanel;
 	private JPanel customDiagPanel;
 	private final int DIAGRAM_WIDTH = 350;
 	private final int DIAGRAM_HEIGHT = 175;
 	private final int CUSTOM_DIAGRAM_WIDTH = 480;
 	private final int CUSTOM_DIAGRAM_HEIGHT = 350;
-	
-	public DiagramsTab(final Database db){
+	private JCheckBox[] selectedAccounts;
+	private JCheckBox allAccounts;
+	private JCheckBox total;
+
+	public DiagramsTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);
-		
+
 		diagramsLastYearPanel = new JPanel();
 		diagramsLastMonthPanel = new JPanel();
 		diagramsThisYearPanel = new JPanel();
@@ -96,8 +105,32 @@ public class DiagramsTab extends JPanel implements Observer{
 		diagToDateField = new JDateChooser(new Date(), "yyyy-MM-dd");
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
+		
+		diagAccountsPanel = new JPanel();
+		diagAccountsPanel.setLayout(new BoxLayout(diagAccountsPanel, BoxLayout.Y_AXIS));
+		diagAccountsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		diagramControlPanel.add(diagAccountsPanel);
+		
+		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"),false);
+		//allAccounts.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		allAccounts.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				boolean select = e.getStateChange() == ItemEvent.SELECTED;
+				for (JCheckBox checkBox : selectedAccounts){
+					checkBox.setSelected(select);
+					//update(db,null);
+				}
+			}
+			
+		});
+		
+		total = new JCheckBox(Utilities.getString("TOTAL_ACCOUNT_NAME"),true);
+		//total.setAlignmentX(Component.CENTER_ALIGNMENT);
+				
 
-		JButton btnCustomDiagram = new JButton(Utilities.getString("CUSTOM_DIAGRAM"));
+		JButton btnCustomDiagram = new JButton(
+				Utilities.getString("CUSTOM_DIAGRAM"));
 		btnCustomDiagram.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);
@@ -109,21 +142,33 @@ public class DiagramsTab extends JPanel implements Observer{
 		customDiagPanel = new JPanel();
 		add(customDiagPanel);
 
-		update(db,null);
+		update(db, null);
 	}
-
 
 	public void update(Observable o, Object arg) {
 		updateDiagrams();
+		validate();
 		repaint();
 	}
-	
+
 	private void updateDiagrams() {
 		diagramsLastYearPanel.removeAll();
 		diagramsLastMonthPanel.removeAll();
 		diagramsThisMonthPanel.removeAll();
 		diagramsThisYearPanel.removeAll();
 		customDiagPanel.removeAll();
+		diagAccountsPanel.removeAll();
+		
+		List<String> accounts = db.getAccountNames();
+		HashSet<String> oldSelectedAccounts = new HashSet<String>();
+		if (selectedAccounts != null) {
+			for (JCheckBox checkBox : selectedAccounts){
+				if (checkBox.isSelected()){
+					oldSelectedAccounts.add(checkBox.getText());
+				}
+			}			
+		}
+		
 		Calendar start = Calendar.getInstance();
 		Calendar end = Calendar.getInstance();
 		start.set(Calendar.MONTH, start.getActualMinimum(Calendar.MONTH));
@@ -132,7 +177,7 @@ public class DiagramsTab extends JPanel implements Observer{
 		end.set(Calendar.DATE, start.getActualMaximum(Calendar.DATE));
 		generateDiagram(start.getTime(), end.getTime(),
 				Integer.toString(Calendar.getInstance().get(Calendar.YEAR)),
-				diagramsThisYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
+				diagramsThisYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT,accounts,true);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.set(Calendar.DATE, start.getActualMinimum(Calendar.DATE));
@@ -142,34 +187,50 @@ public class DiagramsTab extends JPanel implements Observer{
 				end.getTime(),
 				Calendar.getInstance().getDisplayName(Calendar.MONTH,
 						Calendar.LONG, Locale.getDefault()),
-				diagramsThisMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
+				diagramsThisMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT,accounts,true);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.YEAR, -1);
-		generateDiagram(start.getTime(), end.getTime(), Utilities.getString("LAST_YEAR"),
-				diagramsLastYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
+		generateDiagram(start.getTime(), end.getTime(),
+				Utilities.getString("LAST_YEAR"), diagramsLastYearPanel,
+				DIAGRAM_WIDTH, DIAGRAM_HEIGHT,accounts,true);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.MONTH, -1);
-		generateDiagram(start.getTime(), end.getTime(), Utilities.getString("LAST_MONTH"),
-				diagramsLastMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
+		generateDiagram(start.getTime(), end.getTime(),
+				Utilities.getString("LAST_MONTH"), diagramsLastMonthPanel,
+				DIAGRAM_WIDTH, DIAGRAM_HEIGHT,accounts,true);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		// try {
 		// generateDiagram(
 		// df.parse(diagFromDateField.getText()),
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
+		
+		
 		generateDiagram(diagFromDateField.getDate(), diagToDateField.getDate(),
-				Utilities.getString("CUSTOM_DIAGRAM"), customDiagPanel, CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT);
+				Utilities.getString("CUSTOM_DIAGRAM"), customDiagPanel,
+				CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT,oldSelectedAccounts,total.isSelected());
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }
+
+		diagAccountsPanel.add(allAccounts);
+		diagAccountsPanel.add(total);
+		diagAccountsPanel.add(new JSeparator());
+		
+		selectedAccounts = new JCheckBox[accounts.size()];
+		for (int i = 0; i < accounts.size(); i++) {
+			String account = accounts.get(i);			
+			selectedAccounts[i] = new JCheckBox(account, oldSelectedAccounts.contains(account));
+			diagAccountsPanel.add(selectedAccounts[i]);
+		}
 	}
 
 	private void generateDiagram(Date from, Date to, String title,
-			JPanel panel, int width, int height) {
+			JPanel panel, int width, int height, Collection<String> accounts,boolean includeTotal) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Map<String, Double>> diagramData = db.getCustomDiagramData(
-				from, to);
+				from, to,accounts, includeTotal);
 		TimeSeriesCollection collection = new TimeSeriesCollection();
 		for (Map.Entry<String, Map<String, Double>> dataset : diagramData
 				.entrySet()) {
@@ -200,18 +261,18 @@ public class DiagramsTab extends JPanel implements Observer{
 			}
 			collection.addSeries(series);
 		}
-		JFreeChart chart = ChartFactory.createTimeSeriesChart(title, Utilities.getString("DIAGRAM_DATE"),
+		JFreeChart chart = ChartFactory.createTimeSeriesChart(title,
+				Utilities.getString("DIAGRAM_DATE"),
 				Utilities.getString("DIAGRAM_BALANCE"), collection);
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
 		daxis.setRange(from, to);
-//		daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,7));
+		// daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,7));
 		NumberAxis naxis = (NumberAxis) xyPlot.getRangeAxis();
 		naxis.setNumberFormatOverride(NumberFormat.getCurrencyInstance());
 		ChartPanel diagram = new ChartPanel(chart);
-		diagram.setPreferredSize(new Dimension(width, height));
+//		diagram.setPreferredSize(new Dimension(width, height));
 		panel.add(diagram);
 	}
-
 
 }

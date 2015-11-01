@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -384,19 +385,29 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public String getRevenue(Date from, Date to, String account) {
+	public String getRevenue(Date from, Date to, Collection<String> accounts) {
 		try {
+			String selectedAccounts = "(";
+			int i = 1;
+			for (String a : accounts){
+				selectedAccounts+="'" + a + "'";
+				if (i < accounts.size()){
+					selectedAccounts+=",";
+				}
+				i++;
+			}
+			selectedAccounts+=")";
 			PreparedStatement ps;
-			if (account.isEmpty()) {
-				ps = selectBetweenDates(
-						"Select SUM(transactionAmount) as revenue FROM", "",
-						from, to);
-			} else {
+//			if (account.isEmpty()) {
+//				ps = selectBetweenDates(
+//						"Select SUM(transactionAmount) as revenue FROM", "",
+//						from, to);
+//			} else {
 				ps = selectBetweenDates(
 						"Select SUM(transactionAmount) as revenue FROM",
-						"WHERE accountName = ?", from, to);
-				ps.setString(13, account);
-			}
+						"WHERE accountName IN " + selectedAccounts, from, to);
+//				ps.setString(13, account);
+//			}
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				String res = results.getString("revenue");
@@ -409,7 +420,17 @@ public class Database extends Observable {
 	}
 
 	public Map<String, Map<String, Double>> getCustomDiagramData(Date from,
-			Date to) {
+			Date to, Collection<String> accounts, boolean includeTotal) {
+		String selectedAccounts = "(";
+		int i = 1;
+		for (String a : accounts){
+			selectedAccounts+="'" + a + "'";
+			if (i < accounts.size()){
+				selectedAccounts+=",";
+			}
+			i++;
+		}
+		selectedAccounts+=")";
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
@@ -421,18 +442,20 @@ public class Database extends Observable {
 		Map<String, Map<String, Double>> dataset = new TreeMap<String, Map<String, Double>>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ?");
+					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ? AND accountName IN " + selectedAccounts);
 			ps.setInt(1,onlyIncluded);
-			ResultSet accounts = ps.executeQuery();
+			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
-			while (accounts.next()) {
-				double startBalance = accounts.getDouble("accountBalance");
+			while (accs.next()) {
+				double startBalance = accs.getDouble("accountBalance");
 				totalStartBalance += startBalance;
-				String accountName = accounts.getString("accountName");
+				String accountName = accs.getString("accountName");
 				buildDiagramDataset(from, to, dataset, startBalance,
-						accountName);
+						accountName,null);
 			}
-			buildDiagramDataset(from, to, dataset, totalStartBalance, Utilities.getString("TOTAL_ACCOUNT_NAME"));
+			if (includeTotal){
+				buildDiagramDataset(from, to, dataset, totalStartBalance, Utilities.getString("TOTAL_ACCOUNT_NAME"), selectedAccounts);				
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -441,13 +464,13 @@ public class Database extends Observable {
 
 	private void buildDiagramDataset(Date from, Date to,
 			Map<String, Map<String, Double>> dataset, double startBalance,
-			String accountName) throws SQLException {
+			String accountName, String consideredAccounts) throws SQLException {
 		Map<String, Double> datapoints = new TreeMap<String, Double>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(sdf.format(to), startBalance);
 		PreparedStatement ps;
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
-			ps = selectBetweenDates("SELECT transactionAmount FROM", "", from,
+			ps = selectBetweenDates("SELECT transactionAmount FROM", "WHERE accountName IN " + consideredAccounts, from,
 					new Date());
 		} else {
 			ps = selectBetweenDates("SELECT transactionAmount FROM",
@@ -462,7 +485,7 @@ public class Database extends Observable {
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
-					"", from, to);
+					"WHERE accountName IN " + consideredAccounts, from, to);
 		} else {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",

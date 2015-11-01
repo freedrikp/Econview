@@ -1,8 +1,9 @@
 === TODO ===
 
+*Create settings panel for config
+*Move all sizes to config
 *Add option for GUI date formatting ---- planned v1.2
 
-*Select between accounts in custom diagram
 *Set better tick count, start of weeks/months.
 
 === BETWEEN ===
@@ -11,6 +12,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Select between accounts in custom diagram and improve selection for custom revenue ---- v1.1
+
 *Implemented config file (database file and language) ---- v1.1
 
 *Implement better feedback during import/export ---- v1.1

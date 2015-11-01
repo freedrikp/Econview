@@ -5,10 +5,13 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -17,6 +20,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,16 +55,21 @@ public class RevenueTab extends JPanel implements Observer{
 	private JDateChooser revDateToField;
 
 	private JComboBox accountRevBox;
+
+	private JCheckBox[] selectedAccounts;
 	
+	private JCheckBox allAccounts;
+	
+	private JPanel customRevAccountPanel;
 	private static final String[] monthlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_MONTH"),
-	Utilities.getString("REVENEUE_HEADER_REVENUE") };
-private static final String[] yearlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENEUE_HEADER_REVENUE") };
+	Utilities.getString("REVENUE_HEADER_REVENUE") };
+private static final String[] yearlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_REVENUE") };
 private static final String[] monthlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_MONTH"),
-	Utilities.getString("REVENEUE_HEADER_REVENUE"), Utilities.getString("REVENEUE_HEADER_ACCOUNT") };
-private static final String[] yearlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENEUE_HEADER_ACCOUNT"),
-	Utilities.getString("REVENEUE_HEADER_REVENUE") };
-private static final String[] totalAccountRevHeader = { Utilities.getString("REVENEUE_HEADER_ACCOUNT"),
-	Utilities.getString("REVENEUE_HEADER_REVENUE") };
+	Utilities.getString("REVENUE_HEADER_ACCOUNT"),Utilities.getString("REVENUE_HEADER_REVENUE") };
+private static final String[] yearlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_ACCOUNT"),
+	Utilities.getString("REVENUE_HEADER_REVENUE") };
+private static final String[] totalAccountRevHeader = { Utilities.getString("REVENUE_HEADER_ACCOUNT"),
+	Utilities.getString("REVENUE_HEADER_REVENUE") };
 
 	public RevenueTab(final Database db){
 		super();
@@ -159,8 +168,28 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 			}
 		});
 
-		accountRevBox = new JComboBox();
-		sideRevenuePanel.add(accountRevBox);
+//		accountRevBox = new JComboBox();
+//		sideRevenuePanel.add(accountRevBox);
+		
+		customRevAccountPanel = new JPanel();
+		customRevAccountPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		customRevAccountPanel.setLayout(new BoxLayout(customRevAccountPanel,BoxLayout.Y_AXIS));
+		sideRevenuePanel.add(customRevAccountPanel);
+		
+		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"),false);
+		
+		allAccounts.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				boolean select = e.getStateChange() == ItemEvent.SELECTED;
+				for (JCheckBox checkBox : selectedAccounts){
+					checkBox.setSelected(select);
+					//update(db,null);
+				}
+			}
+			
+		});
+		
+		
 		customRevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(customRevButton);
 
@@ -183,6 +212,7 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 		GUI.resizeTable(totalAccountRevTable);
 		updateTotalRevLabel();
 		updateCustomRevLabel();
+		validate();
 		repaint();
 	}
 	
@@ -221,22 +251,43 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 		// df.parse(revDateToField.getText())));
 		// revDateLabel.setText("(" + df.format(revDateFromField.getDate())
 		// + " <-> " + df.format(revDateToField.getDate()) + "):");
-		List<String> accountNames = db.getAccountNames();
-		accountNames.add(0, Utilities.getString("ALL_ACCOUNTS"));
-		String selectedAccount = (String) accountRevBox.getModel()
-				.getSelectedItem();
-		accountRevBox
-				.setModel(new DefaultComboBoxModel(accountNames.toArray()));
-		accountRevBox.getModel().setSelectedItem(selectedAccount);
-		if (selectedAccount == null) {
-			selectedAccount = "";
-			accountRevBox.setSelectedIndex(0);
-		} else if (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
-			selectedAccount = "";
+		
+//		List<String> accountNames = db.getAccountNames();
+//		accountNames.add(0, Utilities.getString("ALL_ACCOUNTS"));
+//		String selectedAccount = (String) accountRevBox.getModel()
+//				.getSelectedItem();
+//		accountRevBox
+//				.setModel(new DefaultComboBoxModel(accountNames.toArray()));
+//		accountRevBox.getModel().setSelectedItem(selectedAccount);
+//		if (selectedAccount == null) {
+//			selectedAccount = "";
+//			accountRevBox.setSelectedIndex(0);
+//		} else if (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
+//			selectedAccount = "";
+//		}
+		customRevAccountPanel.removeAll();
+		List<String> accounts = db.getAccountNames();
+		HashSet<String> oldSelectedAccounts = new HashSet<String>();
+		if (selectedAccounts != null) {
+			for (JCheckBox checkBox : selectedAccounts){
+				if (checkBox.isSelected()){
+					oldSelectedAccounts.add(checkBox.getText());
+				}
+			}			
 		}
+		
+		customRevAccountPanel.add(allAccounts);
+		customRevAccountPanel.add(new JSeparator());
+		selectedAccounts = new JCheckBox[accounts.size()];
+		for (int i = 0; i < accounts.size(); i++) {
+			String account = accounts.get(i);			
+			selectedAccounts[i] = new JCheckBox(account, oldSelectedAccounts.contains(account));
+			customRevAccountPanel.add(selectedAccounts[i]);
+		}
+		
 		customRevLabel.setText(NumberFormat.getCurrencyInstance().format(
 				Double.parseDouble(db.getRevenue(revDateFromField.getDate(),
-						revDateToField.getDate(), selectedAccount))));
+						revDateToField.getDate(), oldSelectedAccounts))));
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }

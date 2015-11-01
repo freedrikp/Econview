@@ -54,12 +54,12 @@ public class Utilities {
 		lan.put("ADD_TRANSACTION_DATE", "Date");
 		lan.put("ADD_TRANSACTION_COMMENT", "Comment");
 		lan.put("TRANSACTION_DETAILS", "Transaction Details");
-		lan.put("REVENEUE_HEADER_YEAR", "Year");
-		lan.put("REVENEUE_HEADER_MONTH", "Month");
-		lan.put("REVENEUE_HEADER_ACCOUNT", "Account");
-		lan.put("REVENEUE_HEADER_REVENEUE", "Revenue");
+		lan.put("REVENUE_HEADER_YEAR", "Year");
+		lan.put("REVENUE_HEADER_MONTH", "Month");
+		lan.put("REVENUE_HEADER_ACCOUNT", "Account");
+		lan.put("REVENUE_HEADER_REVENUE", "Revenue");
 		lan.put("TOTAL_REVENUE", "Total Revenue");
-		lan.put("CUSTOM_REVENEUE", "Custom Revenue");
+		lan.put("CUSTOM_REVENUE", "Custom Revenue");
 		lan.put("ALL_ACCOUNTS", "All Accounts");
 		lan.put("CUSTOM_DIAGRAM", "Custom Diagram");
 		lan.put("LAST_YEAR", "Last Year");
@@ -74,7 +74,7 @@ public class Utilities {
 		lan.put("MENUBAR_IMPORT_EXPORT_EXPORT", "Export");
 		lan.put("MENUBAR_INCLUDED", "Included");
 		lan.put("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED", "Show Only Included");
-		lan.put("COPYIND_DATABASE", "Copying Database...");
+		lan.put("COPYING_DATABASE", "Copying Database...");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}
