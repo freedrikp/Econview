@@ -34,8 +34,8 @@ public class TransactionsTab extends JPanel implements Observer {
 	private Database db;
 	private JScrollPane transactionsPane;
 	private JTable transactionsTable;
-	private static final String[] transactionHeader = { "ID", "Account",
-			"Amount", "Date", "Comment" };
+	private static final String[] transactionHeader = { Utilities.getString("TRANSACTION_HEADER_ID"),Utilities.getString("TRANSACTION_HEADER_ACCOUNT"),
+		Utilities.getString("TRANSACTION_HEADER_AMOUNT"), Utilities.getString("TRANSACTION_HEADER_DATE"), Utilities.getString("TRANSACTION_HEADER_COMMENT")};
 
 	public TransactionsTab(final Database db) {
 		super();
@@ -54,7 +54,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		JPanel transactionsButtonPanel = new JPanel();
 		add(transactionsButtonPanel);
 
-		JButton btnAddTransaction = new JButton("Add Transaction");
+		JButton btnAddTransaction = new JButton(Utilities.getString("ADD_TRANSACTION"));
 		btnAddTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -114,7 +114,7 @@ public class TransactionsTab extends JPanel implements Observer {
 				transactionsButtonPanel, BoxLayout.Y_AXIS));
 		transactionsButtonPanel.add(btnAddTransaction);
 
-		JButton btnEditTransaction = new JButton("Edit Transaction");
+		JButton btnEditTransaction = new JButton(Utilities.getString("EDIT_TRANSACTION"));
 		btnEditTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -195,18 +195,18 @@ public class TransactionsTab extends JPanel implements Observer {
 		});
 		transactionsButtonPanel.add(btnEditTransaction);
 
-		JButton btnRemoveTransaction = new JButton("Remove Transaction");
+		JButton btnRemoveTransaction = new JButton(Utilities.getString("REMOVE_TRANSACTION"));
 		btnRemoveTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (JOptionPane.showConfirmDialog(
 						null,
-						"Are you sure you want to remove this transaction? -- "
+						Utilities.getString("REMOVE_TRANSACTION_PROMPT") + " -- "
 								+ (String) transactionsTable.getModel()
 										.getValueAt(
 												transactionsTable
 														.getSelectedRow(), 0),
-						"Remove transaction", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						Utilities.getString("REMOVE_TRANSACTION"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeTransaction(Long
 							.parseLong((String) transactionsTable.getModel()
 									.getValueAt(
@@ -235,21 +235,21 @@ public class TransactionsTab extends JPanel implements Observer {
 		JComboBox accountField = new JComboBox(accountValues);
 		accountField.setSelectedItem(selectedAccount);
 		JPanel accountPanel = new JPanel();
-		accountPanel.add(new JLabel("Account:"));
+		accountPanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
 		accountPanel.add(accountField);
 		panel.add(accountPanel);
 
 		JTextField amountField = new JTextField("", 7);
 		amountField.setText(selectedAmount);
 		JPanel amountPanel = new JPanel();
-		amountPanel.add(new JLabel("Amount:"));
+		amountPanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_AMOUNT") + ":"));
 		amountPanel.add(amountField);
 		panel.add(amountPanel);
 
 		// JTextField dateField = new JTextField("", 7);
 		// dateField.setText(selectedDate);
 		JPanel datePanel = new JPanel();
-		datePanel.add(new JLabel("Date:"));
+		datePanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_DATE") + ":"));
 		// -----
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		JDateChooser dateSelector = null;
@@ -267,12 +267,12 @@ public class TransactionsTab extends JPanel implements Observer {
 		JTextField commentField = new JTextField("", 15);
 		commentField.setText(selectedComment);
 		JPanel commentPanel = new JPanel();
-		commentPanel.add(new JLabel("Comment:"));
+		commentPanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_COMMENT") + ":"));
 		commentPanel.add(commentField);
 		panel.add(commentPanel);
 
 		int result = JOptionPane.showConfirmDialog(null, panel,
-				"Transaction Details", JOptionPane.OK_CANCEL_OPTION,
+				Utilities.getString("TRANSACTION_DETAILS"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null);
 
 		if (result == JOptionPane.OK_OPTION) {

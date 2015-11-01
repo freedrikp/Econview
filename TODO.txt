@@ -1,16 +1,18 @@
 === TODO ===
 
+*Add option for GUI date formatting ---- planned v1.2
 
 *Select between accounts in custom diagram
 *Set better tick count, start of weeks/months.
 
 === BETWEEN ===
 
-*Implemented config file (database file and language) ---- v1.1
 
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Implemented config file (database file and language) ---- v1.1
+
 *Implement better feedback during import/export ---- v1.1
 
 *Add not included account balance sum ---- v1.1

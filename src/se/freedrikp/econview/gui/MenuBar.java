@@ -24,21 +24,21 @@ public class MenuBar extends JMenuBar {
 	public MenuBar(final Database db){
 		super();
 		this.db = db;
-		JMenu mnFile = new JMenu("File");
+		JMenu mnFile = new JMenu(Utilities.getString("MENUBAR_FILE"));
 		add(mnFile);
 
-		JMenuItem mntmOpenDatabase = new JMenuItem("Open Database");
+		JMenuItem mntmOpenDatabase = new JMenuItem(Utilities.getString("MENUBAR_FILE_OPEN_DATABASE"));
 		mntmOpenDatabase.addActionListener(new OpenDatabaseListener(this));
 		mnFile.add(mntmOpenDatabase);
 
-		JMenuItem mntmSaveDatabaseAs = new JMenuItem("Save Database as");
+		JMenuItem mntmSaveDatabaseAs = new JMenuItem(Utilities.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
 		mntmSaveDatabaseAs.addActionListener(new SaveDatabaseListener(this));
 		mnFile.add(mntmSaveDatabaseAs);
 
-		JMenu mnImportExport = new JMenu("Import/Export");
+		JMenu mnImportExport = new JMenu(Utilities.getString("MENUBAR_IMPORT_EXPORT"));
 		add(mnImportExport);
 
-		JMenuItem mntmImport = new JMenuItem("Import");
+		JMenuItem mntmImport = new JMenuItem(Utilities.getString("MENUBAR_IMPORT_EXPORT_IMPORT"));
 		mntmImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(System
@@ -57,7 +57,7 @@ public class MenuBar extends JMenuBar {
 		});
 		mnImportExport.add(mntmImport);
 
-		JMenuItem mntmExport = new JMenuItem("Export");
+		JMenuItem mntmExport = new JMenuItem(Utilities.getString("MENUBAR_IMPORT_EXPORT_EXPORT"));
 		mntmExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(System
@@ -76,10 +76,10 @@ public class MenuBar extends JMenuBar {
 		});
 		mnImportExport.add(mntmExport);
 		
-		JMenu mnIncluded = new JMenu("Included");
+		JMenu mnIncluded = new JMenu(Utilities.getString("MENUBAR_INCLUDED"));
 		add(mnIncluded);
 
-		final JCheckBoxMenuItem mntmShowHideIncluded = new JCheckBoxMenuItem("Show Only Included",db.getOnlyIncluded());
+		final JCheckBoxMenuItem mntmShowHideIncluded = new JCheckBoxMenuItem(Utilities.getString("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED"),db.getOnlyIncluded());
 		mntmShowHideIncluded.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				db.setOnlyIncluded(mntmShowHideIncluded.getState());
@@ -129,7 +129,7 @@ public class MenuBar extends JMenuBar {
 					FileInputStream fis = new FileInputStream(fromFile);
 					FileOutputStream fos = new FileOutputStream(toFile);
 					ProgressMonitor pm = new ProgressMonitor(menuBar, null,
-							"Copying Database...", 0, (int) fromFile.length());
+							Utilities.getString("COPYING_DATABASE"), 0, (int) fromFile.length());
 					pm.setMillisToPopup(0);
 					pm.setMillisToDecideToPopup(0);
 					byte[] buffer = new byte[1024];

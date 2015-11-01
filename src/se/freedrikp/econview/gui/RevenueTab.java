@@ -52,15 +52,15 @@ public class RevenueTab extends JPanel implements Observer{
 
 	private JComboBox accountRevBox;
 	
-	private static final String[] monthlyRevHeader = { "Year", "Month",
-	"Revenue" };
-private static final String[] yearlyRevHeader = { "Year", "Revenue" };
-private static final String[] monthlyAccountRevHeader = { "Year", "Month",
-	"Account", "Revenue" };
-private static final String[] yearlyAccountRevHeader = { "Year", "Account",
-	"Revenue" };
-private static final String[] totalAccountRevHeader = { "Account",
-	"Revenue" };
+	private static final String[] monthlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_MONTH"),
+	Utilities.getString("REVENEUE_HEADER_REVENUE") };
+private static final String[] yearlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENEUE_HEADER_REVENUE") };
+private static final String[] monthlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_MONTH"),
+	Utilities.getString("REVENEUE_HEADER_REVENUE"), Utilities.getString("REVENEUE_HEADER_ACCOUNT") };
+private static final String[] yearlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENEUE_HEADER_ACCOUNT"),
+	Utilities.getString("REVENEUE_HEADER_REVENUE") };
+private static final String[] totalAccountRevHeader = { Utilities.getString("REVENEUE_HEADER_ACCOUNT"),
+	Utilities.getString("REVENEUE_HEADER_REVENUE") };
 
 	public RevenueTab(final Database db){
 		super();
@@ -108,7 +108,7 @@ private static final String[] totalAccountRevHeader = { "Account",
 		sideRevenuePanel.setLayout(new BoxLayout(sideRevenuePanel,
 				BoxLayout.Y_AXIS));
 
-		JLabel lblTotalRevenue = new JLabel("Total Revenue:");
+		JLabel lblTotalRevenue = new JLabel(Utilities.getString("TOTAL_REVENUE") + ":");
 		lblTotalRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(lblTotalRevenue);
 
@@ -122,7 +122,7 @@ private static final String[] totalAccountRevHeader = { "Account",
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-		JLabel lblCustomRevenue = new JLabel("Custom Revenue:");
+		JLabel lblCustomRevenue = new JLabel(Utilities.getString("CUSTOM_REVENUE") + ":");
 		lblCustomRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(lblCustomRevenue);
 
@@ -152,7 +152,7 @@ private static final String[] totalAccountRevHeader = { "Account",
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
-		JButton customRevButton = new JButton("Custom Revenue");
+		JButton customRevButton = new JButton(Utilities.getString("CUSTOM_REVENUE"));
 		customRevButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);
@@ -222,7 +222,7 @@ private static final String[] totalAccountRevHeader = { "Account",
 		// revDateLabel.setText("(" + df.format(revDateFromField.getDate())
 		// + " <-> " + df.format(revDateToField.getDate()) + "):");
 		List<String> accountNames = db.getAccountNames();
-		accountNames.add(0, ("All accounts"));
+		accountNames.add(0, Utilities.getString("ALL_ACCOUNTS"));
 		String selectedAccount = (String) accountRevBox.getModel()
 				.getSelectedItem();
 		accountRevBox
@@ -231,7 +231,7 @@ private static final String[] totalAccountRevHeader = { "Account",
 		if (selectedAccount == null) {
 			selectedAccount = "";
 			accountRevBox.setSelectedIndex(0);
-		} else if (selectedAccount.equals("All accounts")) {
+		} else if (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
 			selectedAccount = "";
 		}
 		customRevLabel.setText(NumberFormat.getCurrencyInstance().format(

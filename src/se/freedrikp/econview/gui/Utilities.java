@@ -16,23 +16,23 @@ public class Utilities {
 	private static final String englishFile = "english.lang";
 
 	private static void loadDefaultLanguage() {
-		lang = new HashMap<String, HashMap<String, String>>();
-		HashMap<String,String> lan = new HashMap<String,String>();
-		
-		lan.put("TOTAL_ACCOUNT_NAME","Total");
+		HashMap<String, String> lan = new HashMap<String, String>();
+
+		lan.put("TOTAL_ACCOUNT_NAME", "Total");
 		lan.put("EXPORTING_DATABASE", "Exporting Database");
 		lan.put("IMPORTING_DATABASE", "Importing Database");
-		lan.put("ACCOUNTS_TAB_NAME","Accounts");
-		lan.put("TRANSACTIONS_TAB_NAME","Transactions");
-		lan.put("REVENUES_TAB_NAME","Revenue");
-		lan.put("DIAGRAMS_TAB_NAME","Diagrams");
-		lan.put("ACCOUNT_HEADER_ACCOUNT","Account");
+		lan.put("ACCOUNTS_TAB_NAME", "Accounts");
+		lan.put("TRANSACTIONS_TAB_NAME", "Transactions");
+		lan.put("REVENUES_TAB_NAME", "Revenue");
+		lan.put("DIAGRAMS_TAB_NAME", "Diagrams");
+		lan.put("ACCOUNT_HEADER_ACCOUNT", "Account");
 		lan.put("ACCOUNT_HEADER_BALANCE", "Balance");
 		lan.put("ACCOUNT_HEADER_INCLUDED", "Included");
 		lan.put("ADD_ACCOUNT", "Add Account");
 		lan.put("EDIT_ACCOUNT", "Edit Account");
 		lan.put("REMOVE_ACCOUNT", "Remove Account");
-		lan.put("REMOVE_ACCOUNT_PROMPT", "Are you sure you want to remove this account?");
+		lan.put("REMOVE_ACCOUNT_PROMPT",
+				"Are you sure you want to remove this account?");
 		lan.put("TOTAL_INCLUDED_BALANCE", "Total Included Balance");
 		lan.put("TOTAL_BALANCE", "Total Balance");
 		lan.put("TOTAL_NOT_INCLUDED_BALANCE", "Total Not Included Balance");
@@ -40,18 +40,53 @@ public class Utilities {
 		lan.put("ADD_ACCOUNT_BALANCE", "Balance");
 		lan.put("ADD_ACCOUNT_INCLUDE", "Include in statistics?");
 		lan.put("ACCOUNT_DETAILS", "Account Details");
-		
+		lan.put("TRANSACTION_HEADER_ID", "ID");
+		lan.put("TRANSACTION_HEADER_ACCOUNT", "Account");
+		lan.put("TRANSACTION_HEADER_AMOUNT", "Amount");
+		lan.put("TRANSACTION_HEADER_DATE", "Date");
+		lan.put("TRANSACTION_HEADER_COMMENT", "Comment");
+		lan.put("ADD_TRANSACTION", "Add Transaction");
+		lan.put("EDIT_TRANSACTION", "Edit Transaction");
+		lan.put("REMOVE_TRANSACTION", "Remove Transaction");
+		lan.put("REMOVE_TRANSACTION_PROMPT", "Are you sure you want to remove this transaction?");
+		lan.put("ADD_TRANSACTION_ACCOUNT", "Account");
+		lan.put("ADD_TRANSACTION_AMOUNT", "Amount");
+		lan.put("ADD_TRANSACTION_DATE", "Date");
+		lan.put("ADD_TRANSACTION_COMMENT", "Comment");
+		lan.put("TRANSACTION_DETAILS", "Transaction Details");
+		lan.put("REVENEUE_HEADER_YEAR", "Year");
+		lan.put("REVENEUE_HEADER_MONTH", "Month");
+		lan.put("REVENEUE_HEADER_ACCOUNT", "Account");
+		lan.put("REVENEUE_HEADER_REVENEUE", "Revenue");
+		lan.put("TOTAL_REVENUE", "Total Revenue");
+		lan.put("CUSTOM_REVENEUE", "Custom Revenue");
+		lan.put("ALL_ACCOUNTS", "All Accounts");
+		lan.put("CUSTOM_DIAGRAM", "Custom Diagram");
+		lan.put("LAST_YEAR", "Last Year");
+		lan.put("LAST_MONTH", "Last Month");
+		lan.put("DIAGRAM_DATE", "Date");
+		lan.put("DIAGRAM_BALANCE", "Balance");
+		lan.put("MENUBAR_FILE", "File");
+		lan.put("MENUBAR_FILE_OPEN_DATABASE", "Open Database");
+		lan.put("MENUBAR_FILE_SAVE_DATABASE_AS", "Save Database As");
+		lan.put("MENUBAR_IMPORT_EXPORT", "Import/Export");
+		lan.put("MENUBAR_IMPORT_EXPORT_IMPORT", "Import");
+		lan.put("MENUBAR_IMPORT_EXPORT_EXPORT", "Export");
+		lan.put("MENUBAR_INCLUDED", "Included");
+		lan.put("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED", "Show Only Included");
+		lan.put("COPYIND_DATABASE", "Copying Database...");
+
 		lang.put(getConfig("LANGUAGE"), lan);
 	}
 
 	private static void loadDefaultConfig() {
-		config = new HashMap<String, String>();
 		config.put("DATABASE_FILE", "econview.db");
 		config.put("LANGUAGE", englishFile);
 	}
 
 	public static String getConfig(String key) {
 		if (config == null) {
+			config = new HashMap<String, String>();
 			loadDefaultConfig();
 			if (!configFile.exists() || configFile.length() == 0) {
 				writeConfig();
@@ -94,11 +129,13 @@ public class Utilities {
 
 	public static String getString(String key) {
 		if (lang == null) {
+			lang = new HashMap<String, HashMap<String, String>>();
 			loadDefaultLanguage();
 			writeLanguages();
 			parseLanguages();
 		}
-		return lang.get(getConfig("LANGUAGE")).get(key);
+		String string = lang.get(getConfig("LANGUAGE")).get(key);
+		return string != null ? string : "<unknown>";
 	}
 
 	private static void parseLanguages() {

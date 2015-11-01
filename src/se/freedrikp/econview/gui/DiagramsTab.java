@@ -97,7 +97,7 @@ public class DiagramsTab extends JPanel implements Observer{
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
 
-		JButton btnCustomDiagram = new JButton("Custom Diagram");
+		JButton btnCustomDiagram = new JButton(Utilities.getString("CUSTOM_DIAGRAM"));
 		btnCustomDiagram.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);
@@ -146,12 +146,12 @@ public class DiagramsTab extends JPanel implements Observer{
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.YEAR, -1);
-		generateDiagram(start.getTime(), end.getTime(), "Last Year",
+		generateDiagram(start.getTime(), end.getTime(), Utilities.getString("LAST_YEAR"),
 				diagramsLastYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.MONTH, -1);
-		generateDiagram(start.getTime(), end.getTime(), "Last Month",
+		generateDiagram(start.getTime(), end.getTime(), Utilities.getString("LAST_MONTH"),
 				diagramsLastMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		// try {
@@ -159,7 +159,7 @@ public class DiagramsTab extends JPanel implements Observer{
 		// df.parse(diagFromDateField.getText()),
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
 		generateDiagram(diagFromDateField.getDate(), diagToDateField.getDate(),
-				"Custom Diagram", customDiagPanel, CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT);
+				Utilities.getString("CUSTOM_DIAGRAM"), customDiagPanel, CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT);
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }
@@ -200,8 +200,8 @@ public class DiagramsTab extends JPanel implements Observer{
 			}
 			collection.addSeries(series);
 		}
-		JFreeChart chart = ChartFactory.createTimeSeriesChart(title, "Date",
-				"Balance", collection);
+		JFreeChart chart = ChartFactory.createTimeSeriesChart(title, Utilities.getString("DIAGRAM_DATE"),
+				Utilities.getString("DIAGRAM_BALANCE"), collection);
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
 		daxis.setRange(from, to);
