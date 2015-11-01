@@ -1,8 +1,7 @@
 === TODO ===
 
-*Add ot included account balance sum
+
 *Select between accounts in custom diagram
-*Implement better feedback during import/export
 *Set better tick count, start of weeks/months.
 
 === BETWEEN ===
@@ -12,6 +11,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Implement better feedback during import/export ---- v1.1
+
+*Add not included account balance sum ---- v1.1
+
 *Improve included functionality (global show/hide option) ---- v1.1
 
 *Implement auto resize of columns in JTables ---- v1.0

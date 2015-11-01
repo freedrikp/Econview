@@ -31,7 +31,10 @@ public class AccountsTab extends JPanel implements Observer{
 	private JTable accountsTable;
 	private JLabel totalBalanceLabel;
 	private JLabel totalIncludedBalanceLabel;
+	private JLabel totalNotIncludedBalanceLabel;
 	private static final String[] accountHeader = { Utilities.getString("ACCOUNT_HEADER_ACCOUNT"), Utilities.getString("ACCOUNT_HEADER_BALANCE"), Utilities.getString("ACCOUNT_HEADER_INCLUDED") };
+	private JLabel totalBalanceLabelText;
+	private JLabel totalNotIncludedBalanceLabelText;
 
 	public AccountsTab(final Database db){
 		super();
@@ -148,7 +151,7 @@ public class AccountsTab extends JPanel implements Observer{
 		
 		accountsButtonPanel.add(new JSeparator());
 		
-		JLabel totalBalanceLabelText = new JLabel(Utilities.getString("TOTAL_BALANCE") + ":");
+		totalBalanceLabelText = new JLabel(Utilities.getString("TOTAL_BALANCE") + ":");
 		accountsButtonPanel.add(totalBalanceLabelText);
 		totalBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
@@ -156,6 +159,17 @@ public class AccountsTab extends JPanel implements Observer{
 		totalBalanceLabel.setForeground(Color.RED);
 		accountsButtonPanel.add(totalBalanceLabel);
 		totalBalanceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		accountsButtonPanel.add(new JSeparator());
+		
+		totalNotIncludedBalanceLabelText = new JLabel(Utilities.getString("TOTAL_NOT_INCLUDED_BALANCE") + ":");
+		accountsButtonPanel.add(totalNotIncludedBalanceLabelText);
+		totalNotIncludedBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		totalNotIncludedBalanceLabel = new JLabel("");
+		totalNotIncludedBalanceLabel.setForeground(Color.RED);
+		accountsButtonPanel.add(totalNotIncludedBalanceLabel);
+		totalNotIncludedBalanceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		update(db,null);
 	}
 	
@@ -196,10 +210,15 @@ public class AccountsTab extends JPanel implements Observer{
 	
 	public void update(Observable o, Object arg) {
 		updateAccountList();
-		totalIncludedBalanceLabel.setText((NumberFormat.getCurrencyInstance()
-				.format(Double.parseDouble(db.getAccountBalanceSum(true)))));
-		totalBalanceLabel.setText((NumberFormat.getCurrencyInstance()
-				.format(Double.parseDouble(db.getAccountBalanceSum(false)))));
+		totalIncludedBalanceLabel.setText(NumberFormat.getCurrencyInstance()
+				.format(Double.parseDouble(db.getIncludedAccountBalanceSum())));
+		totalBalanceLabel.setText(NumberFormat.getCurrencyInstance()
+				.format(Double.parseDouble(db.getTotalAccountBalanceSum())));
+		totalNotIncludedBalanceLabel.setText(NumberFormat.getCurrencyInstance().format(Double.parseDouble(db.getNotIncludedAccountBalanceSum())));
+		totalBalanceLabel.setVisible(!db.getOnlyIncluded());
+		totalNotIncludedBalanceLabel.setVisible(!db.getOnlyIncluded());
+		totalBalanceLabelText.setVisible(!db.getOnlyIncluded());
+		totalNotIncludedBalanceLabelText.setVisible(!db.getOnlyIncluded());
 		accountsPane.getVerticalScrollBar().setValue(
 				accountsPane.getVerticalScrollBar().getMaximum());
 		GUI.resizeTable(accountsTable);

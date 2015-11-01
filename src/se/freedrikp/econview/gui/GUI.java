@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -18,10 +20,11 @@ import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.database.Database;
 
-public class GUI extends JFrame {// implements Observer {
+public class GUI extends JFrame implements Observer {
 
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
+	private Database db;
 
 	/**
 	 * Launch the application.
@@ -51,7 +54,8 @@ public class GUI extends JFrame {// implements Observer {
 		super("EconView");
 		//setResizable(false);
 		// this.dbfile = dbfile;
-		// db.addObserver(this);
+		this.db = db;
+		db.addObserver(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//setBounds(100, 100, 1280, 430);
 		setBounds(100, 100, 1360, 500);
@@ -82,7 +86,7 @@ public class GUI extends JFrame {// implements Observer {
 		DiagramsTab diagramsPanel = new DiagramsTab(db);
 		tabbedPane.addTab(Utilities.getString("DIAGRAMS_TAB_NAME"), null, diagramsPanel, null);
 
-//		update(db, null);
+		update(db, null);
 	}
 
 	public static double parseAmount(String amount)
@@ -168,6 +172,12 @@ public class GUI extends JFrame {// implements Observer {
 		 
 		    tableColumn.setPreferredWidth( preferredWidth );
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		setTitle("EconView - " + db.getFile().getAbsolutePath());
+		repaint();
 	}
 
 	// public String getDBFile() {

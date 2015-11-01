@@ -20,6 +20,8 @@ public class Utilities {
 		HashMap<String,String> lan = new HashMap<String,String>();
 		
 		lan.put("TOTAL_ACCOUNT_NAME","Total");
+		lan.put("EXPORTING_DATABASE", "Exporting Database");
+		lan.put("IMPORTING_DATABASE", "Importing Database");
 		lan.put("ACCOUNTS_TAB_NAME","Accounts");
 		lan.put("TRANSACTIONS_TAB_NAME","Transactions");
 		lan.put("REVENUES_TAB_NAME","Revenue");
@@ -33,6 +35,7 @@ public class Utilities {
 		lan.put("REMOVE_ACCOUNT_PROMPT", "Are you sure you want to remove this account?");
 		lan.put("TOTAL_INCLUDED_BALANCE", "Total Included Balance");
 		lan.put("TOTAL_BALANCE", "Total Balance");
+		lan.put("TOTAL_NOT_INCLUDED_BALANCE", "Total Not Included Balance");
 		lan.put("ADD_ACCOUNT_NAME", "Name");
 		lan.put("ADD_ACCOUNT_BALANCE", "Balance");
 		lan.put("ADD_ACCOUNT_INCLUDE", "Include in statistics?");

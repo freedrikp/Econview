@@ -12,13 +12,14 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import javax.swing.Icon;
+import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.gui.Utilities;
 
@@ -445,7 +446,7 @@ public class Database extends Observable {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(sdf.format(to), startBalance);
 		PreparedStatement ps;
-		if (accountName.equals("Total")) {
+		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates("SELECT transactionAmount FROM", "", from,
 					new Date());
 		} else {
@@ -458,7 +459,7 @@ public class Database extends Observable {
 			startBalance -= transactions.getDouble("transactionAmount");
 		}
 		datapoints.put(sdf.format(from), startBalance);
-		if (accountName.equals("Total")) {
+		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"", from, to);
@@ -517,12 +518,40 @@ public class Database extends Observable {
 		return ps;
 	}
 
-	public String getAccountBalanceSum(boolean onlyIncluded) {
+	public String getTotalAccountBalanceSum() {
 		try {
-			int incl = onlyIncluded ? 1 : 0;
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,incl);
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts");
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				String res = result.getString("balanceSum");
+				return res != null ? res : "0";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public String getIncludedAccountBalanceSum() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded = 1");
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				String res = result.getString("balanceSum");
+				return res != null ? res : "0";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public String getNotIncludedAccountBalanceSum() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded = 0");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				String res = result.getString("balanceSum");
@@ -540,15 +569,26 @@ public class Database extends Observable {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT name,type FROM sqlite_master WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%'");
 			ResultSet rs = ps.executeQuery();
+			LinkedList<String> tableNames = new LinkedList<String>();
+			long totalCount = 0;
 			while (rs.next()) {
-				pw.println(rs.getString("name"));
-				// ps = c.prepareStatement("SELECT COUNT(*) FROM " +
-				// rs.getString("name"));
-				// ResultSet row = ps.executeQuery();
-				// while(row.next()){
-				// pw.println(row.getString(1));
-				// }
-				ps = c.prepareStatement("SELECT * FROM " + rs.getString("name"));
+				tableNames.add(rs.getString("name"));
+				ps = c.prepareStatement("SELECT COUNT(*) as Count FROM " + rs.getString("name"));
+				ResultSet row = ps.executeQuery();
+				while(row.next()){
+					totalCount += row.getLong("Count");
+				}
+			}
+			pw.println(totalCount);
+			ProgressMonitor pm = new ProgressMonitor(null, Utilities.getString("EXPORTING_DATABASE"), "", 0, 100);
+			final float percent =  100.0f/totalCount;
+			float progress = 0;
+			pm.setMillisToPopup(0);
+			pm.setMillisToDecideToPopup(0);
+			for (String table : tableNames){
+				pm.setNote(table);
+				pw.println(table);
+				ps = c.prepareStatement("SELECT * FROM " + table);
 				ResultSet row = ps.executeQuery();
 				for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
 					pw.print(row.getMetaData().getColumnLabel(i));
@@ -569,6 +609,8 @@ public class Database extends Observable {
 						}
 					}
 					pw.println();
+					progress+=percent;
+					pm.setProgress(Math.round(progress));
 				}
 				pw.println();
 			}
@@ -581,8 +623,18 @@ public class Database extends Observable {
 	public void importDatabase(InputStream in) {
 		try {
 			Scanner scan = new Scanner(in);
+			long totalCount = 0;
+			if (scan.hasNextLine()){
+				totalCount = Long.parseLong(scan.nextLine());
+			}
+			ProgressMonitor pm = new ProgressMonitor(null,Utilities.getString("IMPORTING_DATABASE"),"",0,100);
+			pm.setMillisToPopup(0);
+			pm.setMillisToDecideToPopup(0);
+			final float percent =  100.0f/totalCount;
+			float progress = 0;
 			while (scan.hasNextLine()) {
 				String name = scan.nextLine();
+				pm.setNote(name);
 				String header = scan.nextLine();
 				String line;
 				while (scan.hasNextLine()
@@ -603,6 +655,8 @@ public class Database extends Observable {
 					sql += ")";
 					PreparedStatement ps = c.prepareStatement(sql);
 					ps.executeUpdate();
+					progress+=percent;
+					pm.setProgress(Math.round(progress));
 				}
 			}
 		} catch (SQLException e) {
