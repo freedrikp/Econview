@@ -1,13 +1,13 @@
 === TODO ===
 
-
-
-
+*Implement some kind of multiaccount transactiond (needs to think about it further)
+*Implement position of window in the middle of the screen
+*Remove total revenues per account (kind of useless statistics)
 *Create settings panel for config
 *Move all sizes to config
 *Add option for GUI date formatting ---- planned v1.2
 
-*Set better tick count, start of weeks/months.
+*Set better tick count, start of weeks/months. (dont know if this makes sense)
 
 === BETWEEN ===
 
