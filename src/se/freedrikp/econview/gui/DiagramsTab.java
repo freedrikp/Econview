@@ -51,10 +51,14 @@ public class DiagramsTab extends JPanel implements Observer {
 	private JDateChooser diagToDateField;
 	private JPanel diagAccountsPanel;
 	private JPanel customDiagPanel;
-	private final int DIAGRAM_WIDTH = 350;
-	private final int DIAGRAM_HEIGHT = 175;
-	private final int CUSTOM_DIAGRAM_WIDTH = 480;
-	private final int CUSTOM_DIAGRAM_HEIGHT = 350;
+//	private final int DIAGRAM_WIDTH = 350;
+//	private final int DIAGRAM_HEIGHT = 175;
+//	private final int CUSTOM_DIAGRAM_WIDTH = 480;
+//	private final int CUSTOM_DIAGRAM_HEIGHT = 350;
+	private final int DIAGRAM_WIDTH = Integer.parseInt(Utilities.getConfig("DIAGRAM_WIDTH"));
+	private final int DIAGRAM_HEIGHT = Integer.parseInt(Utilities.getConfig("DIAGRAM_HEIGHT"));
+	private final int CUSTOM_DIAGRAM_WIDTH = Integer.parseInt(Utilities.getConfig("CUSTOM_DIAGRAM_WIDTH"));
+	private final int CUSTOM_DIAGRAM_HEIGHT = Integer.parseInt(Utilities.getConfig("CUSTOM_DIAGRAM_HEIGHT"));
 	private JCheckBox[] selectedAccounts;
 	private JCheckBox allAccounts;
 	private JCheckBox total;

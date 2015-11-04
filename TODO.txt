@@ -1,10 +1,7 @@
 === TODO ===
-
-*Implement some kind of multiaccount transactiond (needs to think about it further)
-*Implement position of window in the middle of the screen
-*Remove total revenues per account (kind of useless statistics)
+*Implement statistics in transactions (oldest,latest,number,numberwithdrawalls,numberdeposits and more)
+*Implement some kind of multiaccount transactions (needs to think about it further)
 *Create settings panel for config
-*Move all sizes to config
 *Add option for GUI date formatting ---- planned v1.2
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
@@ -15,6 +12,11 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Remove total revenues per account (kind of useless statistics) ---- v1.2
+
+*Implement position of window in the middle of the screen ---- v1.2
+
+*Move all sizes to config ---- v1.2
 
 *Fix bug in total diagram curve ---- v1.1
 

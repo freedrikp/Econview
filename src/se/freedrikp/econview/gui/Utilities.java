@@ -82,6 +82,12 @@ public class Utilities {
 	private static void loadDefaultConfig() {
 		config.put("DATABASE_FILE", "econview.db");
 		config.put("LANGUAGE", englishFile);
+		config.put("WINDOW_WIDTH", "1360");
+		config.put("WINDOW_HEIGHT", "500");
+		config.put("DIAGRAM_WIDTH","350");
+		config.put("DIAGRAM_HEIGHT","175");
+		config.put("CUSTOM_DIAGRAM_WIDTH","480");
+		config.put("CUSTOM_DIAGRAM_HEIGHT","350");
 	}
 
 	public static String getConfig(String key) {

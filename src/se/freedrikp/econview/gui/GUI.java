@@ -1,7 +1,9 @@
 package se.freedrikp.econview.gui;
 
 import java.awt.Component;
+import java.awt.DisplayMode;
 import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Observable;
@@ -25,6 +27,8 @@ public class GUI extends JFrame implements Observer {
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
 	private Database db;
+	private final int WIDTH = Integer.parseInt(Utilities.getConfig("WINDOW_WIDTH"));
+	private final int HEIGHT = Integer.parseInt(Utilities.getConfig("WINDOW_HEIGHT"));
 
 	/**
 	 * Launch the application.
@@ -58,7 +62,9 @@ public class GUI extends JFrame implements Observer {
 		db.addObserver(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//setBounds(100, 100, 1280, 430);
-		setBounds(100, 100, 1360, 500);
+//		setBounds(100, 100, 1360, 500);
+		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+		setBounds((dm.getWidth()-WIDTH)/2, (dm.getHeight()-HEIGHT)/2, WIDTH, HEIGHT);
 
 		MenuBar menuBar = new MenuBar(db);
 		setJMenuBar(menuBar);

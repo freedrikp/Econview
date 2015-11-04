@@ -18,20 +18,18 @@ import java.util.Observer;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 
-import com.toedter.calendar.JDateChooser;
-
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
+
+import com.toedter.calendar.JDateChooser;
 
 public class RevenueTab extends JPanel implements Observer{
 	private Database db;
@@ -44,7 +42,7 @@ public class RevenueTab extends JPanel implements Observer{
 
 	private JTable monthlyAccountRevTable;
 
-	private JTable totalAccountRevTable;
+//	private JTable totalAccountRevTable;
 
 	private JLabel totalRevLabel;
 
@@ -54,7 +52,7 @@ public class RevenueTab extends JPanel implements Observer{
 
 	private JDateChooser revDateToField;
 
-	private JComboBox accountRevBox;
+//	private JComboBox accountRevBox;
 
 	private JCheckBox[] selectedAccounts;
 	
@@ -68,8 +66,8 @@ private static final String[] monthlyAccountRevHeader = { Utilities.getString("R
 	Utilities.getString("REVENUE_HEADER_ACCOUNT"),Utilities.getString("REVENUE_HEADER_REVENUE") };
 private static final String[] yearlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_ACCOUNT"),
 	Utilities.getString("REVENUE_HEADER_REVENUE") };
-private static final String[] totalAccountRevHeader = { Utilities.getString("REVENUE_HEADER_ACCOUNT"),
-	Utilities.getString("REVENUE_HEADER_REVENUE") };
+//private static final String[] totalAccountRevHeader = { Utilities.getString("REVENUE_HEADER_ACCOUNT"),
+//	Utilities.getString("REVENUE_HEADER_REVENUE") };
 
 	public RevenueTab(final Database db){
 		super();
@@ -105,12 +103,12 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 		monthlyAccountRevTable.setEnabled(false);
 		monthlyAccountRevPane.setViewportView(monthlyAccountRevTable);
 
-		JScrollPane totalAccountRevPane = new JScrollPane();
-		add(totalAccountRevPane);
+//		JScrollPane totalAccountRevPane = new JScrollPane();
+//		add(totalAccountRevPane);
 
-		totalAccountRevTable = new JTable();
-		totalAccountRevTable.setEnabled(false);
-		totalAccountRevPane.setViewportView(totalAccountRevTable);
+//		totalAccountRevTable = new JTable();
+//		totalAccountRevTable.setEnabled(false);
+//		totalAccountRevPane.setViewportView(totalAccountRevTable);
 
 		JPanel sideRevenuePanel = new JPanel();
 		add(sideRevenuePanel);
@@ -129,7 +127,7 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 		JSeparator totCustomRevSep = new JSeparator();
 		sideRevenuePanel.add(totCustomRevSep);
 
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 		JLabel lblCustomRevenue = new JLabel(Utilities.getString("CUSTOM_REVENUE") + ":");
 		lblCustomRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -208,8 +206,8 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 		GUI.resizeTable(yearlyAccountRevTable);
 		updateMonthlyAccountRevList();
 		GUI.resizeTable(monthlyAccountRevTable);
-		updateTotalAccountRevList();
-		GUI.resizeTable(totalAccountRevTable);
+//		updateTotalAccountRevList();
+//		GUI.resizeTable(totalAccountRevTable);
 		updateTotalRevLabel();
 		updateCustomRevLabel();
 		validate();
@@ -242,7 +240,7 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 	}
 
 	private void updateCustomRevLabel() {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		// try {
 		// revDateLabel.setText("(" + revDateFromField.getText() + " <-> "
 		// + revDateToField.getText() + "):");
@@ -325,14 +323,14 @@ private static final String[] totalAccountRevHeader = { Utilities.getString("REV
 		monthlyAccountRevTable.setModel(m);
 	}
 
-	private void updateTotalAccountRevList() {
-		Model m = new Model(totalAccountRevHeader, 0);
-		for (String[] row : db.getTotalAccountRevenues()) {
-			row[1] = NumberFormat.getCurrencyInstance().format(
-					Double.parseDouble(row[1]));
-			m.addRow(row);
-		}
-		totalAccountRevTable.setModel(m);
-	}
+//	private void updateTotalAccountRevList() {
+//		Model m = new Model(totalAccountRevHeader, 0);
+//		for (String[] row : db.getTotalAccountRevenues()) {
+//			row[1] = NumberFormat.getCurrencyInstance().format(
+//					Double.parseDouble(row[1]));
+//			m.addRow(row);
+//		}
+//		totalAccountRevTable.setModel(m);
+//	}
 
 }
