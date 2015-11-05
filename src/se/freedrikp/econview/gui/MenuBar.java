@@ -1,5 +1,6 @@
 package se.freedrikp.econview.gui;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -7,12 +8,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.database.Database;
@@ -21,24 +30,28 @@ public class MenuBar extends JMenuBar {
 
 	private Database db;
 
-	public MenuBar(final Database db){
+	public MenuBar(final Database db) {
 		super();
 		this.db = db;
 		JMenu mnFile = new JMenu(Utilities.getString("MENUBAR_FILE"));
 		add(mnFile);
 
-		JMenuItem mntmOpenDatabase = new JMenuItem(Utilities.getString("MENUBAR_FILE_OPEN_DATABASE"));
+		JMenuItem mntmOpenDatabase = new JMenuItem(
+				Utilities.getString("MENUBAR_FILE_OPEN_DATABASE"));
 		mntmOpenDatabase.addActionListener(new OpenDatabaseListener(this));
 		mnFile.add(mntmOpenDatabase);
 
-		JMenuItem mntmSaveDatabaseAs = new JMenuItem(Utilities.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
+		JMenuItem mntmSaveDatabaseAs = new JMenuItem(
+				Utilities.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
 		mntmSaveDatabaseAs.addActionListener(new SaveDatabaseListener(this));
 		mnFile.add(mntmSaveDatabaseAs);
 
-		JMenu mnImportExport = new JMenu(Utilities.getString("MENUBAR_IMPORT_EXPORT"));
+		JMenu mnImportExport = new JMenu(
+				Utilities.getString("MENUBAR_IMPORT_EXPORT"));
 		add(mnImportExport);
 
-		JMenuItem mntmImport = new JMenuItem(Utilities.getString("MENUBAR_IMPORT_EXPORT_IMPORT"));
+		JMenuItem mntmImport = new JMenuItem(
+				Utilities.getString("MENUBAR_IMPORT_EXPORT_IMPORT"));
 		mntmImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(System
@@ -57,7 +70,8 @@ public class MenuBar extends JMenuBar {
 		});
 		mnImportExport.add(mntmImport);
 
-		JMenuItem mntmExport = new JMenuItem(Utilities.getString("MENUBAR_IMPORT_EXPORT_EXPORT"));
+		JMenuItem mntmExport = new JMenuItem(
+				Utilities.getString("MENUBAR_IMPORT_EXPORT_EXPORT"));
 		mntmExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(System
@@ -75,19 +89,54 @@ public class MenuBar extends JMenuBar {
 			}
 		});
 		mnImportExport.add(mntmExport);
-		
+
 		JMenu mnIncluded = new JMenu(Utilities.getString("MENUBAR_INCLUDED"));
 		add(mnIncluded);
 
-		final JCheckBoxMenuItem mntmShowHideIncluded = new JCheckBoxMenuItem(Utilities.getString("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED"),db.getOnlyIncluded());
+		final JCheckBoxMenuItem mntmShowHideIncluded = new JCheckBoxMenuItem(
+				Utilities.getString("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED"),
+				db.getOnlyIncluded());
 		mntmShowHideIncluded.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				db.setOnlyIncluded(mntmShowHideIncluded.getState());
 			}
 		});
 		mnIncluded.add(mntmShowHideIncluded);
+
+		JMenu mnSettings = new JMenu(Utilities.getString("MENUBAR_SETTINGS"));
+		add(mnSettings);
+
+		JMenuItem mntmConfig = new JMenuItem(
+				Utilities.getString("MENUBAR_SETTINGS_CONFIGURATION"));
+		mntmConfig.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				JScrollPane scrollPane = new JScrollPane();
+				HashMap<String, JTextField> map = new HashMap<String, JTextField>();
+				scrollPane.setViewportView(panel);
+				for (Map.Entry<String, String> config : Utilities
+						.listAllConfigs().entrySet()) {
+					JPanel pan = new JPanel();
+					pan.add(new JLabel(config.getKey() + ":"));
+					JTextField field = new JTextField(config.getValue(), 10);
+					pan.add(field);
+					panel.add(pan);
+					map.put(config.getKey(), field);
+				}
+				int result = JOptionPane.showConfirmDialog(null, panel,
+						Utilities.getString("SETTINGS_CONFIGURATION"),
+						JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION){
+					for (Map.Entry<String, JTextField> entry : map.entrySet()){
+						Utilities.putConfig(entry.getKey(), entry.getValue().getText());
+					}
+				}
+			}
+		});
+		mnSettings.add(mntmConfig);
 	}
-	
+
 	private class OpenDatabaseListener implements ActionListener {
 		private MenuBar menuBar;
 
@@ -101,7 +150,7 @@ public class MenuBar extends JMenuBar {
 			f.setDialogType(JFileChooser.OPEN_DIALOG);
 			String text = f.getUI().getApproveButtonText(f);
 			fc.setDialogTitle(text);
-			int result = fc.showDialog(menuBar,text);
+			int result = fc.showDialog(menuBar, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				db.openFile(fc.getSelectedFile());
 			}
@@ -121,7 +170,7 @@ public class MenuBar extends JMenuBar {
 			f.setDialogType(JFileChooser.SAVE_DIALOG);
 			String text = f.getUI().getApproveButtonText(f);
 			fc.setDialogTitle(text);
-			int result = fc.showDialog(menuBar,text);
+			int result = fc.showDialog(menuBar, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File toFile = fc.getSelectedFile();
 				File fromFile = db.getFile();
@@ -129,7 +178,8 @@ public class MenuBar extends JMenuBar {
 					FileInputStream fis = new FileInputStream(fromFile);
 					FileOutputStream fos = new FileOutputStream(toFile);
 					ProgressMonitor pm = new ProgressMonitor(menuBar, null,
-							Utilities.getString("COPYING_DATABASE"), 0, (int) fromFile.length());
+							Utilities.getString("COPYING_DATABASE"), 0,
+							(int) fromFile.length());
 					pm.setMillisToPopup(0);
 					pm.setMillisToDecideToPopup(0);
 					byte[] buffer = new byte[1024];

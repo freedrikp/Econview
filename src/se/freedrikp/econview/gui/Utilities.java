@@ -80,6 +80,9 @@ public class Utilities {
 		lan.put("MENUBAR_INCLUDED", "Included");
 		lan.put("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED", "Show Only Included");
 		lan.put("COPYING_DATABASE", "Copying Database...");
+		lan.put("MENUBAR_SETTINGS", "Settings");
+		lan.put("MENUBAR_SETTINGS_CONFIGURATION", "Configuration");
+		lan.put("SETTINGS_CONFIGURATION", "Configuration Settings");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}
@@ -198,6 +201,11 @@ public class Utilities {
 			}
 		}
 
+	}
+
+	public static Map<String,String> listAllConfigs() {
+		getConfig("UNKNOWN");
+		return config;
 	}
 
 }
