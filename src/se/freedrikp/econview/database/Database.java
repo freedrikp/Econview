@@ -29,6 +29,7 @@ public class Database extends Observable {
 	private Connection c;
 	private File dbfile;
 	private int onlyIncluded;
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	public Database(String dbfile) {
 		this.dbfile = new File(dbfile);

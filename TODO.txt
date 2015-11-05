@@ -2,7 +2,7 @@
 *Change "included" to "hidden" (reverse logic)
 *Implement some kind of multiaccount transactions (needs to think about it further)
 *Create settings panel for config
-*Add option for GUI date formatting ---- planned v1.2
+*Add option for GUI date formatting (separate date formats, improve interface with database) ---- planned v1.2
 *Clean up code
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)

@@ -68,11 +68,15 @@ private static final String[] yearlyAccountRevHeader = { Utilities.getString("RE
 	Utilities.getString("REVENUE_HEADER_REVENUE") };
 //private static final String[] totalAccountRevHeader = { Utilities.getString("REVENUE_HEADER_ACCOUNT"),
 //	Utilities.getString("REVENUE_HEADER_REVENUE") };
+private final SimpleDateFormat dateFormat;
+private final SimpleDateFormat monthFormat;
 
 	public RevenueTab(final Database db){
 		super();
 		this.db = db;
 		db.addObserver(this);
+		dateFormat = new SimpleDateFormat(Utilities.getConfig("FULL_DATE_FORMAT"));
+		monthFormat = new SimpleDateFormat(Utilities.getConfig("LONG_MONTH_FORMAT"));
 		setLayout(new GridLayout(1, 0, 0, 0));
 
 		JScrollPane yearlyRevPane = new JScrollPane();
@@ -146,7 +150,7 @@ private static final String[] yearlyAccountRevHeader = { Utilities.getString("RE
 		sideRevenuePanel.add(customRevSep);
 
 		// revDateFromField = new JTextField(df.format(new Date()));
-		revDateFromField = new JDateChooser(new Date(), "yyyy-MM-dd");
+		revDateFromField = new JDateChooser(new Date(), dateFormat.toPattern());
 		sideRevenuePanel.add(revDateFromField);
 		// revDateFromField.setColumns(7);
 
@@ -155,7 +159,7 @@ private static final String[] yearlyAccountRevHeader = { Utilities.getString("RE
 		sideRevenuePanel.add(revDateSepLabel);
 
 		// revDateToField = new JTextField(df.format(new Date()));
-		revDateToField = new JDateChooser(new Date(), "yyyy-MM-dd");
+		revDateToField = new JDateChooser(new Date(), dateFormat.toPattern());
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
@@ -295,8 +299,7 @@ private static final String[] yearlyAccountRevHeader = { Utilities.getString("RE
 		Model m = new Model(monthlyRevHeader, 0);
 		for (String[] row : db.getMonthlyRevenues()) {
 			try {
-				row[1] = new SimpleDateFormat("MMMM")
-						.format(new SimpleDateFormat("MM").parse(row[1]));
+				row[1] = monthFormat.format(new SimpleDateFormat("MM").parse(row[1]));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -311,8 +314,7 @@ private static final String[] yearlyAccountRevHeader = { Utilities.getString("RE
 		Model m = new Model(monthlyAccountRevHeader, 0);
 		for (String[] row : db.getMonthlyAccountRevenues()) {
 			try {
-				row[1] = new SimpleDateFormat("MMMM")
-						.format(new SimpleDateFormat("MM").parse(row[1]));
+				row[1] = monthFormat.format(new SimpleDateFormat("MM").parse(row[1]));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

@@ -62,11 +62,13 @@ public class DiagramsTab extends JPanel implements Observer {
 	private JCheckBox[] selectedAccounts;
 	private JCheckBox allAccounts;
 	private JCheckBox total;
+	private final SimpleDateFormat dateFormat;
 
 	public DiagramsTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);
+		dateFormat = new SimpleDateFormat(Utilities.getConfig("FULL_DATE_FORMAT"));
 
 		diagramsLastYearPanel = new JPanel();
 		diagramsLastMonthPanel = new JPanel();
@@ -97,7 +99,7 @@ public class DiagramsTab extends JPanel implements Observer {
 				BoxLayout.Y_AXIS));
 
 		// diagFromDateField = new JTextField(df.format(new Date()));
-		diagFromDateField = new JDateChooser(new Date(), "yyyy-MM-dd");
+		diagFromDateField = new JDateChooser(new Date(), dateFormat.toPattern());
 		diagramControlPanel.add(diagFromDateField);
 		// diagFromDateField.setColumns(10);
 
@@ -106,7 +108,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagramControlPanel.add(diagDateSepLabel);
 
 		// diagToDateField = new JTextField(df.format(new Date()));
-		diagToDateField = new JDateChooser(new Date(), "yyyy-MM-dd");
+		diagToDateField = new JDateChooser(new Date(), dateFormat.toPattern());
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
 		
@@ -204,7 +206,6 @@ public class DiagramsTab extends JPanel implements Observer {
 		generateDiagram(start.getTime(), end.getTime(),
 				Utilities.getString("LAST_MONTH"), diagramsLastMonthPanel,
 				DIAGRAM_WIDTH, DIAGRAM_HEIGHT,accounts,true);
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		// try {
 		// generateDiagram(
 		// df.parse(diagFromDateField.getText()),
@@ -232,7 +233,6 @@ public class DiagramsTab extends JPanel implements Observer {
 
 	private void generateDiagram(Date from, Date to, String title,
 			JPanel panel, int width, int height, Collection<String> accounts,boolean includeTotal) {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Map<String, Double>> diagramData = db.getCustomDiagramData(
 				from, to,accounts, includeTotal);
 		TimeSeriesCollection collection = new TimeSeriesCollection();
@@ -249,16 +249,16 @@ public class DiagramsTab extends JPanel implements Observer {
 					start.setTime(previousDate);
 					start.add(Calendar.DATE, 1);
 					Calendar end = Calendar.getInstance();
-					end.setTime(df.parse(datapoint.getKey()));
+					end.setTime(dateFormat.parse(datapoint.getKey()));
 
 					for (Date date = start.getTime(); start.before(end); start
 							.add(Calendar.DATE, 1), date = start.getTime()) {
 						series.add(new Day(date), previousAmount);
 					}
-					series.add(new Day(df.parse(datapoint.getKey())),
+					series.add(new Day(dateFormat.parse(datapoint.getKey())),
 							datapoint.getValue());
 					previousAmount = datapoint.getValue();
-					previousDate = df.parse(datapoint.getKey());
+					previousDate = dateFormat.parse(datapoint.getKey());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
