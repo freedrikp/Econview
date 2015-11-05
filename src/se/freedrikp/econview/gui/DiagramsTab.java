@@ -249,16 +249,16 @@ public class DiagramsTab extends JPanel implements Observer {
 					start.setTime(previousDate);
 					start.add(Calendar.DATE, 1);
 					Calendar end = Calendar.getInstance();
-					end.setTime(dateFormat.parse(datapoint.getKey()));
+					end.setTime(db.dateFormat.parse(datapoint.getKey()));
 
 					for (Date date = start.getTime(); start.before(end); start
 							.add(Calendar.DATE, 1), date = start.getTime()) {
 						series.add(new Day(date), previousAmount);
 					}
-					series.add(new Day(dateFormat.parse(datapoint.getKey())),
+					series.add(new Day(db.dateFormat.parse(datapoint.getKey())),
 							datapoint.getValue());
 					previousAmount = datapoint.getValue();
-					previousDate = dateFormat.parse(datapoint.getKey());
+					previousDate = db.dateFormat.parse(datapoint.getKey());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
