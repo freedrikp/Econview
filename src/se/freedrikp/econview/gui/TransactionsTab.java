@@ -1,5 +1,6 @@
 package se.freedrikp.econview.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -21,8 +22,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
@@ -36,6 +35,11 @@ public class TransactionsTab extends JPanel implements Observer {
 	private JTable transactionsTable;
 	private static final String[] transactionHeader = { Utilities.getString("TRANSACTION_HEADER_ID"),Utilities.getString("TRANSACTION_HEADER_ACCOUNT"),
 		Utilities.getString("TRANSACTION_HEADER_AMOUNT"), Utilities.getString("TRANSACTION_HEADER_DATE"), Utilities.getString("TRANSACTION_HEADER_COMMENT")};
+	private JLabel oldestDate;
+	private JLabel newestDate;
+	private JLabel numTransactions;
+	private JLabel numDeposits;
+	private JLabel numWithdrawals;
 
 	public TransactionsTab(final Database db) {
 		super();
@@ -216,6 +220,51 @@ public class TransactionsTab extends JPanel implements Observer {
 			}
 		});
 		transactionsButtonPanel.add(btnRemoveTransaction);
+		JPanel statisticsPanel = new JPanel();
+		statisticsPanel.setLayout(new BoxLayout(statisticsPanel, BoxLayout.Y_AXIS));
+		
+		JPanel oldestDatePanel = new JPanel();
+		oldestDatePanel.add(new JLabel(Utilities.getString("OLDEST_TRANSACTION_DATE") + ": "));
+		oldestDate = new JLabel();
+		oldestDate.setAlignmentX(Component.CENTER_ALIGNMENT);
+		oldestDate.setForeground(Color.RED);
+		oldestDatePanel.add(oldestDate);
+		statisticsPanel.add(oldestDatePanel);
+		
+		JPanel newestDatePanel = new JPanel();
+		newestDatePanel.add(new JLabel(Utilities.getString("NEWEST_TRANSACTION_DATE") + ": "));
+		newestDate = new JLabel();
+		newestDate.setAlignmentX(Component.CENTER_ALIGNMENT);
+		newestDate.setForeground(Color.RED);
+		newestDatePanel.add(newestDate);
+		statisticsPanel.add(newestDatePanel);
+		
+		JPanel numTransactionsPanel = new JPanel();
+		numTransactionsPanel.add(new JLabel(Utilities.getString("NUMBER_OF_TRANSACTIONS") + ": "));
+		numTransactions = new JLabel();
+		numTransactions.setAlignmentX(Component.CENTER_ALIGNMENT);
+		numTransactions.setForeground(Color.RED);
+		numTransactionsPanel.add(numTransactions);
+		statisticsPanel.add(numTransactionsPanel);
+		
+		JPanel numDepositsPanel = new JPanel();
+		numDepositsPanel.add(new JLabel(Utilities.getString("NUMBER_OF_DEPOSITS") + ": "));
+		numDeposits = new JLabel();
+		numDeposits.setAlignmentX(Component.CENTER_ALIGNMENT);
+		numDeposits.setForeground(Color.RED);
+		numDepositsPanel.add(numDeposits);
+		statisticsPanel.add(numDepositsPanel);
+		
+		JPanel numWithDrawalsPanel = new JPanel();
+		numWithDrawalsPanel.add(new JLabel(Utilities.getString("NUMBER_OF_WITHDRAWALS") + ": "));
+		numWithdrawals = new JLabel();
+		numWithdrawals.setAlignmentX(Component.CENTER_ALIGNMENT);
+		numWithdrawals.setForeground(Color.RED);
+		numWithDrawalsPanel.add(numWithdrawals);
+		statisticsPanel.add(numWithDrawalsPanel);
+		
+		transactionsButtonPanel.add(statisticsPanel);
+		
 		update(db, null);
 	}
 
@@ -224,6 +273,11 @@ public class TransactionsTab extends JPanel implements Observer {
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
 		GUI.resizeTable(transactionsTable);
+		oldestDate.setText(db.getOldestTransactionDate());
+		newestDate.setText(db.getNewestTransactionDate());
+		numTransactions.setText(db.getNumberOfTransactions());
+		numDeposits.setText(db.getNumberOfDeposits());
+		numWithdrawals.setText(db.getNumberOfWithdrawals());
 		repaint();
 	}
 

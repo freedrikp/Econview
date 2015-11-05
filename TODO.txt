@@ -1,8 +1,9 @@
 === TODO ===
-*Implement statistics in transactions (oldest,latest,number,numberwithdrawalls,numberdeposits and more)
+*Change "included" to "hidden" (reverse logic)
 *Implement some kind of multiaccount transactions (needs to think about it further)
 *Create settings panel for config
 *Add option for GUI date formatting ---- planned v1.2
+*Clean up code
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -12,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Implement statistics in transactions (oldest,latest,number,numberwithdrawalls,numberdeposits and more(to come later)) ---- v1.2
+
 *Remove total revenues per account (kind of useless statistics) ---- v1.2
 
 *Implement position of window in the middle of the screen ---- v1.2

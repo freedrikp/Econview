@@ -54,6 +54,11 @@ public class Utilities {
 		lan.put("ADD_TRANSACTION_DATE", "Date");
 		lan.put("ADD_TRANSACTION_COMMENT", "Comment");
 		lan.put("TRANSACTION_DETAILS", "Transaction Details");
+		lan.put("OLDEST_TRANSACTION_DATE", "Oldest Transaction Date");
+		lan.put("NEWEST_TRANSACTION_DATE", "Newest Transaction Date");
+		lan.put("NUMBER_OF_TRANSACTIONS", "Number Of Transactions");
+		lan.put("NUMBER_OF_DEPOSITS", "Number Of Deposits");
+		lan.put("NUMBER_OF_WITHDRAWALS", "Number Of Withdrawals");
 		lan.put("REVENUE_HEADER_YEAR", "Year");
 		lan.put("REVENUE_HEADER_MONTH", "Month");
 		lan.put("REVENUE_HEADER_ACCOUNT", "Account");

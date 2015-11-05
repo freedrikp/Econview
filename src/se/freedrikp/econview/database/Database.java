@@ -733,4 +733,88 @@ public class Database extends Observable {
 	public boolean getOnlyIncluded() {
 		return onlyIncluded > 0 ? true : false;
 	}
+	
+	public String getNumberOfTransactions() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				String res = result.getString("number");
+				return res != null ? res : "0";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public String getNumberOfDeposits() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionAmount > 0");
+			ps.setInt(1,onlyIncluded);
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				String res = result.getString("number");
+				return res != null ? res : "0";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public String getNumberOfWithdrawals() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionAmount < 0");
+			ps.setInt(1,onlyIncluded);
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				String res = result.getString("number");
+				return res != null ? res : "0";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public String getOldestTransactionDate() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
+			ResultSet result = ps.executeQuery();
+			String res = "";
+			while (result.next()) {
+				res += result.getString("year") + "-" + result.getString("month") + "-" + result.getString("day");
+				//return res != null ? res : "0";
+			}
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public String getNewestTransactionDate() {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1,onlyIncluded);
+			ResultSet result = ps.executeQuery();
+			String res = "";
+			while (result.next()) {
+				res += result.getString("year") + "-" + result.getString("month") + "-" + result.getString("day");
+				//return res != null ? res : "0";
+			}
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
 }
