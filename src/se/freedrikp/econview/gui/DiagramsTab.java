@@ -233,35 +233,33 @@ public class DiagramsTab extends JPanel implements Observer {
 
 	private void generateDiagram(Date from, Date to, String title,
 			JPanel panel, int width, int height, Collection<String> accounts,boolean includeTotal) {
-		Map<String, Map<String, Double>> diagramData = db.getCustomDiagramData(
+		Map<String, Map<Date, Double>> diagramData = db.getCustomDiagramData(
 				from, to,accounts, includeTotal);
 		TimeSeriesCollection collection = new TimeSeriesCollection();
-		for (Map.Entry<String, Map<String, Double>> dataset : diagramData
+		for (Map.Entry<String, Map<Date, Double>> dataset : diagramData
 				.entrySet()) {
 			double previousAmount = 0;
 			Date previousDate = from;
 			TimeSeries series = new TimeSeries(dataset.getKey());
-			for (Map.Entry<String, Double> datapoint : dataset.getValue()
+//			System.out.println("-----------------------");
+			for (Map.Entry<Date, Double> datapoint : dataset.getValue()
 					.entrySet()) {
-				try {
+				Calendar start = Calendar.getInstance();
+				start.setTime(previousDate);
+				start.add(Calendar.DATE, 1);
+				Calendar end = Calendar.getInstance();
+				end.setTime(datapoint.getKey());
 
-					Calendar start = Calendar.getInstance();
-					start.setTime(previousDate);
-					start.add(Calendar.DATE, 1);
-					Calendar end = Calendar.getInstance();
-					end.setTime(db.dateFormat.parse(datapoint.getKey()));
-
-					for (Date date = start.getTime(); start.before(end); start
-							.add(Calendar.DATE, 1), date = start.getTime()) {
-						series.add(new Day(date), previousAmount);
-					}
-					series.add(new Day(db.dateFormat.parse(datapoint.getKey())),
-							datapoint.getValue());
-					previousAmount = datapoint.getValue();
-					previousDate = db.dateFormat.parse(datapoint.getKey());
-				} catch (ParseException e) {
-					e.printStackTrace();
+				for (Date date = start.getTime(); start.before(end); start
+						.add(Calendar.DATE, 1), date = start.getTime()) {
+					series.add(new Day(date), previousAmount);
 				}
+				
+				series.addOrUpdate(new Day(datapoint.getKey()),
+						datapoint.getValue());
+//				System.out.println(datapoint.getKey().toString());
+				previousAmount = datapoint.getValue();
+				previousDate = datapoint.getKey();
 			}
 			collection.addSeries(series);
 		}

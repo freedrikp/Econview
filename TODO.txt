@@ -8,12 +8,12 @@
 
 === BETWEEN ===
 
-*Add option for GUI date formatting (separate date formats, improve interface with database) ---- planned v1.2
-		done for transactions and revenues, now to do it for diagrams
 
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Add option for GUI date formatting (separate date formats, improve interface with database) ---- v1.2
+
 *Implement statistics in transactions (oldest,latest,number,numberwithdrawalls,numberdeposits and more(to come later)) ---- v1.2
 
 *Remove total revenues per account (kind of useless statistics) ---- v1.2

@@ -29,8 +29,8 @@ public class Database extends Observable {
 	private Connection c;
 	private File dbfile;
 	private int onlyIncluded;
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd");
+//	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+//			"yyyy-MM-dd");
 
 	public Database(String dbfile) {
 		this.dbfile = new File(dbfile);
@@ -428,7 +428,7 @@ public class Database extends Observable {
 		return 0.;
 	}
 
-	public Map<String, Map<String, Double>> getCustomDiagramData(Date from,
+	public Map<String, Map<Date, Double>> getCustomDiagramData(Date from,
 			Date to, Collection<String> accounts, boolean includeTotal) {
 		String selectedAccounts = "(";
 		int i = 1;
@@ -448,7 +448,7 @@ public class Database extends Observable {
 		String fod = day.format(from);
 		// System.out.println(foy + "-" + fom + "-" + fod + "<->" + toy + "-" +
 		// tom + "-" + tod);
-		Map<String, Map<String, Double>> dataset = new TreeMap<String, Map<String, Double>>();
+		Map<String, Map<Date, Double>> dataset = new TreeMap<String, Map<Date, Double>>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ? AND accountName IN "
@@ -490,28 +490,28 @@ public class Database extends Observable {
 	}
 
 	private void buildDiagramDataset(Date from, Date to,
-			Map<String, Map<String, Double>> dataset, double startBalance,
+			Map<String, Map<Date, Double>> dataset, double startBalance,
 			String accountName, String consideredAccounts) throws SQLException {
-		Map<String, Double> datapoints = new TreeMap<String, Double>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		datapoints.put(sdf.format(to), startBalance);
+		Map<Date, Double> datapoints = new TreeMap<Date, Double>();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		datapoints.put(to, startBalance);
 		PreparedStatement ps;
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
 					"WHERE accountName IN " + consideredAccounts, from,
-					new Date());
+					getNewestTransactionDate());
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
-					"WHERE accountName = ?", from, new Date());
+					"WHERE accountName = ?", from, getNewestTransactionDate());
 			ps.setString(14, accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
 		while (transactions.next()) {
 			startBalance -= transactions.getDouble("Amount");
 		}
-		datapoints.put(sdf.format(from), startBalance);
+		datapoints.put(from, startBalance);
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
@@ -524,11 +524,10 @@ public class Database extends Observable {
 		}
 		transactions = ps.executeQuery();
 		while (transactions.next()) {
-			String date = transactions.getString("transactionYear") + "-"
-					+ transactions.getString("transactionMonth") + "-"
-					+ transactions.getString("transactionDay");
+			Calendar cal = Calendar.getInstance();
+			cal.set(transactions.getInt("transactionYear"),transactions.getInt("transactionMonth") -1,transactions.getInt("transactionDay"),0,0,0);
 			startBalance += transactions.getDouble("transactionAmount");
-			datapoints.put(date, startBalance);
+			datapoints.put(cal.getTime(), startBalance);
 		}
 		dataset.put(accountName, datapoints);
 	}
