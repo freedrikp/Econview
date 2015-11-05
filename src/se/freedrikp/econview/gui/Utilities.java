@@ -120,7 +120,7 @@ public class Utilities {
 
 	private static void parseConfig() {
 		try {
-			Scanner scan = new Scanner(configFile);
+			Scanner scan = new Scanner(configFile,"UTF-8");
 			while (scan.hasNextLine()) {
 				String line = scan.nextLine().trim();
 				String[] conf = line.split("=");
@@ -167,7 +167,7 @@ public class Utilities {
 					.get(f.getName()) : new HashMap<String, String>();
 			Scanner scan;
 			try {
-				scan = new Scanner(f);
+				scan = new Scanner(f,"UTF-8");
 
 				while (scan.hasNextLine()) {
 					String line = scan.nextLine().trim();
