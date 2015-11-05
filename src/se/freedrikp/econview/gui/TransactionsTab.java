@@ -288,15 +288,11 @@ public class TransactionsTab extends JPanel implements Observer {
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
 		GUI.resizeTable(transactionsTable);
-		try {
-			oldestDate.setText(dateFormat.format(db.dateFormat.parse(db.getOldestTransactionDate())));
-			newestDate.setText(dateFormat.format(db.dateFormat.parse(db.getNewestTransactionDate())));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		numTransactions.setText(db.getNumberOfTransactions());
-		numDeposits.setText(db.getNumberOfDeposits());
-		numWithdrawals.setText(db.getNumberOfWithdrawals());
+		oldestDate.setText(dateFormat.format(db.getOldestTransactionDate()));
+		newestDate.setText(dateFormat.format(db.getNewestTransactionDate()));
+		numTransactions.setText(Long.toString(db.getNumberOfTransactions()));
+		numDeposits.setText(Long.toString(db.getNumberOfDeposits()));
+		numWithdrawals.setText(Long.toString(db.getNumberOfWithdrawals()));
 		repaint();
 	}
 
@@ -365,14 +361,9 @@ public class TransactionsTab extends JPanel implements Observer {
 
 	private void updateTransactionList() {
 		Model m = new Model(transactionHeader, 0);
-		for (String[] row : db.getTransactions()) {
-			row[2] = NumberFormat.getCurrencyInstance().format(
-					Double.parseDouble(row[2]));
-			try {
-				row[3] = dateFormat.format(db.dateFormat.parse(row[3]));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+		for (Object[] row : db.getTransactions()) {
+			row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
+			row[3] = dateFormat.format(row[3]);
 			m.addRow(row);
 		}
 		transactionsTable.setModel(m);

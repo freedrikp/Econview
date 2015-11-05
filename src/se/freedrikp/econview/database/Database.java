@@ -11,9 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,8 @@ public class Database extends Observable {
 	private Connection c;
 	private File dbfile;
 	private int onlyIncluded;
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd");
 
 	public Database(String dbfile) {
 		this.dbfile = new File(dbfile);
@@ -91,7 +92,7 @@ public class Database extends Observable {
 			c.setAutoCommit(false);
 			ps = c.prepareStatement("UPDATE Transactions SET accountName=? WHERE accountName=?");
 			ps.setString(1, accountName);
-			ps.setString(2,oldAccountName);
+			ps.setString(2, oldAccountName);
 			ps.executeUpdate();
 			ps = c.prepareStatement("UPDATE Accounts SET accountName=?, accountBalance=?, accountIncluded = ? WHERE accountName=?");
 			ps.setString(1, accountName);
@@ -112,7 +113,8 @@ public class Database extends Observable {
 	public void removeAccount(String accountName) {
 		try {
 			c.setAutoCommit(false);
-			PreparedStatement ps = c.prepareStatement("DELETE FROM Transactions WHERE accountName=?");
+			PreparedStatement ps = c
+					.prepareStatement("DELETE FROM Transactions WHERE accountName=?");
 			ps.setString(1, accountName);
 			ps.executeUpdate();
 			ps = c.prepareStatement("DELETE FROM Accounts WHERE accountName=?");
@@ -211,19 +213,18 @@ public class Database extends Observable {
 		notifyObservers();
 	}
 
-	public List<String[]> getAccounts() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getAccounts() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[3];
+				Object[] row = new Object[3];
 				row[0] = results.getString("accountName");
-				row[1] = results.getString("accountBalance");
-				row[2] = Boolean
-						.toString(results.getInt("accountIncluded") == 1);
+				row[1] = results.getDouble("accountBalance");
+				row[2] = results.getInt("accountIncluded") == 1;
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -232,21 +233,23 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<String[]> getTransactions() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getTransactions() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[5];
-				row[0] = results.getString("transactionID");
+				Object[] row = new Object[5];
+				row[0] = results.getLong("transactionID");
 				row[1] = results.getString("accountName");
-				row[2] = results.getString("transactionAmount");
-				row[3] = results.getString("transactionYear") + "-"
-						+ results.getString("transactionMonth") + "-"
-						+ results.getString("transactionDay");
+				row[2] = results.getDouble("transactionAmount");
+				Calendar cal = Calendar.getInstance();
+				cal.set(results.getInt("transactionYear"),
+						results.getInt("transactionMonth")-1,
+						results.getInt("transactionDay"), 0, 0, 0);
+				row[3] = cal.getTime();
 				row[4] = results.getString("transactionComment");
 				list.add(row);
 			}
@@ -261,7 +264,7 @@ public class Database extends Observable {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT accountName FROM Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				list.add(results.getString("accountName"));
@@ -272,18 +275,19 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<String[]> getMonthlyRevenues() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getMonthlyRevenues() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear,transactionMonth");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[3];
-				row[0] = results.getString("transactionYear");
-				row[1] = results.getString("transactionMonth");
-				row[2] = results.getString("revenue");
+				Object[] row = new Object[2];
+				Calendar cal = Calendar.getInstance();
+				cal.set(results.getInt("transactionYear"),results.getInt("transactionMonth")-1,1,0,0,0);
+				row[0] = cal.getTime();
+				row[1] = results.getDouble("revenue");
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -292,17 +296,19 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<String[]> getYearlyRevenues() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getYearlyRevenues() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[2];
-				row[0] = results.getString("transactionYear");
-				row[1] = results.getString("revenue");
+				Object[] row = new Object[2];
+				Calendar cal = Calendar.getInstance();
+				cal.set(results.getInt("transactionYear"),0,1,0,0,0);
+				row[0] = cal.getTime();
+				row[1] = results.getDouble("revenue");
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -311,19 +317,20 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<String[]> getMonthlyAccountRevenues() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getMonthlyAccountRevenues() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear,transactionMonth");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[4];
-				row[0] = results.getString("transactionYear");
-				row[1] = results.getString("transactionMonth");
-				row[2] = results.getString("accountName");
-				row[3] = results.getString("revenue");
+				Object[] row = new Object[3];
+				Calendar cal = Calendar.getInstance();
+				cal.set(results.getInt("transactionYear"),results.getInt("transactionMonth")-1,1,0,0,0);
+				row[0] = cal.getTime();
+				row[1] = results.getString("accountName");
+				row[2] = results.getDouble("revenue");
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -332,18 +339,20 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<String[]> getYearlyAccountRevenues() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getYearlyAccountRevenues() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[3];
-				row[0] = results.getString("transactionYear");
+				Object[] row = new Object[3];
+				Calendar cal = Calendar.getInstance();
+				cal.set(results.getInt("transactionYear"),0,1,0,0,0);
+				row[0] = cal.getTime();
 				row[1] = results.getString("accountName");
-				row[2] = results.getString("revenue");
+				row[2] = results.getDouble("revenue");
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -352,33 +361,32 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public String getTotalRevenue() {
+	public Double getTotalRevenue() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String res = results.getString("revenue");
-				return res != null ? res : "0";
+				return results.getDouble("revenue");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0.;
 	}
 
-	public List<String[]> getTotalAccountRevenues() {
-		ArrayList<String[]> list = new ArrayList<String[]>();
+	public List<Object[]> getTotalAccountRevenues() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String[] row = new String[2];
+				Object[] row = new Object[2];
 				row[0] = results.getString("accountName");
-				row[1] = results.getString("revenue");
+				row[1] = results.getDouble("revenue");
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -387,52 +395,51 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public String getRevenue(Date from, Date to, Collection<String> accounts) {
+	public Double getRevenue(Date from, Date to, Collection<String> accounts) {
 		try {
 			String selectedAccounts = "(";
 			int i = 1;
-			for (String a : accounts){
-				selectedAccounts+="'" + a + "'";
-				if (i < accounts.size()){
-					selectedAccounts+=",";
+			for (String a : accounts) {
+				selectedAccounts += "'" + a + "'";
+				if (i < accounts.size()) {
+					selectedAccounts += ",";
 				}
 				i++;
 			}
-			selectedAccounts+=")";
+			selectedAccounts += ")";
 			PreparedStatement ps;
-//			if (account.isEmpty()) {
-//				ps = selectBetweenDates(
-//						"Select SUM(transactionAmount) as revenue FROM", "",
-//						from, to);
-//			} else {
-				ps = selectBetweenDates(
-						"Select SUM(transactionAmount) as revenue FROM",
-						"WHERE accountName IN " + selectedAccounts, from, to);
-//				ps.setString(13, account);
-//			}
+			// if (account.isEmpty()) {
+			// ps = selectBetweenDates(
+			// "Select SUM(transactionAmount) as revenue FROM", "",
+			// from, to);
+			// } else {
+			ps = selectBetweenDates(
+					"Select SUM(transactionAmount) as revenue FROM",
+					"WHERE accountName IN " + selectedAccounts, from, to);
+			// ps.setString(13, account);
+			// }
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
-				String res = results.getString("revenue");
-				return res != null ? res : "0";
+				return results.getDouble("revenue");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0.;
 	}
 
 	public Map<String, Map<String, Double>> getCustomDiagramData(Date from,
 			Date to, Collection<String> accounts, boolean includeTotal) {
 		String selectedAccounts = "(";
 		int i = 1;
-		for (String a : accounts){
-			selectedAccounts+="'" + a + "'";
-			if (i < accounts.size()){
-				selectedAccounts+=",";
+		for (String a : accounts) {
+			selectedAccounts += "'" + a + "'";
+			if (i < accounts.size()) {
+				selectedAccounts += ",";
 			}
 			i++;
 		}
-		selectedAccounts+=")";
+		selectedAccounts += ")";
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
@@ -444,8 +451,9 @@ public class Database extends Observable {
 		Map<String, Map<String, Double>> dataset = new TreeMap<String, Map<String, Double>>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ? AND accountName IN " + selectedAccounts);
-			ps.setInt(1,onlyIncluded);
+					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ? AND accountName IN "
+							+ selectedAccounts);
+			ps.setInt(1, onlyIncluded);
 			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
 			while (accs.next()) {
@@ -453,23 +461,27 @@ public class Database extends Observable {
 				totalStartBalance += startBalance;
 				String accountName = accs.getString("accountName");
 				buildDiagramDataset(from, to, dataset, startBalance,
-						accountName,null);
+						accountName, null);
 			}
-			if (includeTotal){
-				buildDiagramDataset(from, to, dataset, totalStartBalance, Utilities.getString("TOTAL_ACCOUNT_NAME"), selectedAccounts);
-//				HashMap<String,Double> total = new HashMap<String,Double>();
-//				for (Map<String,Double> map : dataset.values()){
-//					for (Map.Entry<String, Double> entry : map.entrySet()){
-//						if (total.containsKey(entry.getKey())){
-//							double newValue = entry.getValue() + total.get(entry.getKey());
-//							total.put(entry.getKey(), newValue);
-//						}else{
-//							total.put(entry.getKey(), entry.getValue());
-//						}
-//					}
-//				}
-//				System.out.println(total);
-//				dataset.put(Utilities.getString("TOTAL_ACCOUNT_NAME"), total);
+			if (includeTotal) {
+				buildDiagramDataset(from, to, dataset, totalStartBalance,
+						Utilities.getString("TOTAL_ACCOUNT_NAME"),
+						selectedAccounts);
+				// HashMap<String,Double> total = new HashMap<String,Double>();
+				// for (Map<String,Double> map : dataset.values()){
+				// for (Map.Entry<String, Double> entry : map.entrySet()){
+				// if (total.containsKey(entry.getKey())){
+				// double newValue = entry.getValue() +
+				// total.get(entry.getKey());
+				// total.put(entry.getKey(), newValue);
+				// }else{
+				// total.put(entry.getKey(), entry.getValue());
+				// }
+				// }
+				// }
+				// System.out.println(total);
+				// dataset.put(Utilities.getString("TOTAL_ACCOUNT_NAME"),
+				// total);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -485,10 +497,13 @@ public class Database extends Observable {
 		datapoints.put(sdf.format(to), startBalance);
 		PreparedStatement ps;
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
-			ps = selectBetweenDates("SELECT sum(transactionAmount) as Amount FROM", "WHERE accountName IN " + consideredAccounts, from,
+			ps = selectBetweenDates(
+					"SELECT sum(transactionAmount) as Amount FROM",
+					"WHERE accountName IN " + consideredAccounts, from,
 					new Date());
 		} else {
-			ps = selectBetweenDates("SELECT SUM(transactionAmount) as Amount FROM",
+			ps = selectBetweenDates(
+					"SELECT SUM(transactionAmount) as Amount FROM",
 					"WHERE accountName = ?", from, new Date());
 			ps.setString(14, accountName);
 		}
@@ -536,9 +551,14 @@ public class Database extends Observable {
 		String sqlDays = "(SELECT * FROM "
 				+ sqlMonths
 				+ " WHERE NOT (transactionYear == ? AND transactionMonth == ? AND transactionDay > ? OR transactionYear == ? AND transactionMonth == ? AND transactionDay < ?))";
-		PreparedStatement ps = c.prepareStatement(sqlSelect + " " + sqlDays
-				+ " " + sqlWhere + "ORDER BY transactionYear,transactionMonth,transactionDay ASC");
-		ps.setInt(1,onlyIncluded);
+		PreparedStatement ps = c
+				.prepareStatement(sqlSelect
+						+ " "
+						+ sqlDays
+						+ " "
+						+ sqlWhere
+						+ "ORDER BY transactionYear,transactionMonth,transactionDay ASC");
+		ps.setInt(1, onlyIncluded);
 		ps.setString(2, toy);
 		ps.setString(3, foy);
 
@@ -556,49 +576,46 @@ public class Database extends Observable {
 		return ps;
 	}
 
-	public String getTotalAccountBalanceSum() {
+	public double getTotalAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
-				String res = result.getString("balanceSum");
-				return res != null ? res : "0";
+				return result.getDouble("balanceSum");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0.;
 	}
-	
-	public String getIncludedAccountBalanceSum() {
+
+	public double getIncludedAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded = 1");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
-				String res = result.getString("balanceSum");
-				return res != null ? res : "0";
+				return result.getDouble("balanceSum");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0.;
 	}
-	
-	public String getNotIncludedAccountBalanceSum() {
+
+	public double getNotIncludedAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded = 0");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
-				String res = result.getString("balanceSum");
-				return res != null ? res : "0";
+				return result.getDouble("balanceSum");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0.;
 	}
 
 	public void exportDatabase(OutputStream out) {
@@ -611,19 +628,21 @@ public class Database extends Observable {
 			long totalCount = 0;
 			while (rs.next()) {
 				tableNames.add(rs.getString("name"));
-				ps = c.prepareStatement("SELECT COUNT(*) as Count FROM " + rs.getString("name"));
+				ps = c.prepareStatement("SELECT COUNT(*) as Count FROM "
+						+ rs.getString("name"));
 				ResultSet row = ps.executeQuery();
-				while(row.next()){
+				while (row.next()) {
 					totalCount += row.getLong("Count");
 				}
 			}
 			pw.println(totalCount);
-			ProgressMonitor pm = new ProgressMonitor(null, Utilities.getString("EXPORTING_DATABASE"), "", 0, 100);
-			final float percent =  100.0f/totalCount;
+			ProgressMonitor pm = new ProgressMonitor(null,
+					Utilities.getString("EXPORTING_DATABASE"), "", 0, 100);
+			final float percent = 100.0f / totalCount;
 			float progress = 0;
 			pm.setMillisToPopup(0);
 			pm.setMillisToDecideToPopup(0);
-			for (String table : tableNames){
+			for (String table : tableNames) {
 				pm.setNote(table);
 				pw.println(table);
 				ps = c.prepareStatement("SELECT * FROM " + table);
@@ -647,7 +666,7 @@ public class Database extends Observable {
 						}
 					}
 					pw.println();
-					progress+=percent;
+					progress += percent;
 					pm.setProgress(Math.round(progress));
 				}
 				pw.println();
@@ -662,13 +681,14 @@ public class Database extends Observable {
 		try {
 			Scanner scan = new Scanner(in);
 			long totalCount = 0;
-			if (scan.hasNextLine()){
+			if (scan.hasNextLine()) {
 				totalCount = Long.parseLong(scan.nextLine());
 			}
-			ProgressMonitor pm = new ProgressMonitor(null,Utilities.getString("IMPORTING_DATABASE"),"",0,100);
+			ProgressMonitor pm = new ProgressMonitor(null,
+					Utilities.getString("IMPORTING_DATABASE"), "", 0, 100);
 			pm.setMillisToPopup(0);
 			pm.setMillisToDecideToPopup(0);
-			final float percent =  100.0f/totalCount;
+			final float percent = 100.0f / totalCount;
 			float progress = 0;
 			while (scan.hasNextLine()) {
 				String name = scan.nextLine();
@@ -693,7 +713,7 @@ public class Database extends Observable {
 					sql += ")";
 					PreparedStatement ps = c.prepareStatement(sql);
 					ps.executeUpdate();
-					progress+=percent;
+					progress += percent;
 					pm.setProgress(Math.round(progress));
 				}
 			}
@@ -724,8 +744,8 @@ public class Database extends Observable {
 	public File getFile() {
 		return dbfile;
 	}
-	
-	public void setOnlyIncluded(boolean onlyIncluded){
+
+	public void setOnlyIncluded(boolean onlyIncluded) {
 		this.onlyIncluded = onlyIncluded ? 1 : 0;
 		setChanged();
 		notifyObservers();
@@ -734,88 +754,79 @@ public class Database extends Observable {
 	public boolean getOnlyIncluded() {
 		return onlyIncluded > 0 ? true : false;
 	}
-	
-	public String getNumberOfTransactions() {
+
+	public long getNumberOfTransactions() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
-				String res = result.getString("number");
-				return res != null ? res : "0";
+				return result.getLong("number");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0L;
 	}
-	
-	public String getNumberOfDeposits() {
+
+	public long getNumberOfDeposits() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionAmount > 0");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
-				String res = result.getString("number");
-				return res != null ? res : "0";
+				return result.getLong("number");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0L;
 	}
-	
-	public String getNumberOfWithdrawals() {
+
+	public long getNumberOfWithdrawals() {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionAmount < 0");
-			ps.setInt(1,onlyIncluded);
+			ps.setInt(1, onlyIncluded);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
-				String res = result.getString("number");
-				return res != null ? res : "0";
+				return result.getLong("number");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
+		return 0L;
 	}
-	
-	public String getOldestTransactionDate() {
+
+	public Date getOldestTransactionDate() {
+		return getTransactionDate("MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day");
+	}
+
+	public Date getNewestTransactionDate() {
+		return getTransactionDate("MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day");
+	}
+
+	private Date getTransactionDate(String sql) {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
+					.prepareStatement("SELECT "
+							+ sql
+							+ " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+			ps.setInt(1, onlyIncluded);
 			ResultSet result = ps.executeQuery();
-			String res = "";
+			Date date = null;
 			while (result.next()) {
-				res += result.getString("year") + "-" + result.getString("month") + "-" + result.getString("day");
-				//return res != null ? res : "0";
+				Calendar cal = Calendar.getInstance();
+				cal.set(result.getInt("year"), result.getInt("month"),
+						result.getInt("day"), 0, 0, 0);
+				date = cal.getTime();
 			}
-			return res;
+			return date;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "0";
-	}
-	
-	public String getNewestTransactionDate() {
-		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1,onlyIncluded);
-			ResultSet result = ps.executeQuery();
-			String res = "";
-			while (result.next()) {
-				res += result.getString("year") + "-" + result.getString("month") + "-" + result.getString("day");
-				//return res != null ? res : "0";
-			}
-			return res;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return "0";
+		return null;
 	}
 }

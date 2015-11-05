@@ -31,7 +31,7 @@ import se.freedrikp.econview.gui.GUI.Model;
 
 import com.toedter.calendar.JDateChooser;
 
-public class RevenueTab extends JPanel implements Observer{
+public class RevenueTab extends JPanel implements Observer {
 	private Database db;
 
 	private JTable yearlyRevTable;
@@ -42,7 +42,7 @@ public class RevenueTab extends JPanel implements Observer{
 
 	private JTable monthlyAccountRevTable;
 
-//	private JTable totalAccountRevTable;
+	// private JTable totalAccountRevTable;
 
 	private JLabel totalRevLabel;
 
@@ -52,31 +52,44 @@ public class RevenueTab extends JPanel implements Observer{
 
 	private JDateChooser revDateToField;
 
-//	private JComboBox accountRevBox;
+	// private JComboBox accountRevBox;
 
 	private JCheckBox[] selectedAccounts;
-	
-	private JCheckBox allAccounts;
-	
-	private JPanel customRevAccountPanel;
-	private static final String[] monthlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_MONTH"),
-	Utilities.getString("REVENUE_HEADER_REVENUE") };
-private static final String[] yearlyRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_REVENUE") };
-private static final String[] monthlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_MONTH"),
-	Utilities.getString("REVENUE_HEADER_ACCOUNT"),Utilities.getString("REVENUE_HEADER_REVENUE") };
-private static final String[] yearlyAccountRevHeader = { Utilities.getString("REVENUE_HEADER_YEAR"), Utilities.getString("REVENUE_HEADER_ACCOUNT"),
-	Utilities.getString("REVENUE_HEADER_REVENUE") };
-//private static final String[] totalAccountRevHeader = { Utilities.getString("REVENUE_HEADER_ACCOUNT"),
-//	Utilities.getString("REVENUE_HEADER_REVENUE") };
-private final SimpleDateFormat dateFormat;
-private final SimpleDateFormat monthFormat;
 
-	public RevenueTab(final Database db){
+	private JCheckBox allAccounts;
+
+	private JPanel customRevAccountPanel;
+	private static final String[] monthlyRevHeader = {
+			Utilities.getString("REVENUE_HEADER_YEAR"),
+			Utilities.getString("REVENUE_HEADER_MONTH"),
+			Utilities.getString("REVENUE_HEADER_REVENUE") };
+	private static final String[] yearlyRevHeader = {
+			Utilities.getString("REVENUE_HEADER_YEAR"),
+			Utilities.getString("REVENUE_HEADER_REVENUE") };
+	private static final String[] monthlyAccountRevHeader = {
+			Utilities.getString("REVENUE_HEADER_YEAR"),
+			Utilities.getString("REVENUE_HEADER_MONTH"),
+			Utilities.getString("REVENUE_HEADER_ACCOUNT"),
+			Utilities.getString("REVENUE_HEADER_REVENUE") };
+	private static final String[] yearlyAccountRevHeader = {
+			Utilities.getString("REVENUE_HEADER_YEAR"),
+			Utilities.getString("REVENUE_HEADER_ACCOUNT"),
+			Utilities.getString("REVENUE_HEADER_REVENUE") };
+	// private static final String[] totalAccountRevHeader = {
+	// Utilities.getString("REVENUE_HEADER_ACCOUNT"),
+	// Utilities.getString("REVENUE_HEADER_REVENUE") };
+	private final SimpleDateFormat dateFormat;
+	private final SimpleDateFormat monthFormat;
+	private final SimpleDateFormat yearFormat;
+
+	public RevenueTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);
-		dateFormat = new SimpleDateFormat(Utilities.getConfig("FULL_DATE_FORMAT"));
-		monthFormat = new SimpleDateFormat(Utilities.getConfig("LONG_MONTH_FORMAT"));
+		dateFormat = new SimpleDateFormat(
+				Utilities.getConfig("FULL_DATE_FORMAT"));
+		monthFormat = new SimpleDateFormat(Utilities.getConfig("MONTH_FORMAT"));
+		yearFormat = new SimpleDateFormat(Utilities.getConfig("YEAR_FORMAT"));
 		setLayout(new GridLayout(1, 0, 0, 0));
 
 		JScrollPane yearlyRevPane = new JScrollPane();
@@ -107,19 +120,20 @@ private final SimpleDateFormat monthFormat;
 		monthlyAccountRevTable.setEnabled(false);
 		monthlyAccountRevPane.setViewportView(monthlyAccountRevTable);
 
-//		JScrollPane totalAccountRevPane = new JScrollPane();
-//		add(totalAccountRevPane);
+		// JScrollPane totalAccountRevPane = new JScrollPane();
+		// add(totalAccountRevPane);
 
-//		totalAccountRevTable = new JTable();
-//		totalAccountRevTable.setEnabled(false);
-//		totalAccountRevPane.setViewportView(totalAccountRevTable);
+		// totalAccountRevTable = new JTable();
+		// totalAccountRevTable.setEnabled(false);
+		// totalAccountRevPane.setViewportView(totalAccountRevTable);
 
 		JPanel sideRevenuePanel = new JPanel();
 		add(sideRevenuePanel);
 		sideRevenuePanel.setLayout(new BoxLayout(sideRevenuePanel,
 				BoxLayout.Y_AXIS));
 
-		JLabel lblTotalRevenue = new JLabel(Utilities.getString("TOTAL_REVENUE") + ":");
+		JLabel lblTotalRevenue = new JLabel(
+				Utilities.getString("TOTAL_REVENUE") + ":");
 		lblTotalRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(lblTotalRevenue);
 
@@ -131,9 +145,10 @@ private final SimpleDateFormat monthFormat;
 		JSeparator totCustomRevSep = new JSeparator();
 		sideRevenuePanel.add(totCustomRevSep);
 
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		// SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-		JLabel lblCustomRevenue = new JLabel(Utilities.getString("CUSTOM_REVENUE") + ":");
+		JLabel lblCustomRevenue = new JLabel(
+				Utilities.getString("CUSTOM_REVENUE") + ":");
 		lblCustomRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(lblCustomRevenue);
 
@@ -163,44 +178,45 @@ private final SimpleDateFormat monthFormat;
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
-		JButton customRevButton = new JButton(Utilities.getString("CUSTOM_REVENUE"));
+		JButton customRevButton = new JButton(
+				Utilities.getString("CUSTOM_REVENUE"));
 		customRevButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);
 			}
 		});
 
-//		accountRevBox = new JComboBox();
-//		sideRevenuePanel.add(accountRevBox);
-		
+		// accountRevBox = new JComboBox();
+		// sideRevenuePanel.add(accountRevBox);
+
 		customRevAccountPanel = new JPanel();
 		customRevAccountPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		customRevAccountPanel.setLayout(new BoxLayout(customRevAccountPanel,BoxLayout.Y_AXIS));
+		customRevAccountPanel.setLayout(new BoxLayout(customRevAccountPanel,
+				BoxLayout.Y_AXIS));
 		sideRevenuePanel.add(customRevAccountPanel);
-		
-		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"),false);
-		
+
+		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), false);
+
 		allAccounts.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				boolean select = e.getStateChange() == ItemEvent.SELECTED;
-				for (JCheckBox checkBox : selectedAccounts){
+				for (JCheckBox checkBox : selectedAccounts) {
 					checkBox.setSelected(select);
-					//update(db,null);
+					// update(db,null);
 				}
 			}
-			
+
 		});
-		
-		
+
 		customRevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(customRevButton);
 
 		Component verticalStrut = Box.createVerticalStrut(2000);
 		sideRevenuePanel.add(verticalStrut);
-		
-		update(db,null);
+
+		update(db, null);
 	}
-	
+
 	public void update(Observable o, Object arg) {
 		updateYearlyRevList();
 		GUI.resizeTable(yearlyRevTable);
@@ -210,19 +226,19 @@ private final SimpleDateFormat monthFormat;
 		GUI.resizeTable(yearlyAccountRevTable);
 		updateMonthlyAccountRevList();
 		GUI.resizeTable(monthlyAccountRevTable);
-//		updateTotalAccountRevList();
-//		GUI.resizeTable(totalAccountRevTable);
+		// updateTotalAccountRevList();
+		// GUI.resizeTable(totalAccountRevTable);
 		updateTotalRevLabel();
 		updateCustomRevLabel();
 		validate();
 		repaint();
 	}
-	
+
 	private void updateYearlyRevList() {
 		Model m = new Model(yearlyRevHeader, 0);
-		for (String[] row : db.getYearlyRevenues()) {
-			row[1] = NumberFormat.getCurrencyInstance().format(
-					Double.parseDouble(row[1]));
+		for (Object[] row : db.getYearlyRevenues()) {
+			row[0] = yearFormat.format(row[0]);
+			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
 			m.addRow(row);
 		}
 		yearlyRevTable.setModel(m);
@@ -230,9 +246,9 @@ private final SimpleDateFormat monthFormat;
 
 	private void updateYearlyAccountRevList() {
 		Model m = new Model(yearlyAccountRevHeader, 0);
-		for (String[] row : db.getYearlyAccountRevenues()) {
-			row[2] = NumberFormat.getCurrencyInstance().format(
-					Double.parseDouble(row[2]));
+		for (Object[] row : db.getYearlyAccountRevenues()) {
+			row[0] = yearFormat.format(row[0]);
+			row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
 			m.addRow(row);
 		}
 		yearlyAccountRevTable.setModel(m);
@@ -240,11 +256,11 @@ private final SimpleDateFormat monthFormat;
 
 	private void updateTotalRevLabel() {
 		totalRevLabel.setText(NumberFormat.getCurrencyInstance().format(
-				Double.parseDouble(db.getTotalRevenue())));
+				db.getTotalRevenue()));
 	}
 
 	private void updateCustomRevLabel() {
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		// SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		// try {
 		// revDateLabel.setText("(" + revDateFromField.getText() + " <-> "
 		// + revDateToField.getText() + "):");
@@ -253,43 +269,45 @@ private final SimpleDateFormat monthFormat;
 		// df.parse(revDateToField.getText())));
 		// revDateLabel.setText("(" + df.format(revDateFromField.getDate())
 		// + " <-> " + df.format(revDateToField.getDate()) + "):");
-		
-//		List<String> accountNames = db.getAccountNames();
-//		accountNames.add(0, Utilities.getString("ALL_ACCOUNTS"));
-//		String selectedAccount = (String) accountRevBox.getModel()
-//				.getSelectedItem();
-//		accountRevBox
-//				.setModel(new DefaultComboBoxModel(accountNames.toArray()));
-//		accountRevBox.getModel().setSelectedItem(selectedAccount);
-//		if (selectedAccount == null) {
-//			selectedAccount = "";
-//			accountRevBox.setSelectedIndex(0);
-//		} else if (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
-//			selectedAccount = "";
-//		}
+
+		// List<String> accountNames = db.getAccountNames();
+		// accountNames.add(0, Utilities.getString("ALL_ACCOUNTS"));
+		// String selectedAccount = (String) accountRevBox.getModel()
+		// .getSelectedItem();
+		// accountRevBox
+		// .setModel(new DefaultComboBoxModel(accountNames.toArray()));
+		// accountRevBox.getModel().setSelectedItem(selectedAccount);
+		// if (selectedAccount == null) {
+		// selectedAccount = "";
+		// accountRevBox.setSelectedIndex(0);
+		// } else if
+		// (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
+		// selectedAccount = "";
+		// }
 		customRevAccountPanel.removeAll();
 		List<String> accounts = db.getAccountNames();
 		HashSet<String> oldSelectedAccounts = new HashSet<String>();
 		if (selectedAccounts != null) {
-			for (JCheckBox checkBox : selectedAccounts){
-				if (checkBox.isSelected()){
+			for (JCheckBox checkBox : selectedAccounts) {
+				if (checkBox.isSelected()) {
 					oldSelectedAccounts.add(checkBox.getText());
 				}
-			}			
+			}
 		}
-		
+
 		customRevAccountPanel.add(allAccounts);
 		customRevAccountPanel.add(new JSeparator());
 		selectedAccounts = new JCheckBox[accounts.size()];
 		for (int i = 0; i < accounts.size(); i++) {
-			String account = accounts.get(i);			
-			selectedAccounts[i] = new JCheckBox(account, oldSelectedAccounts.contains(account));
+			String account = accounts.get(i);
+			selectedAccounts[i] = new JCheckBox(account,
+					oldSelectedAccounts.contains(account));
 			customRevAccountPanel.add(selectedAccounts[i]);
 		}
-		
+
 		customRevLabel.setText(NumberFormat.getCurrencyInstance().format(
-				Double.parseDouble(db.getRevenue(revDateFromField.getDate(),
-						revDateToField.getDate(), oldSelectedAccounts))));
+				db.getRevenue(revDateFromField.getDate(),
+						revDateToField.getDate(), oldSelectedAccounts)));
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }
@@ -297,42 +315,37 @@ private final SimpleDateFormat monthFormat;
 
 	private void updateMonthlyRevList() {
 		Model m = new Model(monthlyRevHeader, 0);
-		for (String[] row : db.getMonthlyRevenues()) {
-			try {
-				row[1] = monthFormat.format(new SimpleDateFormat("MM").parse(row[1]));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			row[2] = NumberFormat.getCurrencyInstance().format(
-					Double.parseDouble(row[2]));
-			m.addRow(row);
+		for (Object[] row : db.getMonthlyRevenues()) {
+			Object[] data = new Object[row.length + 1];
+			data[0] = yearFormat.format(row[0]);
+			data[1] = monthFormat.format(row[0]);
+			data[2] = NumberFormat.getCurrencyInstance().format(row[1]);
+			m.addRow(data);
 		}
 		monthlyRevTable.setModel(m);
 	}
 
 	private void updateMonthlyAccountRevList() {
 		Model m = new Model(monthlyAccountRevHeader, 0);
-		for (String[] row : db.getMonthlyAccountRevenues()) {
-			try {
-				row[1] = monthFormat.format(new SimpleDateFormat("MM").parse(row[1]));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			row[3] = NumberFormat.getCurrencyInstance().format(
-					Double.parseDouble(row[3]));
-			m.addRow(row);
+		for (Object[] row : db.getMonthlyAccountRevenues()) {
+			Object[] data = new Object[row.length + 1];
+			data[0] = yearFormat.format(row[0]);
+			data[1] = monthFormat.format(row[0]);
+			data[2] = row[1];
+			data[3] = NumberFormat.getCurrencyInstance().format(row[2]);
+			m.addRow(data);
 		}
 		monthlyAccountRevTable.setModel(m);
 	}
 
-//	private void updateTotalAccountRevList() {
-//		Model m = new Model(totalAccountRevHeader, 0);
-//		for (String[] row : db.getTotalAccountRevenues()) {
-//			row[1] = NumberFormat.getCurrencyInstance().format(
-//					Double.parseDouble(row[1]));
-//			m.addRow(row);
-//		}
-//		totalAccountRevTable.setModel(m);
-//	}
+	// private void updateTotalAccountRevList() {
+	// Model m = new Model(totalAccountRevHeader, 0);
+	// for (String[] row : db.getTotalAccountRevenues()) {
+	// row[1] = NumberFormat.getCurrencyInstance().format(
+	// Double.parseDouble(row[1]));
+	// m.addRow(row);
+	// }
+	// totalAccountRevTable.setModel(m);
+	// }
 
 }

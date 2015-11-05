@@ -94,7 +94,8 @@ public class Utilities {
 		config.put("CUSTOM_DIAGRAM_WIDTH","480");
 		config.put("CUSTOM_DIAGRAM_HEIGHT","350");
 		config.put("FULL_DATE_FORMAT", "yyyy-MM-dd");
-		config.put("LONG_MONTH_FORMAT", "MMMM");
+		config.put("MONTH_FORMAT", "MMMM");
+		config.put("YEAR_FORMAT", "yyyy");
 	}
 
 	public static String getConfig(String key) {
