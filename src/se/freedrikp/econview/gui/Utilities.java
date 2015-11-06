@@ -99,6 +99,8 @@ public class Utilities {
 		config.put("FULL_DATE_FORMAT", "yyyy-MM-dd");
 		config.put("MONTH_FORMAT", "MMMM");
 		config.put("YEAR_FORMAT", "yyyy");
+		config.put("SETTINGS_CONFIGURATION_PANEL_WIDTH", "400");
+		config.put("SETTINGS_CONFIGURATION_PANEL_HEIGHT", "600");
 	}
 
 	public static String getConfig(String key) {

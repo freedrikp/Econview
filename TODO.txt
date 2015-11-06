@@ -1,4 +1,5 @@
 === TODO ===
+*Fix ordering in revenue
 *Change "included" to "hidden" (reverse logic)
 *Implement some kind of multiaccount transactions (needs to think about it further)
 *Clean up code
@@ -11,6 +12,9 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fix bug so oldest and newest date works correctly ---- v1.3
+
+*Fix bug so scrollPane is used in settings panel ---- v1.3
 
 *Force UTF-8 in language and config parser ---- v1.3
 

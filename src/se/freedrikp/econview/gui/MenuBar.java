@@ -1,6 +1,6 @@
 package se.freedrikp.econview.gui;
 
-import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -124,7 +124,8 @@ public class MenuBar extends JMenuBar {
 					panel.add(pan);
 					map.put(config.getKey(), field);
 				}
-				int result = JOptionPane.showConfirmDialog(null, panel,
+				scrollPane.setPreferredSize(new Dimension(Integer.parseInt(Utilities.getConfig("SETTINGS_CONFIGURATION_PANEL_WIDTH")),Integer.parseInt(Utilities.getConfig("SETTINGS_CONFIGURATION_PANEL_HEIGHT"))));
+				int result = JOptionPane.showConfirmDialog(null, scrollPane,
 						Utilities.getString("SETTINGS_CONFIGURATION"),
 						JOptionPane.OK_CANCEL_OPTION);
 				if (result == JOptionPane.OK_OPTION){

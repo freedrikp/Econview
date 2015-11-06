@@ -800,25 +800,38 @@ public class Database extends Observable {
 	}
 
 	public Date getOldestTransactionDate() {
-		return getTransactionDate("MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day");
+//		return getTransactionDate("MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day");
+		return getTransactionDate("MIN");
 	}
 
 	public Date getNewestTransactionDate() {
-		return getTransactionDate("MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day");
+//		return getTransactionDate("MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day");
+		return getTransactionDate("MAX");
 	}
 
 	private Date getTransactionDate(String sql) {
 		try {
+			String year = "SELECT "+ sql +"(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountIncluded >= ?";
+			String month = "SELECT "+ sql +"(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("+ year +") AND accountIncluded >= ?";
+			String day = "SELECT "+ sql +"(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("+ month +") AND transactionYear IN ("+ year +") AND accountIncluded >= ?";
+			//			PreparedStatement ps = c
+//					.prepareStatement("SELECT "
+//							+ sql
+//							+ " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
 			PreparedStatement ps = c
-					.prepareStatement("SELECT "
-							+ sql
-							+ " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+					.prepareStatement("SELECT transactionYear as year,transactionMonth as month,transactionDay as day FROM Transactions NATURAL JOIN Accounts WHERE transactionYear IN (" + year +") AND transactionMonth IN (" + month +") AND transactionDay IN (" + day +")");
 			ps.setInt(1, onlyIncluded);
+			ps.setInt(2, onlyIncluded);
+			ps.setInt(3, onlyIncluded);
+			ps.setInt(4, onlyIncluded);
+			ps.setInt(5, onlyIncluded);
+			ps.setInt(6, onlyIncluded);
+			ps.setInt(7, onlyIncluded);
 			ResultSet result = ps.executeQuery();
 			Date date = null;
 			while (result.next()) {
 				Calendar cal = Calendar.getInstance();
-				cal.set(result.getInt("year"), result.getInt("month"),
+				cal.set(result.getInt("year"), result.getInt("month")-1,
 						result.getInt("day"), 0, 0, 0);
 				date = cal.getTime();
 			}
