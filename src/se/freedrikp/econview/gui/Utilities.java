@@ -27,18 +27,18 @@ public class Utilities {
 		lan.put("DIAGRAMS_TAB_NAME", "Diagrams");
 		lan.put("ACCOUNT_HEADER_ACCOUNT", "Account");
 		lan.put("ACCOUNT_HEADER_BALANCE", "Balance");
-		lan.put("ACCOUNT_HEADER_INCLUDED", "Included");
+		lan.put("ACCOUNT_HEADER_HIDDEN", "Hidden");
 		lan.put("ADD_ACCOUNT", "Add Account");
 		lan.put("EDIT_ACCOUNT", "Edit Account");
 		lan.put("REMOVE_ACCOUNT", "Remove Account");
 		lan.put("REMOVE_ACCOUNT_PROMPT",
 				"Are you sure you want to remove this account?");
-		lan.put("TOTAL_INCLUDED_BALANCE", "Total Included Balance");
+		lan.put("TOTAL_VISIBLE_BALANCE", "Total Visible Balance");
 		lan.put("TOTAL_BALANCE", "Total Balance");
-		lan.put("TOTAL_NOT_INCLUDED_BALANCE", "Total Not Included Balance");
+		lan.put("TOTAL_HIDDEN_BALANCE", "Total Hidden Balance");
 		lan.put("ADD_ACCOUNT_NAME", "Name");
 		lan.put("ADD_ACCOUNT_BALANCE", "Balance");
-		lan.put("ADD_ACCOUNT_INCLUDE", "Include in statistics?");
+		lan.put("ADD_ACCOUNT_HIDDEN", "Hide Account?");
 		lan.put("ACCOUNT_DETAILS", "Account Details");
 		lan.put("TRANSACTION_HEADER_ID", "ID");
 		lan.put("TRANSACTION_HEADER_ACCOUNT", "Account");
@@ -77,8 +77,8 @@ public class Utilities {
 		lan.put("MENUBAR_IMPORT_EXPORT", "Import/Export");
 		lan.put("MENUBAR_IMPORT_EXPORT_IMPORT", "Import");
 		lan.put("MENUBAR_IMPORT_EXPORT_EXPORT", "Export");
-		lan.put("MENUBAR_INCLUDED", "Included");
-		lan.put("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED", "Show Only Included");
+		lan.put("MENUBAR_HIDDEN", "Hidden");
+		lan.put("MENUBAR_HIDDEN_SHOW_HIDDEN", "Show Hidden");
 		lan.put("COPYING_DATABASE", "Copying Database...");
 		lan.put("MENUBAR_SETTINGS", "Settings");
 		lan.put("MENUBAR_SETTINGS_CONFIGURATION", "Configuration");

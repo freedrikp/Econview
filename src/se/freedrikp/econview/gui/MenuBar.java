@@ -90,18 +90,18 @@ public class MenuBar extends JMenuBar {
 		});
 		mnImportExport.add(mntmExport);
 
-		JMenu mnIncluded = new JMenu(Utilities.getString("MENUBAR_INCLUDED"));
-		add(mnIncluded);
+		JMenu mnHidden = new JMenu(Utilities.getString("MENUBAR_HIDDEN"));
+		add(mnHidden);
 
-		final JCheckBoxMenuItem mntmShowHideIncluded = new JCheckBoxMenuItem(
-				Utilities.getString("MENUBAR_INCLUDED_SHOW_ONLY_INCLUDED"),
-				db.getOnlyIncluded());
-		mntmShowHideIncluded.addActionListener(new ActionListener() {
+		final JCheckBoxMenuItem mntmShowHidden = new JCheckBoxMenuItem(
+				Utilities.getString("MENUBAR_HIDDEN_SHOW_HIDDEN"),
+				db.getShowHidden());
+		mntmShowHidden.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				db.setOnlyIncluded(mntmShowHideIncluded.getState());
+				db.setShowHidden(mntmShowHidden.getState());
 			}
 		});
-		mnIncluded.add(mntmShowHideIncluded);
+		mnHidden.add(mntmShowHidden);
 
 		JMenu mnSettings = new JMenu(Utilities.getString("MENUBAR_SETTINGS"));
 		add(mnSettings);

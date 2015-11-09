@@ -28,13 +28,13 @@ import se.freedrikp.econview.gui.Utilities;
 public class Database extends Observable {
 	private Connection c;
 	private File dbfile;
-	private int onlyIncluded;
+	private int showHidden;
 //	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 //			"yyyy-MM-dd");
 
 	public Database(String dbfile) {
 		this.dbfile = new File(dbfile);
-		onlyIncluded = 1;
+		showHidden = 0;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
@@ -53,7 +53,7 @@ public class Database extends Observable {
 			String sql = "CREATE TABLE Accounts("
 					+ "accountName TEXT PRIMARY KEY,"
 					+ "accountBalance REAL DEFAULT 0.0,"
-					+ "accountIncluded INTEGER DEFAULT '1'" + ")";
+					+ "accountHidden INTEGER DEFAULT '1'" + ")";
 			c.prepareStatement(sql).executeUpdate();
 			sql = "CREATE TABLE Transactions("
 					+ "transactionID INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -69,14 +69,14 @@ public class Database extends Observable {
 	}
 
 	public void addAccount(String accountName, double accountBalance,
-			boolean accountIncluded) {
+			boolean accountHidden) {
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("INSERT INTO Accounts VALUES (?,?,?)");
 			ps.setString(1, accountName);
 			ps.setDouble(2, accountBalance);
-			int included = accountIncluded ? 1 : 0;
-			ps.setInt(3, included);
+			int hidden = accountHidden ? 1 : 0;
+			ps.setInt(3, hidden);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -86,7 +86,7 @@ public class Database extends Observable {
 	}
 
 	public void editAccount(String oldAccountName, String accountName,
-			double accountBalance, boolean accountIncluded) {
+			double accountBalance, boolean accountHidden) {
 		PreparedStatement ps;
 		try {
 			c.setAutoCommit(false);
@@ -94,11 +94,11 @@ public class Database extends Observable {
 			ps.setString(1, accountName);
 			ps.setString(2, oldAccountName);
 			ps.executeUpdate();
-			ps = c.prepareStatement("UPDATE Accounts SET accountName=?, accountBalance=?, accountIncluded = ? WHERE accountName=?");
+			ps = c.prepareStatement("UPDATE Accounts SET accountName=?, accountBalance=?, accountHidden = ? WHERE accountName=?");
 			ps.setString(1, accountName);
 			ps.setDouble(2, accountBalance);
-			int included = accountIncluded ? 1 : 0;
-			ps.setInt(3, included);
+			int hidden = accountHidden ? 1 : 0;
+			ps.setInt(3, hidden);
 			ps.setString(4, oldAccountName);
 			ps.executeUpdate();
 			c.commit();
@@ -217,14 +217,14 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts WHERE accountIncluded >= ? ORDER BY accountName ASC");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT accountName,accountBalance,accountHidden FROM Accounts WHERE accountHidden <= ? ORDER BY accountName ASC");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
 				row[0] = results.getString("accountName");
 				row[1] = results.getDouble("accountBalance");
-				row[2] = results.getInt("accountIncluded") == 1;
+				row[2] = results.getInt("accountHidden") == 1;
 				list.add(row);
 			}
 		} catch (SQLException e) {
@@ -237,8 +237,8 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[5];
@@ -263,8 +263,8 @@ public class Database extends Observable {
 		ArrayList<String> list = new ArrayList<String>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName FROM Accounts WHERE accountIncluded >= ? ORDER BY accountName ASC");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT accountName FROM Accounts WHERE accountHidden <= ? ORDER BY accountName ASC");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				list.add(results.getString("accountName"));
@@ -279,8 +279,8 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -300,8 +300,8 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear ORDER BY transactionYear DESC");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY transactionYear ORDER BY transactionYear DESC");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -321,8 +321,8 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -343,8 +343,8 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -364,8 +364,8 @@ public class Database extends Observable {
 	public Double getTotalRevenue() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ?");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ?");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				return results.getDouble("revenue");
@@ -380,8 +380,8 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY accountName");
+			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -451,9 +451,9 @@ public class Database extends Observable {
 		Map<String, Map<Date, Double>> dataset = new TreeMap<String, Map<Date, Double>>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountIncluded >= ? AND accountName IN "
+					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountHidden <= ? AND accountName IN "
 							+ selectedAccounts);
-			ps.setInt(1, onlyIncluded);
+			ps.setInt(1, showHidden);
 			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
 			while (accs.next()) {
@@ -496,15 +496,17 @@ public class Database extends Observable {
 //		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(to, startBalance);
 		PreparedStatement ps;
+		Date latest = getNewestTransactionDate();
+		latest = latest !=null ? latest:new Date(); 
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
 					"WHERE accountName IN " + consideredAccounts, from,
-					getNewestTransactionDate());
+					latest);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
-					"WHERE accountName = ?", from, getNewestTransactionDate());
+					"WHERE accountName = ?", from, latest);
 			ps.setString(14, accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
@@ -543,7 +545,7 @@ public class Database extends Observable {
 		String foy = year.format(from);
 		String fom = month.format(from);
 		String fod = day.format(from);
-		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionYear <= ? AND transactionYear >= ?)";
+		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear <= ? AND transactionYear >= ?)";
 		String sqlMonths = "(SELECT * FROM "
 				+ sqlYears
 				+ " WHERE NOT (transactionYear == ? AND transactionMonth > ? OR transactionYear == ?  AND transactionmonth < ?))";
@@ -557,7 +559,7 @@ public class Database extends Observable {
 						+ " "
 						+ sqlWhere
 						+ "ORDER BY transactionYear,transactionMonth,transactionDay ASC");
-		ps.setInt(1, onlyIncluded);
+		ps.setInt(1, showHidden);
 		ps.setString(2, toy);
 		ps.setString(3, foy);
 
@@ -589,10 +591,10 @@ public class Database extends Observable {
 		return 0.;
 	}
 
-	public double getIncludedAccountBalanceSum() {
+	public double getVisibleAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded = 1");
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountHidden = 1");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -603,10 +605,10 @@ public class Database extends Observable {
 		return 0.;
 	}
 
-	public double getNotIncludedAccountBalanceSum() {
+	public double getHiddenAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountIncluded = 0");
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountHidden = 0");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -744,21 +746,21 @@ public class Database extends Observable {
 		return dbfile;
 	}
 
-	public void setOnlyIncluded(boolean onlyIncluded) {
-		this.onlyIncluded = onlyIncluded ? 1 : 0;
+	public void setShowHidden(boolean showHidden) {
+		this.showHidden = showHidden ? 1 : 0;
 		setChanged();
 		notifyObservers();
 	}
 
-	public boolean getOnlyIncluded() {
-		return onlyIncluded > 0 ? true : false;
+	public boolean getShowHidden() {
+		return showHidden > 0 ? true : false;
 	}
 
 	public long getNumberOfTransactions() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?");
+			ps.setInt(1, showHidden);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getLong("number");
@@ -772,8 +774,8 @@ public class Database extends Observable {
 	public long getNumberOfDeposits() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionAmount > 0");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionAmount > 0");
+			ps.setInt(1, showHidden);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getLong("number");
@@ -787,8 +789,8 @@ public class Database extends Observable {
 	public long getNumberOfWithdrawals() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ? AND transactionAmount < 0");
-			ps.setInt(1, onlyIncluded);
+					.prepareStatement("SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionAmount < 0");
+			ps.setInt(1, showHidden);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getLong("number");
@@ -811,22 +813,22 @@ public class Database extends Observable {
 
 	private Date getTransactionDate(String sql) {
 		try {
-			String year = "SELECT "+ sql +"(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountIncluded >= ?";
-			String month = "SELECT "+ sql +"(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("+ year +") AND accountIncluded >= ?";
-			String day = "SELECT "+ sql +"(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("+ month +") AND transactionYear IN ("+ year +") AND accountIncluded >= ?";
+			String year = "SELECT "+ sql +"(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
+			String month = "SELECT "+ sql +"(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("+ year +") AND accountHidden <= ?";
+			String day = "SELECT "+ sql +"(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("+ month +") AND transactionYear IN ("+ year +") AND accountHidden <= ?";
 			//			PreparedStatement ps = c
 //					.prepareStatement("SELECT "
 //							+ sql
 //							+ " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
 			PreparedStatement ps = c
 					.prepareStatement("SELECT transactionYear as year,transactionMonth as month,transactionDay as day FROM Transactions NATURAL JOIN Accounts WHERE transactionYear IN (" + year +") AND transactionMonth IN (" + month +") AND transactionDay IN (" + day +")");
-			ps.setInt(1, onlyIncluded);
-			ps.setInt(2, onlyIncluded);
-			ps.setInt(3, onlyIncluded);
-			ps.setInt(4, onlyIncluded);
-			ps.setInt(5, onlyIncluded);
-			ps.setInt(6, onlyIncluded);
-			ps.setInt(7, onlyIncluded);
+			ps.setInt(1, showHidden);
+			ps.setInt(2, showHidden);
+			ps.setInt(3, showHidden);
+			ps.setInt(4, showHidden);
+			ps.setInt(5, showHidden);
+			ps.setInt(6, showHidden);
+			ps.setInt(7, showHidden);
 			ResultSet result = ps.executeQuery();
 			Date date = null;
 			while (result.next()) {

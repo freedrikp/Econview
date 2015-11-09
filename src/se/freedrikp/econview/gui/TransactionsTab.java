@@ -284,8 +284,18 @@ public class TransactionsTab extends JPanel implements Observer {
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
 		GUI.resizeTable(transactionsTable);
-		oldestDate.setText(dateFormat.format(db.getOldestTransactionDate()));
-		newestDate.setText(dateFormat.format(db.getNewestTransactionDate()));
+		Date oldest = db.getOldestTransactionDate();
+		if (oldest!=null){
+			oldestDate.setText(dateFormat.format(oldest));			
+		}else{
+			oldestDate.setText(Utilities.getString("UNKNOWN"));
+		}
+		Date newest = db.getNewestTransactionDate();
+		if (newest!=null){
+			newestDate.setText(dateFormat.format(newest));			
+		}else{
+			newestDate.setText(Utilities.getString("UNKNOWN"));
+		}	
 		numTransactions.setText(Long.toString(db.getNumberOfTransactions()));
 		numDeposits.setText(Long.toString(db.getNumberOfDeposits()));
 		numWithdrawals.setText(Long.toString(db.getNumberOfWithdrawals()));

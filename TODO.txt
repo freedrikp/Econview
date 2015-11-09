@@ -1,5 +1,4 @@
 === TODO ===
-*Change "included" to "hidden" (reverse logic)
 *Implement some kind of multiaccount transactions (needs to think about it further)
 *Clean up code
 
@@ -11,6 +10,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Change "included" to "hidden" (reverse logic) ---- v1.4
+
 *Fix ordering in revenue ---- v1.3
 
 *Fix edit transaction/account bug ---- v1.3
