@@ -71,12 +71,11 @@ public class AccountsTab extends JPanel implements Observer {
 				// }
 				// db.addAccount(accountName,
 				// Double.parseDouble(accountBalance));
-				String[] accountDetails = askUserAccount(null, null,
-						Boolean.toString(true));
+				Object[] accountDetails = askUserAccount(null, null, true);
 				if (accountDetails != null) {
-					db.addAccount(accountDetails[0],
-							GUI.parseAmount(accountDetails[1]),
-							Boolean.parseBoolean(accountDetails[2]));
+					db.addAccount((String)accountDetails[0],
+							GUI.parseAmount((String)accountDetails[1]),
+							(boolean)accountDetails[2]);
 				}
 			}
 		});
@@ -109,19 +108,18 @@ public class AccountsTab extends JPanel implements Observer {
 				// (String) accountsTable.getModel().getValueAt(
 				// accountsTable.getSelectedRow(), 0),
 				// accountName, Double.parseDouble(accountBalance));
-				String[] accountDetails = askUserAccount(
+				Object[] accountDetails = askUserAccount(
 						(String) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 0),
 						(String) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 1),
-						(String) accountsTable.getModel().getValueAt(
+						(boolean) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 2));
 				if (accountDetails != null) {
 					db.editAccount((String) accountsTable.getModel()
 							.getValueAt(accountsTable.getSelectedRow(), 0),
-							accountDetails[0], GUI
-									.parseAmount(accountDetails[1]), Boolean
-									.parseBoolean(accountDetails[2]));
+							(String)accountDetails[0], GUI
+									.parseAmount((String)accountDetails[1]), (boolean)accountDetails[2]);
 				}
 			}
 		});
@@ -186,8 +184,8 @@ public class AccountsTab extends JPanel implements Observer {
 		update(db, null);
 	}
 
-	private String[] askUserAccount(String selectedName,
-			String selectedBalance, String selectedIncluded) {
+	private Object[] askUserAccount(String selectedName,
+			String selectedBalance, boolean selectedIncluded) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		JTextField nameField = new JTextField("", 15);
@@ -207,7 +205,7 @@ public class AccountsTab extends JPanel implements Observer {
 		panel.add(balancePanel);
 		JCheckBox includedBox = new JCheckBox(
 				Utilities.getString("ADD_ACCOUNT_INCLUDE") + " ",
-				Boolean.parseBoolean(selectedIncluded));
+				selectedIncluded);
 		panel.add(includedBox);
 
 		int result = JOptionPane.showConfirmDialog(null, panel,
@@ -216,10 +214,10 @@ public class AccountsTab extends JPanel implements Observer {
 				null);
 
 		if (result == JOptionPane.OK_OPTION) {
-			String[] details = new String[3];
+			Object[] details = new Object[3];
 			details[0] = nameField.getText();
 			details[1] = balanceField.getText();
-			details[2] = Boolean.toString(includedBox.isSelected());
+			details[2] = includedBox.isSelected();
 			return details;
 		}
 		return null;

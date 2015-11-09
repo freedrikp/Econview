@@ -102,17 +102,18 @@ public class TransactionsTab extends JPanel implements Observer {
 				// e1.printStackTrace();
 				// }
 
-				String[] transactionDetails = askUserTransaction(db
-						.getAccountNames().toArray(), null, null, dateFormat
-						.format(new Date()), null);
+				Object[] transactionDetails = askUserTransaction(db
+						.getAccountNames().toArray(), null, null, new Date(),
+						null);
 
 				if (transactionDetails != null) {
 					try {
-						db.addTransaction(transactionDetails[0],
-								GUI.parseAmount(transactionDetails[1]),
-								dateFormat.parse(transactionDetails[2]),
-								transactionDetails[3]);
-					} catch (NumberFormatException | ParseException e1) {
+						db.addTransaction(
+								(String) transactionDetails[0],
+								GUI.parseAmount((String) transactionDetails[1]),
+								(Date) transactionDetails[2],
+								(String) transactionDetails[3]);
+					} catch (NumberFormatException e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -175,30 +176,30 @@ public class TransactionsTab extends JPanel implements Observer {
 				// } catch (ParseException e1) {
 				// e1.printStackTrace();
 				// }
-				String[] transactionDetails = askUserTransaction(
-						db.getAccountNames().toArray(),
-						(String) transactionsTable.getModel().getValueAt(
-								transactionsTable.getSelectedRow(), 1),
-						(String) transactionsTable.getModel().getValueAt(
-								transactionsTable.getSelectedRow(), 2),
-						(String) transactionsTable.getModel().getValueAt(
-								transactionsTable.getSelectedRow(), 3),
-						(String) transactionsTable.getModel().getValueAt(
-								transactionsTable.getSelectedRow(), 4));
-				if (transactionDetails != null) {
-					try {
-						db.editTransaction(Long
-								.parseLong((String) transactionsTable
-										.getModel().getValueAt(
-												transactionsTable
-														.getSelectedRow(), 0)),
-								transactionDetails[0], GUI
-										.parseAmount(transactionDetails[1]),
-								dateFormat.parse(transactionDetails[2]),
-								transactionDetails[3]);
-					} catch (NumberFormatException | ParseException e1) {
-						e1.printStackTrace();
+				try {
+					Object[] transactionDetails = askUserTransaction(
+							db.getAccountNames().toArray(),
+							(String) transactionsTable.getModel().getValueAt(
+									transactionsTable.getSelectedRow(), 1),
+							(String) transactionsTable.getModel().getValueAt(
+									transactionsTable.getSelectedRow(), 2),
+							(Date) dateFormat.parse((String) transactionsTable
+									.getModel().getValueAt(
+											transactionsTable.getSelectedRow(),
+											3)),
+							(String) transactionsTable.getModel().getValueAt(
+									transactionsTable.getSelectedRow(), 4));
+					if (transactionDetails != null) {
+						db.editTransaction(
+								(long) transactionsTable.getModel().getValueAt(
+										transactionsTable.getSelectedRow(), 0),
+								(String) transactionDetails[0],
+								GUI.parseAmount((String) transactionDetails[1]),
+								(Date) transactionDetails[2],
+								(String) transactionDetails[3]);
 					}
+				} catch (NumberFormatException | ParseException e1) {
+					e1.printStackTrace();
 				}
 
 			}
@@ -214,17 +215,12 @@ public class TransactionsTab extends JPanel implements Observer {
 						null,
 						Utilities.getString("REMOVE_TRANSACTION_PROMPT")
 								+ " -- "
-								+ (String) transactionsTable.getModel()
-										.getValueAt(
-												transactionsTable
-														.getSelectedRow(), 0),
+								+ transactionsTable.getModel().getValueAt(
+										transactionsTable.getSelectedRow(), 0),
 						Utilities.getString("REMOVE_TRANSACTION"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-					db.removeTransaction(Long
-							.parseLong((String) transactionsTable.getModel()
-									.getValueAt(
-											transactionsTable.getSelectedRow(),
-											0)));
+					db.removeTransaction((long) transactionsTable.getModel()
+							.getValueAt(transactionsTable.getSelectedRow(), 0));
 				}
 			}
 		});
@@ -296,8 +292,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		repaint();
 	}
 
-	private String[] askUserTransaction(Object[] accountValues,
-			String selectedAccount, String selectedAmount, String selectedDate,
+	private Object[] askUserTransaction(Object[] accountValues,
+			String selectedAccount, String selectedAmount, Date selectedDate,
 			String selectedComment) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -323,13 +319,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		datePanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_DATE")
 				+ ":"));
 		// -----
-		JDateChooser dateSelector = null;
-		try {
-			dateSelector = new JDateChooser(dateFormat.parse(selectedDate),
-					dateFormat.toPattern());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		JDateChooser dateSelector = new JDateChooser(selectedDate,
+				dateFormat.toPattern());
 		datePanel.add(dateSelector);
 		// -----
 		// datePanel.add(dateField);
@@ -349,10 +340,10 @@ public class TransactionsTab extends JPanel implements Observer {
 				null);
 
 		if (result == JOptionPane.OK_OPTION) {
-			String[] details = new String[4];
-			details[0] = (String) accountField.getSelectedItem();
+			Object[] details = new Object[4];
+			details[0] = accountField.getSelectedItem();
 			details[1] = amountField.getText();
-			details[2] = dateFormat.format(dateSelector.getDate());// dateField.getText();
+			details[2] = dateSelector.getDate();// dateField.getText();
 			details[3] = commentField.getText();
 			return details;
 		}

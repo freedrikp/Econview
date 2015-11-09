@@ -12,6 +12,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fix edit transaction/account bug ---- v1.3
+
 *Fix bug so oldest and newest date works correctly ---- v1.3
 
 *Fix bug so scrollPane is used in settings panel ---- v1.3
