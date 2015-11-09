@@ -217,7 +217,7 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts WHERE accountIncluded >= ?");
+					.prepareStatement("SELECT accountName,accountBalance,accountIncluded FROM Accounts WHERE accountIncluded >= ? ORDER BY accountName ASC");
 			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -263,7 +263,7 @@ public class Database extends Observable {
 		ArrayList<String> list = new ArrayList<String>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName FROM Accounts WHERE accountIncluded >= ?");
+					.prepareStatement("SELECT accountName FROM Accounts WHERE accountIncluded >= ? ORDER BY accountName ASC");
 			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -279,7 +279,7 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear,transactionMonth");
+					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC");
 			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -300,7 +300,7 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear");
+					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY transactionYear ORDER BY transactionYear DESC");
 			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -321,7 +321,7 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear,transactionMonth");
+					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC");
 			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -343,7 +343,7 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear");
+					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountIncluded >= ? GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC");
 			ps.setInt(1, onlyIncluded);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
