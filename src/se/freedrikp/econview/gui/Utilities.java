@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -137,9 +138,9 @@ public class Utilities {
 
 	private static void writeConfig() {
 		try {
-			FileWriter fw = new FileWriter(configFile);
+			PrintWriter fw = new PrintWriter(configFile,"UTF-8");
 			for (Map.Entry<String, String> entry : config.entrySet()) {
-				fw.write(entry.getKey() + "=" + entry.getValue() + "\n");
+				fw.println(entry.getKey() + "=" + entry.getValue());
 			}
 			fw.flush();
 			fw.close();
@@ -162,13 +163,13 @@ public class Utilities {
 
 	private static void writeDefaultLanguage() {
 		File langFile = new File(getConfig("LANGUAGE"));
-		FileWriter fw;
+		PrintWriter fw;
 			try {
-				fw = new FileWriter(langFile);
+				fw = new PrintWriter(langFile,"UTF-8");
 			
 			for (Map.Entry<String, String> e : lang.get(getConfig("LANGUAGE")).entrySet()) {
 
-				fw.write(e.getKey() + "=" + e.getValue() + "\n");
+				fw.println(e.getKey() + "=" + e.getValue());
 			}
 			fw.flush();
 			fw.close();	
@@ -207,13 +208,13 @@ public class Utilities {
 		for (Map.Entry<String, HashMap<String, String>> entry : lang.entrySet()) {
 			File langFile = new File(entry.getKey());
 			if ((!langFile.exists() || langFile.length() == 0)) {
-				FileWriter fw;
+				PrintWriter fw;
 				try {
-					fw = new FileWriter(langFile);
+					fw = new PrintWriter(langFile,"UTF-8");
 					for (Map.Entry<String, String> e : entry.getValue()
 							.entrySet()) {
 
-						fw.write(e.getKey() + "=" + e.getValue() + "\n");
+						fw.println(e.getKey() + "=" + e.getValue());
 					}
 					fw.flush();
 					fw.close();

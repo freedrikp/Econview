@@ -13,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fixed bug with encoding of files ---- v1.6
+
 *Fixed bug with hidden/visible sum of balance ---- v1.5
 
 *Fixed so default language is written back after parsing, helps when creating new language files and new strings ---- v1.5
