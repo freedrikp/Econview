@@ -2,6 +2,7 @@ package se.freedrikp.econview.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,12 +10,14 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -108,11 +111,14 @@ public class TransactionsTab extends JPanel implements Observer {
 
 				if (transactionDetails != null) {
 					try {
-						db.addTransaction(
-								(String) transactionDetails[0],
-								GUI.parseAmount((String) transactionDetails[1]),
-								(Date) transactionDetails[2],
-								(String) transactionDetails[3]);
+						int size = transactionDetails.length;
+						for (int i = 0; i < size - 2; i+=2){
+							db.addTransaction(
+									(String) transactionDetails[i],
+									GUI.parseAmount((String) transactionDetails[i+1]),
+									(Date) transactionDetails[size-2],
+									(String) transactionDetails[size-1]);
+						}
 					} catch (NumberFormatException e1) {
 						e1.printStackTrace();
 					}
@@ -190,13 +196,23 @@ public class TransactionsTab extends JPanel implements Observer {
 							(String) transactionsTable.getModel().getValueAt(
 									transactionsTable.getSelectedRow(), 4));
 					if (transactionDetails != null) {
-						db.editTransaction(
-								(long) transactionsTable.getModel().getValueAt(
-										transactionsTable.getSelectedRow(), 0),
-								(String) transactionDetails[0],
-								GUI.parseAmount((String) transactionDetails[1]),
-								(Date) transactionDetails[2],
-								(String) transactionDetails[3]);
+						int size = transactionDetails.length;
+						for(int i = 0; i < size-2; i+=2){
+							if (i < 2){
+								db.editTransaction(
+										(long) transactionsTable.getModel().getValueAt(
+												transactionsTable.getSelectedRow(), 0),
+												(String) transactionDetails[i],
+												GUI.parseAmount((String) transactionDetails[i+1]),
+												(Date) transactionDetails[size-2],
+												(String) transactionDetails[size-1]);
+							}else{
+								db.addTransaction((String) transactionDetails[i],
+												GUI.parseAmount((String) transactionDetails[i+1]),
+												(Date) transactionDetails[size-2],
+												(String) transactionDetails[size-1]);
+							}
+						}
 					}
 				} catch (NumberFormatException | ParseException e1) {
 					e1.printStackTrace();
@@ -285,35 +301,42 @@ public class TransactionsTab extends JPanel implements Observer {
 				transactionsPane.getVerticalScrollBar().getMaximum());
 		GUI.resizeTable(transactionsTable);
 		Date oldest = db.getOldestTransactionDate();
-		if (oldest!=null){
-			oldestDate.setText(dateFormat.format(oldest));			
-		}else{
+		if (oldest != null) {
+			oldestDate.setText(dateFormat.format(oldest));
+		} else {
 			oldestDate.setText(Utilities.getString("UNKNOWN"));
 		}
 		Date newest = db.getNewestTransactionDate();
-		if (newest!=null){
-			newestDate.setText(dateFormat.format(newest));			
-		}else{
+		if (newest != null) {
+			newestDate.setText(dateFormat.format(newest));
+		} else {
 			newestDate.setText(Utilities.getString("UNKNOWN"));
-		}	
+		}
 		numTransactions.setText(Long.toString(db.getNumberOfTransactions()));
 		numDeposits.setText(Long.toString(db.getNumberOfDeposits()));
 		numWithdrawals.setText(Long.toString(db.getNumberOfWithdrawals()));
 		repaint();
 	}
 
-	private Object[] askUserTransaction(Object[] accountValues,
+	private Object[] askUserTransaction(final Object[] accountValues,
 			String selectedAccount, String selectedAmount, Date selectedDate,
 			String selectedComment) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		final JPanel multiAccountPanel = new JPanel();
+		multiAccountPanel.setLayout(new BoxLayout(multiAccountPanel,
+				BoxLayout.Y_AXIS));
+
+		final LinkedList<JComponent> multiAccounts = new LinkedList<JComponent>();
+
 		JComboBox accountField = new JComboBox(accountValues);
 		accountField.setSelectedItem(selectedAccount);
 		JPanel accountPanel = new JPanel();
 		accountPanel.add(new JLabel(Utilities
 				.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
 		accountPanel.add(accountField);
-		panel.add(accountPanel);
+		multiAccountPanel.add(accountPanel);
+		multiAccounts.add(accountField);
 
 		JTextField amountField = new JTextField("", 7);
 		amountField.setText(selectedAmount);
@@ -321,7 +344,54 @@ public class TransactionsTab extends JPanel implements Observer {
 		amountPanel.add(new JLabel(Utilities
 				.getString("ADD_TRANSACTION_AMOUNT") + ":"));
 		amountPanel.add(amountField);
-		panel.add(amountPanel);
+		multiAccountPanel.add(amountPanel);
+		multiAccounts.add(amountField);
+
+//		JScrollPane multiAccountScrollPane = new JScrollPane();
+//		multiAccountScrollPane.setViewportView(multiAccountPanel);
+//		panel.add(multiAccountScrollPane);
+		panel.add(multiAccountPanel);
+
+		JPanel multiAccountControlPanel = new JPanel();
+		JButton removeMultiAccountButton = new JButton("-");
+		JButton addMultiAccountButton = new JButton("+");
+
+		removeMultiAccountButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (multiAccounts.size() >= 4) {
+					multiAccountPanel.remove(multiAccounts.removeLast().getParent());
+					multiAccountPanel.remove(multiAccounts.removeLast().getParent());
+				}
+				multiAccountPanel.revalidate();
+			}
+		});
+
+		addMultiAccountButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox accountField = new JComboBox(accountValues);
+				accountField.setSelectedIndex(-1);
+				JPanel accountPanel = new JPanel();
+				accountPanel.add(new JLabel(Utilities
+						.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
+				accountPanel.add(accountField);
+				multiAccountPanel.add(accountPanel);
+				multiAccounts.add(accountField);
+
+				JTextField amountField = new JTextField("", 7);
+				JPanel amountPanel = new JPanel();
+				amountPanel.add(new JLabel(Utilities
+						.getString("ADD_TRANSACTION_AMOUNT") + ":"));
+				amountPanel.add(amountField);
+				multiAccountPanel.add(amountPanel);
+				multiAccounts.add(amountField);
+
+				multiAccountPanel.revalidate();
+			}
+		});
+
+		multiAccountControlPanel.add(removeMultiAccountButton);
+		multiAccountControlPanel.add(addMultiAccountButton);
+		panel.add(multiAccountControlPanel);
 
 		// JTextField dateField = new JTextField("", 7);
 		// dateField.setText(selectedDate);
@@ -343,18 +413,31 @@ public class TransactionsTab extends JPanel implements Observer {
 				.getString("ADD_TRANSACTION_COMMENT") + ":"));
 		commentPanel.add(commentField);
 		panel.add(commentPanel);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportView(panel);
+		scrollPane.setPreferredSize(new Dimension(Integer.parseInt(Utilities.getConfig("ADD_TRANSACTION_PANEL_HEIGHT")),Integer.parseInt(Utilities.getConfig("ADD_TRANSACTION_PANEL_WIDTH"))));
 
-		int result = JOptionPane.showConfirmDialog(null, panel,
+		int result = JOptionPane.showConfirmDialog(null, scrollPane,
 				Utilities.getString("TRANSACTION_DETAILS"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 				null);
 
 		if (result == JOptionPane.OK_OPTION) {
-			Object[] details = new Object[4];
-			details[0] = accountField.getSelectedItem();
-			details[1] = amountField.getText();
-			details[2] = dateSelector.getDate();// dateField.getText();
-			details[3] = commentField.getText();
+			Object[] details = new Object[multiAccounts.size()+2];
+			int i = 0;
+			for(JComponent c: multiAccounts){
+				if (i % 2 == 0){
+					details[i]=((JComboBox)c).getSelectedItem();
+				}else{
+					details[i]=((JTextField)c).getText();
+				}
+				i++;
+			}
+//			details[0] = accountField.getSelectedItem();
+//			details[1] = amountField.getText();
+			details[i] = dateSelector.getDate();// dateField.getText();
+			details[i+1] = commentField.getText();
 			return details;
 		}
 		return null;

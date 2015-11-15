@@ -1,6 +1,9 @@
 === TODO ===
-*Implement some kind of multiaccount transactions (needs to think about it further)
 *Clean up code
+*Select view of transactions based on date interval
+*Implement support for template transactions
+*Sort among tables
+*Be able to edit multitransactions
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -10,12 +13,14 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Implement some kind of multiaccount transactions (transactions can be added in batches with same date and comment) ---- v1.4
+
 *Change "included" to "hidden" (reverse logic) ---- v1.4
 
 *Fix ordering in revenue ---- v1.3
 
 *Fix edit transaction/account bug ---- v1.3
-git 
+
 *Fix bug so oldest and newest date works correctly ---- v1.3
 
 *Fix bug so scrollPane is used in settings panel ---- v1.3
