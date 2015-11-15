@@ -154,9 +154,27 @@ public class Utilities {
 			loadDefaultLanguage();
 			writeLanguages();
 			parseLanguages();
+			writeDefaultLanguage();
 		}
 		String string = lang.get(getConfig("LANGUAGE")).get(key);
 		return string != null ? string : "<unknown>";
+	}
+
+	private static void writeDefaultLanguage() {
+		File langFile = new File(getConfig("LANGUAGE"));
+		FileWriter fw;
+			try {
+				fw = new FileWriter(langFile);
+			
+			for (Map.Entry<String, String> e : lang.get(getConfig("LANGUAGE")).entrySet()) {
+
+				fw.write(e.getKey() + "=" + e.getValue() + "\n");
+			}
+			fw.flush();
+			fw.close();	
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 	}
 
 	private static void parseLanguages() {

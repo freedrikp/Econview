@@ -594,7 +594,7 @@ public class Database extends Observable {
 	public double getVisibleAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountHidden = 1");
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountHidden = 0");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -608,7 +608,7 @@ public class Database extends Observable {
 	public double getHiddenAccountBalanceSum() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountHidden = 0");
+					.prepareStatement("SELECT SUM(accountBalance) as balanceSum FROM Accounts WHERE accountHidden = 1");
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");

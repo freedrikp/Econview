@@ -13,6 +13,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fixed bug with hidden/visible sum of balance ---- v1.5
+
+*Fixed so default language is written back after parsing, helps when creating new language files and new strings ---- v1.5
+
 *Implement some kind of multiaccount transactions (transactions can be added in batches with same date and comment) ---- v1.4
 
 *Change "included" to "hidden" (reverse logic) ---- v1.4
