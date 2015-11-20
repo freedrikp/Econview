@@ -4,6 +4,7 @@
 *Implement support for template transactions
 *Sort among tables
 *Be able to edit multitransactions
+*Investigate tabbed pane for diagrams
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
