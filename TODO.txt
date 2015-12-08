@@ -5,6 +5,7 @@
 *Sort among tables
 *Be able to edit multitransactions
 *Investigate tabbed pane for diagrams
+*Investigate possibillities of users within the system
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
