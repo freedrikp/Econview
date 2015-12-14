@@ -1,11 +1,12 @@
 === TODO ===
 *Clean up code
-*Select view of transactions based on date interval
+*Select view of transactions based on date interval and account
 *Implement support for template transactions
 *Sort among tables
 *Be able to edit multitransactions
 *Investigate tabbed pane for diagrams
-*Investigate possibillities of users within the system
+*Investigate possibillities of users within the system -- crypto and stuff
+*More buttons on transactiondialog, new transaction immediately
 
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
