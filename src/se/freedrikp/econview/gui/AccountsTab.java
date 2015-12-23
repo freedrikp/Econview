@@ -59,19 +59,7 @@ public class AccountsTab extends JPanel implements Observer {
 		btnAddAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// String accountName = askUser("Account Name",
-				// "What is the name of the new account?", null, null);
-				// if (accountName == null) {
-				// return;
-				// }
-				// String accountBalance = askUser("Account Balance",
-				// "What is the balance of the new account?", null, null);
-				// if (accountBalance == null) {
-				// return;
-				// }
-				// db.addAccount(accountName,
-				// Double.parseDouble(accountBalance));
-				Object[] accountDetails = askUserAccount(null, null, true);
+				Object[] accountDetails = AccountDialog.showAddDialog();
 				if (accountDetails != null) {
 					db.addAccount((String)accountDetails[0],
 							GUI.parseAmount((String)accountDetails[1]),
@@ -88,27 +76,7 @@ public class AccountsTab extends JPanel implements Observer {
 		btnEditAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				// String accountName = askUser(
-				// "Account Name",
-				// "What is the name of the account?",
-				// (String) accountsTable.getModel().getValueAt(
-				// accountsTable.getSelectedRow(), 0), null);
-				// if (accountName == null) {
-				// return;
-				// }
-				// String accountBalance = askUser(
-				// "Account Balance",
-				// "What is the balance of the account?",
-				// (String) accountsTable.getModel().getValueAt(
-				// accountsTable.getSelectedRow(), 1), null);
-				// if (accountBalance == null) {
-				// return;
-				// }
-				// db.editAccount(
-				// (String) accountsTable.getModel().getValueAt(
-				// accountsTable.getSelectedRow(), 0),
-				// accountName, Double.parseDouble(accountBalance));
-				Object[] accountDetails = askUserAccount(
+				Object[] accountDetails = AccountDialog.showEditDialog(
 						(String) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 0),
 						(String) accountsTable.getModel().getValueAt(
@@ -182,45 +150,6 @@ public class AccountsTab extends JPanel implements Observer {
 		accountsButtonPanel.add(totalHiddenBalanceLabel);
 		totalHiddenBalanceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		update(db, null);
-	}
-
-	private Object[] askUserAccount(String selectedName,
-			String selectedBalance, boolean selectedIncluded) {
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		JTextField nameField = new JTextField("", 15);
-		nameField.setText(selectedName);
-		JPanel namePanel = new JPanel();
-		namePanel
-				.add(new JLabel(Utilities.getString("ADD_ACCOUNT_NAME") + ":"));
-		namePanel.add(nameField);
-		panel.add(namePanel);
-
-		JTextField balanceField = new JTextField("", 7);
-		balanceField.setText(selectedBalance);
-		JPanel balancePanel = new JPanel();
-		balancePanel.add(new JLabel(Utilities.getString("ADD_ACCOUNT_BALANCE")
-				+ ":"));
-		balancePanel.add(balanceField);
-		panel.add(balancePanel);
-		JCheckBox hiddenBox = new JCheckBox(
-				Utilities.getString("ADD_ACCOUNT_HIDDEN") + " ",
-				selectedIncluded);
-		panel.add(hiddenBox);
-
-		int result = JOptionPane.showConfirmDialog(null, panel,
-				Utilities.getString("ACCOUNT_DETAILS"),
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				null);
-
-		if (result == JOptionPane.OK_OPTION) {
-			Object[] details = new Object[3];
-			details[0] = nameField.getText();
-			details[1] = balanceField.getText();
-			details[2] = hiddenBox.isSelected();
-			return details;
-		}
-		return null;
 	}
 
 	public void update(Observable o, Object arg) {
