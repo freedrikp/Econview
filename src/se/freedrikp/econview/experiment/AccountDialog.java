@@ -1,7 +1,10 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.experiment;
+
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -10,20 +13,18 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-public class TransactionDialog extends JDialog {
+public class AccountDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField datetextField;
 	private JTextField accountNameTextField;
-	private JTextField commentTextField;
-	private JTextField amountTextField;
+	private JTextField balanceTextField;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			TransactionDialog dialog = new TransactionDialog();
+			AccountDialog dialog = new AccountDialog("","");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -34,7 +35,7 @@ public class TransactionDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public TransactionDialog() {
+	public AccountDialog(String accountName, String accountBalance) {
 		setBounds(100, 100, 450, 241);
 		getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -50,31 +51,13 @@ public class TransactionDialog extends JDialog {
 			accountNameTextField.setColumns(10);
 		}
 		{
-			JLabel amountLabel = new JLabel("Amount:");
-			contentPanel.add(amountLabel);
+			JLabel balanceLabel = new JLabel("Balance:");
+			contentPanel.add(balanceLabel);
 		}
 		{
-			amountTextField = new JTextField();
-			contentPanel.add(amountTextField);
-			amountTextField.setColumns(10);
-		}
-		{
-			JLabel dateLabel = new JLabel("Date:");
-			contentPanel.add(dateLabel);
-		}
-		{
-			datetextField = new JTextField();
-			contentPanel.add(datetextField);
-			datetextField.setColumns(10);
-		}
-		{
-			JLabel commentLabel = new JLabel("Comment");
-			contentPanel.add(commentLabel);
-		}
-		{
-			commentTextField = new JTextField();
-			contentPanel.add(commentTextField);
-			commentTextField.setColumns(10);
+			balanceTextField = new JTextField();
+			contentPanel.add(balanceTextField);
+			balanceTextField.setColumns(10);
 		}
 		{
 			JLabel placeholder = new JLabel("");
@@ -86,6 +69,10 @@ public class TransactionDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			{
 				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -96,6 +83,7 @@ public class TransactionDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		
 	}
 
 }

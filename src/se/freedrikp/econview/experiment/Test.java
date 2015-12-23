@@ -1,3 +1,4 @@
+package se.freedrikp.econview.experiment;
 import se.freedrikp.econview.accounts.Account;
 import se.freedrikp.econview.accounts.AccountList;
 
