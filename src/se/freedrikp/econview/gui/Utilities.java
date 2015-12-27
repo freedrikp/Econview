@@ -40,6 +40,7 @@ public class Utilities {
 		lan.put("ADD_ACCOUNT_NAME", "Name");
 		lan.put("ADD_ACCOUNT_BALANCE", "Balance");
 		lan.put("ADD_ACCOUNT_HIDDEN", "Hide Account?");
+		lan.put("ADD_ACCOUNT_CHAIN", "Do you wish to add a new account?");
 		lan.put("ACCOUNT_DETAILS", "Account Details");
 		lan.put("TRANSACTION_HEADER_ID", "ID");
 		lan.put("TRANSACTION_HEADER_ACCOUNT", "Account");
