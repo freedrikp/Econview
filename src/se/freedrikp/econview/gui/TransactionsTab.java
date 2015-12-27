@@ -2,6 +2,7 @@ package se.freedrikp.econview.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,11 +84,13 @@ public class TransactionsTab extends JPanel implements Observer {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		fromDateChooser = new JDateChooser(cal.getTime(),
 				Utilities.getConfig("FULL_DATE_FORMAT"));
+		fromDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(fromDateChooser);
 		JLabel dateSepLabel = new JLabel("<->");
 		transactionsViewPanel.add(dateSepLabel);
 		toDateChooser = new JDateChooser(Calendar.getInstance().getTime(),
 				Utilities.getConfig("FULL_DATE_FORMAT"));
+		toDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(toDateChooser);
 
 		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), true);

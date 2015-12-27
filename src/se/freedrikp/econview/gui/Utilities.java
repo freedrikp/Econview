@@ -106,6 +106,8 @@ public class Utilities {
 		config.put("SETTINGS_CONFIGURATION_PANEL_HEIGHT", "600");
 		config.put("ADD_TRANSACTION_PANEL_WIDTH", "500");
 		config.put("ADD_TRANSACTION_PANEL_HEIGHT", "400");
+		config.put("DATE_FIELD_WIDTH", "150");
+		config.put("DATE_FIELD_HEIGHT", "15");
 	}
 
 	public static String getConfig(String key) {

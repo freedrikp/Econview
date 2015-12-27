@@ -100,6 +100,7 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		// diagFromDateField = new JTextField(df.format(new Date()));
 		diagFromDateField = new JDateChooser(new Date(), dateFormat.toPattern());
+		diagFromDateField.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		diagramControlPanel.add(diagFromDateField);
 		// diagFromDateField.setColumns(10);
 
@@ -109,6 +110,7 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		// diagToDateField = new JTextField(df.format(new Date()));
 		diagToDateField = new JDateChooser(new Date(), dateFormat.toPattern());
+		diagToDateField.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
 		

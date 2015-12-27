@@ -2,6 +2,7 @@ package se.freedrikp.econview.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -165,6 +166,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateFromField = new JTextField(df.format(new Date()));
 		revDateFromField = new JDateChooser(new Date(), dateFormat.toPattern());
+		revDateFromField.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		sideRevenuePanel.add(revDateFromField);
 		// revDateFromField.setColumns(7);
 
@@ -174,6 +176,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateToField = new JTextField(df.format(new Date()));
 		revDateToField = new JDateChooser(new Date(), dateFormat.toPattern());
+		revDateToField.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
