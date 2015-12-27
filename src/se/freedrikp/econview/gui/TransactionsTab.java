@@ -2,7 +2,6 @@ package se.freedrikp.econview.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,26 +9,20 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
-
-import com.toedter.calendar.JDateChooser;
 
 public class TransactionsTab extends JPanel implements Observer {
 
@@ -57,6 +50,7 @@ public class TransactionsTab extends JPanel implements Observer {
 				Utilities.getConfig("FULL_DATE_FORMAT"));
 		setLayout(new GridLayout(0, 2, 0, 0));
 
+		final TransactionDialog transDialog = new TransactionDialog(db);
 		transactionsPane = new JScrollPane();
 		add(transactionsPane);
 
@@ -73,26 +67,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		btnAddTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Object[] transactionDetails = TransactionDialog.showAddDialog(db
-						.getAccountNames().toArray());
-
-				if (transactionDetails != null) {
-					try {
-						int size = transactionDetails.length;
-						for (int i = 0; i < size - 2; i+=2){
-							db.addTransaction(
-									(String) transactionDetails[i],
-									GUI.parseAmount((String) transactionDetails[i+1]),
-									(Date) transactionDetails[size-2],
-									(String) transactionDetails[size-1]);
-						}
-					} catch (NumberFormatException e1) {
-						e1.printStackTrace();
-					}
-				}
-
+				transDialog.showAddDialog();
 			}
-
 		});
 		transactionsButtonPanel.setLayout(new BoxLayout(
 				transactionsButtonPanel, BoxLayout.Y_AXIS));
@@ -104,8 +80,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		btnEditTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					Object[] transactionDetails = TransactionDialog.showEditDialog(
-							db.getAccountNames().toArray(),
+					transDialog.showEditDialog((long) transactionsTable.getModel().getValueAt(
+									transactionsTable.getSelectedRow(), 0),
 							(String) transactionsTable.getModel().getValueAt(
 									transactionsTable.getSelectedRow(), 1),
 							(String) transactionsTable.getModel().getValueAt(
@@ -116,25 +92,6 @@ public class TransactionsTab extends JPanel implements Observer {
 											3)),
 							(String) transactionsTable.getModel().getValueAt(
 									transactionsTable.getSelectedRow(), 4));
-					if (transactionDetails != null) {
-						int size = transactionDetails.length;
-						for(int i = 0; i < size-2; i+=2){
-							if (i < 2){
-								db.editTransaction(
-										(long) transactionsTable.getModel().getValueAt(
-												transactionsTable.getSelectedRow(), 0),
-												(String) transactionDetails[i],
-												GUI.parseAmount((String) transactionDetails[i+1]),
-												(Date) transactionDetails[size-2],
-												(String) transactionDetails[size-1]);
-							}else{
-								db.addTransaction((String) transactionDetails[i],
-												GUI.parseAmount((String) transactionDetails[i+1]),
-												(Date) transactionDetails[size-2],
-												(String) transactionDetails[size-1]);
-							}
-						}
-					}
 				} catch (NumberFormatException | ParseException e1) {
 					e1.printStackTrace();
 				}

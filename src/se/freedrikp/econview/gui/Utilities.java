@@ -2,7 +2,6 @@ package se.freedrikp.econview.gui;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -55,6 +54,7 @@ public class Utilities {
 		lan.put("ADD_TRANSACTION_AMOUNT", "Amount");
 		lan.put("ADD_TRANSACTION_DATE", "Date");
 		lan.put("ADD_TRANSACTION_COMMENT", "Comment");
+		lan.put("ADD_TRANSACTION_CHAIN", "Do you wish to add a new transaction?");
 		lan.put("TRANSACTION_DETAILS", "Transaction Details");
 		lan.put("OLDEST_TRANSACTION_DATE", "Oldest Transaction Date");
 		lan.put("NEWEST_TRANSACTION_DATE", "Newest Transaction Date");
@@ -103,7 +103,7 @@ public class Utilities {
 		config.put("YEAR_FORMAT", "yyyy");
 		config.put("SETTINGS_CONFIGURATION_PANEL_WIDTH", "400");
 		config.put("SETTINGS_CONFIGURATION_PANEL_HEIGHT", "600");
-		config.put("ADD_TRANSACTION_PANEL_WIDTH", "300");
+		config.put("ADD_TRANSACTION_PANEL_WIDTH", "400");
 		config.put("ADD_TRANSACTION_PANEL_HEIGHT", "300");
 	}
 
