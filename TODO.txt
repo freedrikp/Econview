@@ -15,6 +15,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Added buttons to increase/decrease date in TransactionDialog. ----v1.7
+
+*Fixed bug with todays date in new transaction. ---- v1.7
+
 *More buttons on transactiondialog, new transaction immediately ---- v1.7
 
 *Fixed bug with encoding of files ---- v1.6

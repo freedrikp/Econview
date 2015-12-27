@@ -3,6 +3,7 @@ package se.freedrikp.econview.gui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -113,6 +114,27 @@ public class TransactionDialog {
 		dateSelector.setDateFormatString(Utilities
 				.getConfig("FULL_DATE_FORMAT"));
 		datePanel.add(dateSelector);
+		
+		JButton increaseDate = new JButton("+");
+		increaseDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateSelector.getDate());
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				dateSelector.setDate(cal.getTime());
+			}
+		});
+		JButton decreaseDate = new JButton("-");
+		decreaseDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateSelector.getDate());
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+				dateSelector.setDate(cal.getTime());
+			}
+		});
+		datePanel.add(increaseDate);
+		datePanel.add(decreaseDate);
 		dialogPanel.add(datePanel);
 
 		commentField = new JTextField("", 15);
@@ -175,6 +197,7 @@ public class TransactionDialog {
 		boolean chain;
 		do {
 			createDialog();
+			dateSelector.setDate(new Date());
 			chain = showDialog(-1);
 		} while (chain);
 	}
