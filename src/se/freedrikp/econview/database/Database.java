@@ -233,12 +233,23 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<Object[]> getTransactions() {
+	public List<Object[]> getTransactions(Date fromDate, Date toDate, Collection<String> accounts) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?");
-			ps.setInt(1, showHidden);
+			String selectedAccounts = "(";
+			int i = 1;
+			for (String a : accounts) {
+				selectedAccounts += "'" + a + "'";
+				if (i < accounts.size()) {
+					selectedAccounts += ",";
+				}
+				i++;
+			}
+			selectedAccounts += ")";
+//			PreparedStatement ps = c
+//					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?");
+//			ps.setInt(1, showHidden);
+			PreparedStatement ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM","Where accountName IN " + selectedAccounts,fromDate,toDate);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[5];

@@ -5,21 +5,32 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+
+import com.toedter.calendar.JDateChooser;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
@@ -41,6 +52,11 @@ public class TransactionsTab extends JPanel implements Observer {
 	private JLabel numDeposits;
 	private JLabel numWithdrawals;
 	private final SimpleDateFormat dateFormat;
+	private JDateChooser toDateChooser;
+	private JDateChooser fromDateChooser;
+	private JCheckBox allAccounts;
+	private JCheckBox[] selectedAccounts;
+	private JPanel transactionsViewAccountPanel;
 
 	public TransactionsTab(final Database db) {
 		super();
@@ -48,7 +64,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		db.addObserver(this);
 		dateFormat = new SimpleDateFormat(
 				Utilities.getConfig("FULL_DATE_FORMAT"));
-		setLayout(new GridLayout(0, 2, 0, 0));
+		// setLayout(new GridLayout(0, 3, 0, 0));
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 		final TransactionDialog transDialog = new TransactionDialog(db);
 		transactionsPane = new JScrollPane();
@@ -58,6 +75,49 @@ public class TransactionsTab extends JPanel implements Observer {
 		transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		// transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		transactionsPane.setViewportView(transactionsTable);
+
+		JPanel transactionsViewPanel = new JPanel();
+		transactionsViewPanel.setLayout(new BoxLayout(transactionsViewPanel,
+				BoxLayout.Y_AXIS));
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		fromDateChooser = new JDateChooser(cal.getTime(),
+				Utilities.getConfig("FULL_DATE_FORMAT"));
+		transactionsViewPanel.add(fromDateChooser);
+		JLabel dateSepLabel = new JLabel("<->");
+		transactionsViewPanel.add(dateSepLabel);
+		toDateChooser = new JDateChooser(Calendar.getInstance().getTime(),
+				Utilities.getConfig("FULL_DATE_FORMAT"));
+		transactionsViewPanel.add(toDateChooser);
+
+		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), true);
+
+		allAccounts.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				boolean select = e.getStateChange() == ItemEvent.SELECTED;
+				for (JCheckBox checkBox : selectedAccounts) {
+					checkBox.setSelected(select);
+				}
+			}
+
+		});
+
+		transactionsViewAccountPanel = new JPanel();
+		transactionsViewAccountPanel.setLayout(new BoxLayout(
+				transactionsViewAccountPanel, BoxLayout.Y_AXIS));
+		transactionsViewPanel
+				.add(new JScrollPane(transactionsViewAccountPanel));
+		JButton updateTransactionsView = new JButton(
+				Utilities.getString("UPDATE_TRANSACTIONS_VIEW"));
+		updateTransactionsView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update(db, null);
+			}
+		});
+		transactionsViewPanel.add(updateTransactionsView);
+		updateTransactionsView.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		dateSepLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		add(transactionsViewPanel);
 
 		JPanel transactionsButtonPanel = new JPanel();
 		add(transactionsButtonPanel);
@@ -80,7 +140,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		btnEditTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					transDialog.showEditDialog((long) transactionsTable.getModel().getValueAt(
+					transDialog.showEditDialog(
+							(long) transactionsTable.getModel().getValueAt(
 									transactionsTable.getSelectedRow(), 0),
 							(String) transactionsTable.getModel().getValueAt(
 									transactionsTable.getSelectedRow(), 1),
@@ -193,12 +254,46 @@ public class TransactionsTab extends JPanel implements Observer {
 		numTransactions.setText(Long.toString(db.getNumberOfTransactions()));
 		numDeposits.setText(Long.toString(db.getNumberOfDeposits()));
 		numWithdrawals.setText(Long.toString(db.getNumberOfWithdrawals()));
+		validate();
 		repaint();
 	}
 
 	private void updateTransactionList() {
+		transactionsViewAccountPanel.removeAll();
+		List<String> accounts = db.getAccountNames();
+		HashSet<String> oldSelectedAccounts = new HashSet<String>();
+		if (selectedAccounts != null) {
+			for (JCheckBox checkBox : selectedAccounts) {
+				if (checkBox.isSelected()) {
+					oldSelectedAccounts.add(checkBox.getText());
+				}
+			}
+		}
+
+		transactionsViewAccountPanel.add(allAccounts);
+		transactionsViewAccountPanel.add(new JSeparator());
+		if (selectedAccounts == null) {
+			selectedAccounts = new JCheckBox[accounts.size()];
+			for (int i = 0; i < accounts.size(); i++) {
+				String account = accounts.get(i);
+				selectedAccounts[i] = new JCheckBox(account,
+						true);
+				oldSelectedAccounts.add(account);
+				transactionsViewAccountPanel.add(selectedAccounts[i]);
+			}
+		} else {
+			selectedAccounts = new JCheckBox[accounts.size()];
+			for (int i = 0; i < accounts.size(); i++) {
+				String account = accounts.get(i);
+				selectedAccounts[i] = new JCheckBox(account,
+						oldSelectedAccounts.contains(account));
+				transactionsViewAccountPanel.add(selectedAccounts[i]);
+			}
+		}
+
 		Model m = new Model(transactionHeader, 0);
-		for (Object[] row : db.getTransactions()) {
+		for (Object[] row : db.getTransactions(fromDateChooser.getDate(),
+				toDateChooser.getDate(), oldSelectedAccounts)) {
 			row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
 			row[3] = dateFormat.format(row[3]);
 			m.addRow(row);

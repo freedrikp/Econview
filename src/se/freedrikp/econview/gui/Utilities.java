@@ -46,6 +46,7 @@ public class Utilities {
 		lan.put("TRANSACTION_HEADER_AMOUNT", "Amount");
 		lan.put("TRANSACTION_HEADER_DATE", "Date");
 		lan.put("TRANSACTION_HEADER_COMMENT", "Comment");
+		lan.put("UPDATE_TRANSACTIONS_VIEW", "Update View");
 		lan.put("ADD_TRANSACTION", "Add Transaction");
 		lan.put("EDIT_TRANSACTION", "Edit Transaction");
 		lan.put("REMOVE_TRANSACTION", "Remove Transaction");
