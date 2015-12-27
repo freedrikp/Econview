@@ -103,8 +103,8 @@ public class Utilities {
 		config.put("YEAR_FORMAT", "yyyy");
 		config.put("SETTINGS_CONFIGURATION_PANEL_WIDTH", "400");
 		config.put("SETTINGS_CONFIGURATION_PANEL_HEIGHT", "600");
-		config.put("ADD_TRANSACTION_PANEL_WIDTH", "400");
-		config.put("ADD_TRANSACTION_PANEL_HEIGHT", "300");
+		config.put("ADD_TRANSACTION_PANEL_WIDTH", "500");
+		config.put("ADD_TRANSACTION_PANEL_HEIGHT", "400");
 	}
 
 	public static String getConfig(String key) {

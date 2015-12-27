@@ -3,9 +3,11 @@ package se.freedrikp.econview.gui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -29,6 +31,8 @@ public class TransactionDialog {
 	private JScrollPane scrollPane;
 	private final LinkedList<JComponent> multiAccounts;
 	private Database db;
+	private JPanel multiAccountPanel;
+	private Object[] accountValues;
 
 	public TransactionDialog(Database db) {
 		multiAccounts = new LinkedList<JComponent>();
@@ -38,12 +42,12 @@ public class TransactionDialog {
 	private void createDialog() {
 		JPanel dialogPanel = new JPanel();
 		dialogPanel.setLayout(new BoxLayout(dialogPanel, BoxLayout.Y_AXIS));
-		final JPanel multiAccountPanel = new JPanel();
+		multiAccountPanel = new JPanel();
 		multiAccountPanel.setLayout(new BoxLayout(multiAccountPanel,
 				BoxLayout.Y_AXIS));
 
 		multiAccounts.clear();
-		final Object[] accountValues = db.getAccountNames().toArray();
+		accountValues = db.getAccountNames().toArray();
 
 		accountField = new JComboBox(accountValues);
 
@@ -82,24 +86,7 @@ public class TransactionDialog {
 
 		addMultiAccountButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JComboBox accountField = new JComboBox(accountValues);
-				accountField.setSelectedIndex(-1);
-				JPanel accountPanel = new JPanel();
-				accountPanel.add(new JLabel(Utilities
-						.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
-				accountPanel.add(accountField);
-				multiAccountPanel.add(accountPanel);
-				multiAccounts.add(accountField);
-
-				JTextField amountField = new JTextField("", 7);
-				JPanel amountPanel = new JPanel();
-				amountPanel.add(new JLabel(Utilities
-						.getString("ADD_TRANSACTION_AMOUNT") + ":"));
-				amountPanel.add(amountField);
-				multiAccountPanel.add(amountPanel);
-				multiAccounts.add(amountField);
-
-				multiAccountPanel.revalidate();
+				addMultiAccount(null, null);
 			}
 		});
 
@@ -114,7 +101,7 @@ public class TransactionDialog {
 		dateSelector.setDateFormatString(Utilities
 				.getConfig("FULL_DATE_FORMAT"));
 		datePanel.add(dateSelector);
-		
+
 		JButton increaseDate = new JButton("+");
 		increaseDate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -143,52 +130,66 @@ public class TransactionDialog {
 				.getString("ADD_TRANSACTION_COMMENT") + ":"));
 		commentPanel.add(commentField);
 		dialogPanel.add(commentPanel);
-		
-		dialogPanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_CHAIN")));
+
+		dialogPanel
+				.add(new JLabel(Utilities.getString("ADD_TRANSACTION_CHAIN")));
 
 		scrollPane = new JScrollPane();
 		scrollPane.setViewportView(dialogPanel);
-		scrollPane.setPreferredSize(new Dimension(Integer.parseInt(Utilities
-				.getConfig("ADD_TRANSACTION_PANEL_WIDTH")), Integer
-				.parseInt(Utilities.getConfig("ADD_TRANSACTION_PANEL_HEIGHT"))));
+		scrollPane
+				.setPreferredSize(new Dimension(Integer.parseInt(Utilities
+						.getConfig("ADD_TRANSACTION_PANEL_WIDTH")), Integer
+						.parseInt(Utilities
+								.getConfig("ADD_TRANSACTION_PANEL_HEIGHT"))));
 	}
 
-	private boolean showDialog(long transactionID) {
+	private boolean showDialog(long[] IDs) {
 		int result = JOptionPane.showConfirmDialog(null, scrollPane,
 				Utilities.getString("TRANSACTION_DETAILS"),
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 				null);
 
 		if (result == JOptionPane.YES_OPTION || result == JOptionPane.NO_OPTION) {
+			int j = 0;
 			for (int i = 0; i < multiAccounts.size(); i += 2) {
-				if (transactionID < 0) {
+				if (j >= IDs.length) {
 					db.addTransaction((String) ((JComboBox) multiAccounts
 							.get(i)).getSelectedItem(),
 							GUI.parseAmount(((JTextField) multiAccounts
 									.get(i + 1)).getText()), dateSelector
 									.getDate(), commentField.getText());
 				} else {
-					db.editTransaction(transactionID,
+					db.editTransaction(IDs[j],
 							(String) ((JComboBox) multiAccounts.get(i))
 									.getSelectedItem(), GUI
 									.parseAmount(((JTextField) multiAccounts
 											.get(i + 1)).getText()),
 							dateSelector.getDate(), commentField.getText());
 				}
+				j++;
 			}
 		}
 		return result == JOptionPane.YES_OPTION;
 	}
 
-	public void showEditDialog(long transactionID,
-			String selectedAccount, String selectedAmount, Date selectedDate,
-			String selectedComment) {
+	public void showEditDialog(long transactionID, String selectedAccount,
+			String selectedAmount, Date selectedDate, String selectedComment) {
 		createDialog();
 		accountField.setSelectedItem(selectedAccount);
 		amountField.setText(selectedAmount);
+		List<Object[]> multiTransactions = db.getMultiTransactions(
+				transactionID, selectedDate, selectedComment);
+		long[] IDs = new long[multiTransactions.size() + 1];
+		IDs[0] = transactionID;
+		int i = 1;
+		for (Object[] transaction : multiTransactions) {
+			addMultiAccount((String) transaction[1], NumberFormat
+					.getCurrencyInstance().format((Double) transaction[2]));
+			IDs[i++]=(long)transaction[0];
+		}
 		dateSelector.setDate(selectedDate);
 		commentField.setText(selectedComment);
-		if (showDialog(transactionID)) {
+		if (showDialog(IDs)) {
 			showAddDialog();
 		}
 	}
@@ -198,8 +199,30 @@ public class TransactionDialog {
 		do {
 			createDialog();
 			dateSelector.setDate(new Date());
-			chain = showDialog(-1);
+			chain = showDialog(new long[0]);
 		} while (chain);
+	}
+
+	private void addMultiAccount(String selectedAccount, String selectedAmount) {
+		JComboBox accountField = new JComboBox(accountValues);
+		accountField.setSelectedItem(selectedAccount);
+		JPanel accountPanel = new JPanel();
+		accountPanel.add(new JLabel(Utilities
+				.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
+		accountPanel.add(accountField);
+		multiAccountPanel.add(accountPanel);
+		multiAccounts.add(accountField);
+
+		JTextField amountField = new JTextField("", 7);
+		amountField.setText(selectedAmount);
+		JPanel amountPanel = new JPanel();
+		amountPanel.add(new JLabel(Utilities
+				.getString("ADD_TRANSACTION_AMOUNT") + ":"));
+		amountPanel.add(amountField);
+		multiAccountPanel.add(amountPanel);
+		multiAccounts.add(amountField);
+
+		multiAccountPanel.revalidate();
 	}
 
 }

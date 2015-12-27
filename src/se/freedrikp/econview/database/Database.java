@@ -843,4 +843,30 @@ public class Database extends Observable {
 		}
 		return null;
 	}
+	
+	public List<Object[]> getMultiTransactions(long transactionID,Date transactionDate,String transactionComment) {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear = ? AND transactionMonth = ? AND transactionDay = ? AND transactionComment = ? AND transactionID <> ?");
+			ps.setInt(1, showHidden);
+			ps.setString(2, new SimpleDateFormat("yyyy").format(transactionDate));
+			ps.setString(3, new SimpleDateFormat("MM").format(transactionDate));
+			ps.setString(4, new SimpleDateFormat("dd").format(transactionDate));
+			ps.setString(5, transactionComment);
+			ps.setLong(6,transactionID);
+
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] row = new Object[3];
+				row[0] = results.getLong("transactionID");
+				row[1] = results.getString("accountName");
+				row[2] = results.getDouble("transactionAmount");
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }

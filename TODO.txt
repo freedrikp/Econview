@@ -1,12 +1,13 @@
 === TODO ===
 *Clean up code
 *Select view of transactions based on date interval and account
-*Implement support for template transactions
 *Sort among tables
-*Be able to edit multitransactions
 *Investigate tabbed pane for diagrams
 *Investigate possibillities of users within the system -- crypto and stuff
 
+
+----------------------------------------------------------------------------------
+*Implement support for template transactions. (Is this really useful? Multitransactions may have taken over a bit)
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
 === BETWEEN ===
@@ -15,6 +16,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Be able to edit multitransactions. ---- v1.7
+
 *Added buttons to increase/decrease date in TransactionDialog. ----v1.7
 
 *Fixed bug with todays date in new transaction. ---- v1.7
