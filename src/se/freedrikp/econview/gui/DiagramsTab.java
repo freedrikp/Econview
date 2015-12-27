@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
@@ -114,7 +115,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagAccountsPanel = new JPanel();
 		diagAccountsPanel.setLayout(new BoxLayout(diagAccountsPanel, BoxLayout.Y_AXIS));
 		diagAccountsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		diagramControlPanel.add(diagAccountsPanel);
+		diagramControlPanel.add(new JScrollPane(diagAccountsPanel));
 		
 		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"),false);
 		//allAccounts.setAlignmentX(Component.CENTER_ALIGNMENT);

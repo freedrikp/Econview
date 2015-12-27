@@ -192,7 +192,7 @@ public class RevenueTab extends JPanel implements Observer {
 		customRevAccountPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		customRevAccountPanel.setLayout(new BoxLayout(customRevAccountPanel,
 				BoxLayout.Y_AXIS));
-		sideRevenuePanel.add(customRevAccountPanel);
+		sideRevenuePanel.add(new JScrollPane(customRevAccountPanel));
 
 		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), false);
 
@@ -210,8 +210,8 @@ public class RevenueTab extends JPanel implements Observer {
 		customRevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(customRevButton);
 
-		Component verticalStrut = Box.createVerticalStrut(2000);
-		sideRevenuePanel.add(verticalStrut);
+//		Component verticalStrut = Box.createVerticalStrut(2000);
+//		sideRevenuePanel.add(verticalStrut);
 
 		update(db, null);
 	}
