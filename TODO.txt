@@ -1,7 +1,5 @@
 === TODO ===
 *Investigate possibillities of users within the system -- crypto and stuff
-*Fix bug with sorting of amounts.
-*Fix so config file is written back after parse. This helps when replacing old config files.
 
 
 ----------------------------------------------------------------------------------
@@ -15,6 +13,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fix so config file is written back after parse. This helps when replacing old config files. ---- v1.9
+
+*Fix bug with sorting of amounts. ---- v1.9
+
 *Can choose between tabs or splitpanes in diagrams. ---- v1.8
 
 *Sort among tables. ---- v1.8

@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
@@ -50,7 +52,7 @@ public class AccountsTab extends JPanel implements Observer {
 
 		accountsTable = new JTable();
 		accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		accountsTable.setAutoCreateRowSorter(true);
+//		accountsTable.setAutoCreateRowSorter(true);
 		accountsPane.setViewportView(accountsTable);
 
 		JPanel accountsButtonPanel = new JPanel();
@@ -167,5 +169,13 @@ public class AccountsTab extends JPanel implements Observer {
 			m.addRow(row);
 		}
 		accountsTable.setModel(m);
+		TableRowSorter<Model> sorter = new TableRowSorter<Model>(m);
+		accountsTable.setRowSorter(sorter);
+		sorter.setComparator(1, new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+			}
+		}
+		);
 	}
 }

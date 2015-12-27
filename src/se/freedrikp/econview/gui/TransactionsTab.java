@@ -3,7 +3,6 @@ package se.freedrikp.econview.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -12,13 +11,13 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,11 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-
-import com.toedter.calendar.JDateChooser;
+import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
+
+import com.toedter.calendar.JDateChooser;
 
 public class TransactionsTab extends JPanel implements Observer {
 
@@ -74,7 +74,7 @@ public class TransactionsTab extends JPanel implements Observer {
 
 		transactionsTable = new JTable();
 		transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		transactionsTable.setAutoCreateRowSorter(true);
+//		transactionsTable.setAutoCreateRowSorter(true);
 		// transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		transactionsPane.setViewportView(transactionsTable);
 
@@ -303,5 +303,18 @@ public class TransactionsTab extends JPanel implements Observer {
 			m.addRow(row);
 		}
 		transactionsTable.setModel(m);
+		TableRowSorter<Model> sorter = new TableRowSorter<Model>(m);
+		transactionsTable.setRowSorter(sorter);
+		sorter.setComparator(0, new Comparator<Long>() {
+			public int compare(Long o1, Long o2) {
+				return o1.compareTo(o2);
+			}
+		});
+		sorter.setComparator(2, new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+			}
+		}
+		);
 	}
 }

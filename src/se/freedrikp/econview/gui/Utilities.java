@@ -119,6 +119,7 @@ public class Utilities {
 				writeConfig();
 			}
 			parseConfig();
+			writeConfig();
 		}
 		return config.get(key);
 	}
