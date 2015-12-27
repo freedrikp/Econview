@@ -95,8 +95,8 @@ public class Utilities {
 		config.put("LANGUAGE", englishFile);
 		config.put("WINDOW_WIDTH", "1360");
 		config.put("WINDOW_HEIGHT", "500");
-		config.put("DIAGRAM_WIDTH","350");
-		config.put("DIAGRAM_HEIGHT","175");
+		config.put("DIAGRAM_WIDTH","600");
+		config.put("DIAGRAM_HEIGHT","350");
 		config.put("CUSTOM_DIAGRAM_WIDTH","480");
 		config.put("CUSTOM_DIAGRAM_HEIGHT","350");
 		config.put("FULL_DATE_FORMAT", "yyyy-MM-dd");
@@ -108,6 +108,7 @@ public class Utilities {
 		config.put("ADD_TRANSACTION_PANEL_HEIGHT", "400");
 		config.put("DATE_FIELD_WIDTH", "150");
 		config.put("DATE_FIELD_HEIGHT", "15");
+		config.put("DIAGRAMS_STYLE_SPLIT_OR_TAB", "TAB");
 	}
 
 	public static String getConfig(String key) {

@@ -1,5 +1,4 @@
 === TODO ===
-*Investigate tabbed pane for diagrams
 *Investigate possibillities of users within the system -- crypto and stuff
 
 
@@ -14,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Can choose between tabs or splitpanes in diagrams. ---- v1.8
+
 *Sort among tables. ---- v1.8
 
 Fixed so DateChoosers do not consume space. ---- v1.8
