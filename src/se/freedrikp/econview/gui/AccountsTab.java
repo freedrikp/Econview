@@ -44,6 +44,8 @@ public class AccountsTab extends JPanel implements Observer {
 		this.db = db;
 		db.addObserver(this);
 		setLayout(new GridLayout(0, 2, 0, 0));
+		
+		final AccountDialog accDialog = new AccountDialog(db);
 
 		accountsPane = new JScrollPane();
 		add(accountsPane);
@@ -59,12 +61,7 @@ public class AccountsTab extends JPanel implements Observer {
 		btnAddAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Object[] accountDetails = AccountDialog.showAddDialog();
-				if (accountDetails != null) {
-					db.addAccount((String)accountDetails[0],
-							GUI.parseAmount((String)accountDetails[1]),
-							(boolean)accountDetails[2]);
-				}
+				accDialog.showAddDialog();
 			}
 		});
 		accountsButtonPanel.setLayout(new BoxLayout(accountsButtonPanel,
@@ -76,19 +73,13 @@ public class AccountsTab extends JPanel implements Observer {
 		btnEditAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Object[] accountDetails = AccountDialog.showEditDialog(
+				accDialog.showEditDialog(
 						(String) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 0),
 						(String) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 1),
 						(boolean) accountsTable.getModel().getValueAt(
 								accountsTable.getSelectedRow(), 2));
-				if (accountDetails != null) {
-					db.editAccount((String) accountsTable.getModel()
-							.getValueAt(accountsTable.getSelectedRow(), 0),
-							(String)accountDetails[0], GUI
-									.parseAmount((String)accountDetails[1]), (boolean)accountDetails[2]);
-				}
 			}
 		});
 		accountsButtonPanel.add(btnEditAccount);
