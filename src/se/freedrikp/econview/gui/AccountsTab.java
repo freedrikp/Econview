@@ -50,6 +50,7 @@ public class AccountsTab extends JPanel implements Observer {
 
 		accountsTable = new JTable();
 		accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		accountsTable.setAutoCreateRowSorter(true);
 		accountsPane.setViewportView(accountsTable);
 
 		JPanel accountsButtonPanel = new JPanel();

@@ -74,6 +74,7 @@ public class TransactionsTab extends JPanel implements Observer {
 
 		transactionsTable = new JTable();
 		transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		transactionsTable.setAutoCreateRowSorter(true);
 		// transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		transactionsPane.setViewportView(transactionsTable);
 

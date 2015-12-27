@@ -1,6 +1,4 @@
 === TODO ===
-*Clean up code
-*Sort among tables
 *Investigate tabbed pane for diagrams
 *Investigate possibillities of users within the system -- crypto and stuff
 
@@ -11,10 +9,13 @@
 
 === BETWEEN ===
 
+*Clean up code ---- v1.7
 
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Sort among tables. ---- v1.8
+
 Fixed so DateChoosers do not consume space. ---- v1.8
 
 *Added ScrollPanes for account selection in custom revenue/diagram. ---- v1.8

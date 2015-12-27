@@ -97,6 +97,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		yearlyRevTable = new JTable();
 		yearlyRevTable.setEnabled(false);
+		yearlyRevTable.setAutoCreateRowSorter(true);
 		yearlyRevPane.setViewportView(yearlyRevTable);
 
 		JScrollPane monthlyRevPane = new JScrollPane();
@@ -104,6 +105,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		monthlyRevTable = new JTable();
 		monthlyRevTable.setEnabled(false);
+		monthlyRevTable.setAutoCreateRowSorter(true);
 		monthlyRevPane.setViewportView(monthlyRevTable);
 
 		JScrollPane yearlyAccountRevPane = new JScrollPane();
@@ -111,6 +113,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		yearlyAccountRevTable = new JTable();
 		yearlyAccountRevTable.setEnabled(false);
+		yearlyAccountRevTable.setAutoCreateRowSorter(true);
 		yearlyAccountRevPane.setViewportView(yearlyAccountRevTable);
 
 		JScrollPane monthlyAccountRevPane = new JScrollPane();
@@ -118,6 +121,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		monthlyAccountRevTable = new JTable();
 		monthlyAccountRevTable.setEnabled(false);
+		monthlyAccountRevTable.setAutoCreateRowSorter(true);
 		monthlyAccountRevPane.setViewportView(monthlyAccountRevTable);
 
 		// JScrollPane totalAccountRevPane = new JScrollPane();
