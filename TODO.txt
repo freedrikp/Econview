@@ -1,5 +1,7 @@
 === TODO ===
 *Investigate possibillities of users within the system -- crypto and stuff
+*Fix bug with sorting of amounts.
+*Fix so config file is written back after parse. This helps when replacing old config files.
 
 
 ----------------------------------------------------------------------------------
