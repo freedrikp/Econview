@@ -25,14 +25,17 @@ import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.Security;
 
 public class MenuBar extends JMenuBar {
 
 	private Database db;
+	private Security sec;
 
-	public MenuBar(final Database db) {
+	public MenuBar(final Database db, Security sec) {
 		super();
 		this.db = db;
+		this.sec = sec;
 		JMenu mnFile = new JMenu(Utilities.getString("MENUBAR_FILE"));
 		add(mnFile);
 
@@ -153,7 +156,7 @@ public class MenuBar extends JMenuBar {
 			fc.setDialogTitle(text);
 			int result = fc.showDialog(menuBar, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
-				db.openFile(fc.getSelectedFile());
+				sec.openFile(fc.getSelectedFile(),db);
 			}
 		}
 	}
@@ -174,31 +177,33 @@ public class MenuBar extends JMenuBar {
 			int result = fc.showDialog(menuBar, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File toFile = fc.getSelectedFile();
-				File fromFile = db.getFile();
-				try {
-					FileInputStream fis = new FileInputStream(fromFile);
-					FileOutputStream fos = new FileOutputStream(toFile);
-					ProgressMonitor pm = new ProgressMonitor(menuBar, null,
-							Utilities.getString("COPYING_DATABASE"), 0,
-							(int) fromFile.length());
-					pm.setMillisToPopup(0);
-					pm.setMillisToDecideToPopup(0);
-					byte[] buffer = new byte[1024];
-					int bytesRead = 0;
-					long totalRead = 0;
-					while ((bytesRead = fis.read(buffer)) > -1) {
-						totalRead += bytesRead;
-						fos.write(buffer, 0, bytesRead);
-						pm.setProgress((int) totalRead);
-					}
-					fos.flush();
-					fos.close();
-					fis.close();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+//				File fromFile = db.getFile();
+//				try {
+//					FileInputStream fis = new FileInputStream(fromFile);
+//					FileOutputStream fos = new FileOutputStream(toFile);
+//					ProgressMonitor pm = new ProgressMonitor(menuBar, null,
+//							Utilities.getString("COPYING_DATABASE"), 0,
+//							(int) fromFile.length());
+//					pm.setMillisToPopup(0);
+//					pm.setMillisToDecideToPopup(0);
+//					byte[] buffer = new byte[1024];
+//					int bytesRead = 0;
+//					long totalRead = 0;
+//					while ((bytesRead = fis.read(buffer)) > -1) {
+//						totalRead += bytesRead;
+//						fos.write(buffer, 0, bytesRead);
+//						pm.setProgress((int) totalRead);
+//					}
+//					fos.flush();
+//					fos.close();
+//					fis.close();
+//				
+//				} catch (FileNotFoundException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+				sec.saveFile(toFile);
 			}
 		}
 	}

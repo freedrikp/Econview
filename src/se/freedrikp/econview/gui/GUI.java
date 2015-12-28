@@ -21,12 +21,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.Security;
 
 public class GUI extends JFrame implements Observer {
 
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
-	private Database db;
+	private Security sec;
 	private final int WIDTH = Integer.parseInt(Utilities.getConfig("WINDOW_WIDTH"));
 	private final int HEIGHT = Integer.parseInt(Utilities.getConfig("WINDOW_HEIGHT"));
 
@@ -42,7 +43,9 @@ public class GUI extends JFrame implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI frame = new GUI(new Database(Utilities.getConfig("DATABASE_FILE")));
+					Security security = new Security(Utilities.getConfig("USERS_DATABASE_FILE"));
+					Database db = security.openDatabase(Utilities.getConfig("DATABASE_FILE"));
+					GUI frame = new GUI(db,security);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,19 +57,19 @@ public class GUI extends JFrame implements Observer {
 	/**
 	 * Create the frame.
 	 */
-	public GUI(Database db) {
+	public GUI(Database db, Security sec) {
 		super("EconView");
 		//setResizable(false);
 		// this.dbfile = dbfile;
-		this.db = db;
-		db.addObserver(this);
+		this.sec = sec;
+		sec.addObserver(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//setBounds(100, 100, 1280, 430);
 //		setBounds(100, 100, 1360, 500);
 		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
 		setBounds((dm.getWidth()-WIDTH)/2, (dm.getHeight()-HEIGHT)/2, WIDTH, HEIGHT);
 
-		MenuBar menuBar = new MenuBar(db);
+		MenuBar menuBar = new MenuBar(db,sec);
 		setJMenuBar(menuBar);
 
 		contentPane = new JPanel();
@@ -153,7 +156,7 @@ public class GUI extends JFrame implements Observer {
 	}
 
 	public void update(Observable o, Object arg) {
-		setTitle("EconView - " + db.getFile().getAbsolutePath());
+		setTitle("EconView - " + sec.getFile().getAbsolutePath());
 		repaint();
 	}
 	

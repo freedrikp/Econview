@@ -18,6 +18,10 @@ public class Utilities {
 	private static void loadDefaultLanguage() {
 		HashMap<String, String> lan = new HashMap<String, String>();
 
+		lan.put("USER_DETAILS_PROMPT", "User Access Credentials");
+		lan.put("PROMPT_USERNAME", "Username");
+		lan.put("PROMPT_PASSWORD", "Password");
+		lan.put("PROMPT_ACCESS_DENIED", "Wrong credentials, access denied.");
 		lan.put("TOTAL_ACCOUNT_NAME", "Total");
 		lan.put("EXPORTING_DATABASE", "Exporting Database");
 		lan.put("IMPORTING_DATABASE", "Importing Database");
@@ -109,6 +113,7 @@ public class Utilities {
 		config.put("DATE_FIELD_WIDTH", "150");
 		config.put("DATE_FIELD_HEIGHT", "15");
 		config.put("DIAGRAMS_STYLE_SPLIT_OR_TAB", "TAB");
+		config.put("USERS_DATABASE_FILE", "econview_users.db");
 	}
 
 	public static String getConfig(String key) {
