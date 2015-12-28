@@ -4,6 +4,9 @@ import java.awt.Component;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Observable;
@@ -28,8 +31,10 @@ public class GUI extends JFrame implements Observer {
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
 	private Security sec;
-	private final int WIDTH = Integer.parseInt(Utilities.getConfig("WINDOW_WIDTH"));
-	private final int HEIGHT = Integer.parseInt(Utilities.getConfig("WINDOW_HEIGHT"));
+	private final int WIDTH = Integer.parseInt(Utilities
+			.getConfig("WINDOW_WIDTH"));
+	private final int HEIGHT = Integer.parseInt(Utilities
+			.getConfig("WINDOW_HEIGHT"));
 
 	/**
 	 * Launch the application.
@@ -43,9 +48,11 @@ public class GUI extends JFrame implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Security security = new Security(Utilities.getConfig("USERS_DATABASE_FILE"));
-					Database db = security.openDatabase(Utilities.getConfig("DATABASE_FILE"));
-					GUI frame = new GUI(db,security);
+					Security security = new Security(Utilities
+							.getConfig("USERS_DATABASE_FILE"));
+					Database db = security.openDatabase(Utilities
+							.getConfig("DATABASE_FILE"));
+					GUI frame = new GUI(db, security);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -59,17 +66,20 @@ public class GUI extends JFrame implements Observer {
 	 */
 	public GUI(Database db, Security sec) {
 		super("EconView");
-		//setResizable(false);
+		// setResizable(false);
 		// this.dbfile = dbfile;
 		this.sec = sec;
 		sec.addObserver(this);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//setBounds(100, 100, 1280, 430);
-//		setBounds(100, 100, 1360, 500);
-		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-		setBounds((dm.getWidth()-WIDTH)/2, (dm.getHeight()-HEIGHT)/2, WIDTH, HEIGHT);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new Window(this));
+		// setBounds(100, 100, 1280, 430);
+		// setBounds(100, 100, 1360, 500);
+		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getDefaultScreenDevice().getDisplayMode();
+		setBounds((dm.getWidth() - WIDTH) / 2, (dm.getHeight() - HEIGHT) / 2,
+				WIDTH, HEIGHT);
 
-		MenuBar menuBar = new MenuBar(db,sec);
+		MenuBar menuBar = new MenuBar(db, sec);
 		setJMenuBar(menuBar);
 
 		contentPane = new JPanel();
@@ -84,16 +94,20 @@ public class GUI extends JFrame implements Observer {
 		// tabbedPane.addTab("Start", null, startPanel, null);
 
 		AccountsTab accountsPanel = new AccountsTab(db);
-		tabbedPane.addTab(Utilities.getString("ACCOUNTS_TAB_NAME"), null, accountsPanel, null);
+		tabbedPane.addTab(Utilities.getString("ACCOUNTS_TAB_NAME"), null,
+				accountsPanel, null);
 
 		TransactionsTab transactionsPanel = new TransactionsTab(db);
-		tabbedPane.addTab(Utilities.getString("TRANSACTIONS_TAB_NAME"), null, transactionsPanel, null);
+		tabbedPane.addTab(Utilities.getString("TRANSACTIONS_TAB_NAME"), null,
+				transactionsPanel, null);
 
 		RevenueTab revenuePanel = new RevenueTab(db);
-		tabbedPane.addTab(Utilities.getString("REVENUES_TAB_NAME"), null, revenuePanel, null);
+		tabbedPane.addTab(Utilities.getString("REVENUES_TAB_NAME"), null,
+				revenuePanel, null);
 
 		DiagramsTab diagramsPanel = new DiagramsTab(db);
-		tabbedPane.addTab(Utilities.getString("DIAGRAMS_TAB_NAME"), null, diagramsPanel, null);
+		tabbedPane.addTab(Utilities.getString("DIAGRAMS_TAB_NAME"), null,
+				diagramsPanel, null);
 
 		update(db, null);
 	}
@@ -111,11 +125,10 @@ public class GUI extends JFrame implements Observer {
 		return result;
 	}
 
-
 	public static class Model extends DefaultTableModel {
 
 		public Class<?> getColumnClass(int columnIndex) {
-			return getValueAt(0,columnIndex).getClass();
+			return getValueAt(0, columnIndex).getClass();
 		}
 
 		public Model(String[] header, int rows) {
@@ -127,31 +140,30 @@ public class GUI extends JFrame implements Observer {
 		}
 
 	}
-	
+
 	public static void resizeTable(JTable table) {
-		for (int column = 0; column < table.getColumnCount(); column++)
-		{
-		    TableColumn tableColumn = table.getColumnModel().getColumn(column);
-		    int preferredWidth = tableColumn.getMinWidth();
-		    int maxWidth = tableColumn.getMaxWidth();
-		 
-		    for (int row = 0; row < table.getRowCount(); row++)
-		    {
-		        TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
-		        Component c = table.prepareRenderer(cellRenderer, row, column);
-		        int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
-		        preferredWidth = Math.max(preferredWidth, width);
-		 
-		        //  We've exceeded the maximum width, no need to check other rows
-		 
-		        if (preferredWidth >= maxWidth)
-		        {
-		            preferredWidth = maxWidth;
-		            break;
-		        }
-		    }
-		 
-		    tableColumn.setPreferredWidth( preferredWidth );
+		for (int column = 0; column < table.getColumnCount(); column++) {
+			TableColumn tableColumn = table.getColumnModel().getColumn(column);
+			int preferredWidth = tableColumn.getMinWidth();
+			int maxWidth = tableColumn.getMaxWidth();
+
+			for (int row = 0; row < table.getRowCount(); row++) {
+				TableCellRenderer cellRenderer = table.getCellRenderer(row,
+						column);
+				Component c = table.prepareRenderer(cellRenderer, row, column);
+				int width = c.getPreferredSize().width
+						+ table.getIntercellSpacing().width;
+				preferredWidth = Math.max(preferredWidth, width);
+
+				// We've exceeded the maximum width, no need to check other rows
+
+				if (preferredWidth >= maxWidth) {
+					preferredWidth = maxWidth;
+					break;
+				}
+			}
+
+			tableColumn.setPreferredWidth(preferredWidth);
 		}
 	}
 
@@ -159,5 +171,19 @@ public class GUI extends JFrame implements Observer {
 		setTitle("EconView - " + sec.getFile().getAbsolutePath());
 		repaint();
 	}
-	
+
+	private static class Window extends WindowAdapter {
+		private GUI gui;
+
+		public Window(GUI gui) {
+			this.gui = gui;
+		}
+
+		public void windowClosing(WindowEvent e) {
+			gui.dispose();
+			new File(Utilities.getConfig("DATABASE_FILE")).delete();
+			System.exit(0);
+		}
+	}
+
 }

@@ -1,7 +1,6 @@
 === TODO ===
 *Fix control panel for users.
 *Investigate possibillity of having a change password feature.
-*Fix so database file is removed on exit of the program.
 
 
 ----------------------------------------------------------------------------------
@@ -15,6 +14,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fix so database file is removed on exit of the program. ---- v2.0
+
 *There are now users in the system with encrypted databases. ---- v2.0
 
 *Fixed bug with account selected in add transaction. ---- v2.0
