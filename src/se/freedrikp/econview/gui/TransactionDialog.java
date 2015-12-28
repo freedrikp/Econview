@@ -198,6 +198,7 @@ public class TransactionDialog {
 		boolean chain;
 		do {
 			createDialog();
+			accountField.setSelectedItem(null);
 			dateSelector.setDate(new Date());
 			chain = showDialog(new long[0]);
 		} while (chain);

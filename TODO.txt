@@ -13,6 +13,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fixed bug with account selected in add transaction. ---- v2.0
+
+*Override getClass() in Model. Nicer view in Tables. ---- v2.0
+
 *Fix so config file is written back after parse. This helps when replacing old config files. ---- v1.9
 
 *Fix bug with sorting of amounts. ---- v1.9

@@ -108,44 +108,12 @@ public class GUI extends JFrame implements Observer {
 		return result;
 	}
 
-	// public void update(Observable o, Object arg) {
-	// // accountsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-	// // transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-	// // pack();
-	// repaint();
-	// }
-
-	// private String askUser(String title, String question, String
-	// initialValue,
-	// Object[] selectionValues) {
-	// String result = null;
-	// boolean first = true;
-	// do {
-	// if (!first) {
-	// result = (String) JOptionPane.showInputDialog(this,
-	// "Missing input for \"" + title + "\" try again!\n"
-	// + question, title,
-	// JOptionPane.QUESTION_MESSAGE, null, selectionValues,
-	// initialValue);
-	//
-	// } else {
-	// first = false;
-	// result = (String) JOptionPane.showInputDialog(this, question,
-	// title, JOptionPane.QUESTION_MESSAGE, null,
-	// selectionValues, initialValue);
-	// }
-	// if (result == null) {
-	// break;
-	// }
-	// } while (result.isEmpty());
-	// return result;
-	// }
 
 	public static class Model extends DefaultTableModel {
 
-//		public Class<?> getColumnClass(int columnIndex) {
-//			return getValueAt(0,columnIndex).getClass();
-//		}
+		public Class<?> getColumnClass(int columnIndex) {
+			return getValueAt(0,columnIndex).getClass();
+		}
 
 		public Model(String[] header, int rows) {
 			super(header, rows);
@@ -184,24 +152,9 @@ public class GUI extends JFrame implements Observer {
 		}
 	}
 
-	@Override
 	public void update(Observable o, Object arg) {
 		setTitle("EconView - " + db.getFile().getAbsolutePath());
 		repaint();
 	}
-
-	// public String getDBFile() {
-	// return dbfile;
-	// }
-
-	// public void setDatabase(Database db, String dbfile) {
-	// this.dbfile = dbfile;
-	// this.db = db;
-	// db.addObserver(this);
-	// update(db, null);
-	// }
-
-	// public Database getDatabase(){
-	// return db;
-	// }
+	
 }
