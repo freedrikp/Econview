@@ -133,6 +133,9 @@ public class GUI extends JFrame implements Observer {
 	public static class Model extends DefaultTableModel {
 
 		public Class<?> getColumnClass(int columnIndex) {
+			if (getRowCount() == 0){
+				return String.class;
+			}
 			return getValueAt(0, columnIndex).getClass();
 		}
 

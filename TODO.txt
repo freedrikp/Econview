@@ -12,6 +12,12 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fixed so that import is regarded as transaction in database. ---- v2.0
+
+*Fixed bug with getColumnClass in Tables when empty. ---- v2.0
+
+*Fixed bug with closing databases. ---- v2.0
+
 *Fix control panel for users. v2.0
 
 *Change password feature implemented(salt is renewed so decyrption will be impossible). ---- v2.0

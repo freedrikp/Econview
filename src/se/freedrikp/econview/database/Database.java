@@ -691,6 +691,7 @@ public class Database extends Observable {
 
 	public void importDatabase(InputStream in) {
 		try {
+			c.setAutoCommit(false);
 			Scanner scan = new Scanner(in);
 			long totalCount = 0;
 			if (scan.hasNextLine()) {
@@ -729,6 +730,8 @@ public class Database extends Observable {
 					pm.setProgress(Math.round(progress));
 				}
 			}
+			c.commit();
+			c.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
