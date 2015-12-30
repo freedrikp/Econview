@@ -12,6 +12,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fixed bug so database is closed before opening new db. ---- v2.1
+
 *Fixed so that import is regarded as transaction in database. ---- v2.0
 
 *Fixed bug with getColumnClass in Tables when empty. ---- v2.0

@@ -190,6 +190,7 @@ public class Security extends Observable implements Observer {
 	public void openFile(File selectedFile, Database db) {
 		try {
 			if (authenticate()) {
+				db.close();
 				if (new File(Utilities.getConfig("DATABASE_FILE")).delete()) {
 					encDB = selectedFile;
 					boolean found = false;
