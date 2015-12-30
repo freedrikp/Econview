@@ -12,7 +12,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,7 +31,7 @@ import javax.swing.JTextField;
 
 import se.freedrikp.econview.gui.Utilities;
 
-public class Security extends Observable implements Observer{
+public class Security extends Observable implements Observer {
 	private Connection c;
 	private SecureRandom rand;
 	private MessageDigest digest;
@@ -62,19 +64,12 @@ public class Security extends Observable implements Observer{
 		try {
 			c.setAutoCommit(false);
 			String sql = "CREATE TABLE Users(" + "username TEXT PRIMARY KEY,"
-					+ "password TEXT," + "salt TEXT" + ")";
+					+ "password TEXT," + "salt TEXT,"
+					+ "admin INTEGER DEFAULT 0)";
 			c.prepareStatement(sql).executeUpdate();
 			String user = "admin";
 			String password = "1234";
-			byte[] temp = new byte[10];
-			rand.nextBytes(temp);
-			String salt;
-			salt = new String(temp, "UTF-8");
-			password = new String(digest.digest((password + salt)
-					.getBytes("UTF-8")), "UTF-8");
-			sql = "INSERT INTO Users VALUES ('" + user + "','" + password
-					+ "','" + salt + "')";
-			c.prepareStatement(sql).executeUpdate();
+			addUser(user, password,true);
 			c.commit();
 			c.setAutoCommit(true);
 		} catch (SQLException e) {
@@ -226,8 +221,149 @@ public class Security extends Observable implements Observer{
 			e.printStackTrace();
 		}
 	}
-	
-	public File getFile(){
+
+	public File getFile() {
 		return encDB;
+	}
+
+	public boolean addUser(String username, String password, boolean admin) {
+		try {
+			byte[] temp = new byte[10];
+			rand.nextBytes(temp);
+			String salt;
+			salt = new String(temp, "UTF-8");
+
+			password = new String(digest.digest((password + salt)
+					.getBytes("UTF-8")), "UTF-8");
+
+			String sql = "INSERT INTO Users VALUES (?,?,?,?)";
+			PreparedStatement ps = c.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, password);
+			ps.setString(3, salt);
+			int ad = admin ? 1:0;
+			ps.setInt(4, ad);
+			ps.executeUpdate();
+		} catch (SQLException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public boolean changePassword(String username, String oldPass,
+			String newPass) {
+		try {
+			if (!checkUser(username, oldPass)) {
+				return false;
+			}
+
+			byte[] temp = new byte[10];
+			rand.nextBytes(temp);
+			String salt;
+
+			salt = new String(temp, "UTF-8");
+
+			String password = new String(digest.digest((newPass + salt)
+					.getBytes("UTF-8")), "UTF-8");
+			String sql = "UPDATE Users SET password=?, salt=? WHERE username=?";
+			PreparedStatement ps = c.prepareStatement(sql);
+			ps.setString(1, password);
+			ps.setString(2, salt);
+			ps.setString(3, username);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public List<String> listUsers() {
+		try {
+			String sql = "SELECT username FROM Users";
+			ResultSet users = c.prepareStatement(sql).executeQuery();
+			ArrayList<String> res = new ArrayList<String>();
+			while (users.next()) {
+				res.add(users.getString("username"));
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean removeUser(String username) {
+		try {
+			String sql = "DELETE FROM Users WHERE username=?";
+			PreparedStatement ps = c.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean isAdmin() {
+		try {
+		String sql = "SELECT username FROM Users WHERE admin=1";
+		ResultSet results = c.prepareStatement(sql).executeQuery();
+		if (results.next()){
+			return user.equals(results.getString("username"));
+		}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public void setAdmin(String username) {
+		try {
+			c.setAutoCommit(false);
+			String sql = "UPDATE Users SET admin=0 WHERE admin=1";
+			c.prepareStatement(sql).executeUpdate();
+			sql = "UPDATE Users SET admin=? WHERE username=?";
+			PreparedStatement ps = c.prepareStatement(sql);
+			ps.setInt(1, 1);
+			ps.setString(2, username);
+			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void changePasswordAdmin(String username, String password) {
+		try {
+			byte[] temp = new byte[10];
+			rand.nextBytes(temp);
+			String salt;
+
+			salt = new String(temp, "UTF-8");
+
+			password = new String(digest.digest((password + salt)
+					.getBytes("UTF-8")), "UTF-8");
+			String sql = "UPDATE Users SET password=?, salt=? WHERE username=?";
+			PreparedStatement ps = c.prepareStatement(sql);
+			ps.setString(1, password);
+			ps.setString(2, salt);
+			ps.setString(3, username);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void close() throws SQLException{
+		c.close();
 	}
 }

@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.swing.JMenuItem;
+
 public class Utilities {
 	private static HashMap<String, String> config = null;
 	private static HashMap<String, HashMap<String, String>> lang = null;
@@ -90,6 +92,19 @@ public class Utilities {
 		lan.put("MENUBAR_SETTINGS", "Settings");
 		lan.put("MENUBAR_SETTINGS_CONFIGURATION", "Configuration");
 		lan.put("SETTINGS_CONFIGURATION", "Configuration Settings");
+		lan.put("MENUBAR_USERS", "Users");
+		lan.put("MENUBAR_ADD_USER","Add User");
+		lan.put("MENUBAR_CHANGE_PASSWORD","Change Password");
+		lan.put("MENUBAR_MANAGE_USERS","Manage Users");
+		lan.put("PASSWORDS_NOT_MATCH","Passwords do not match.");
+		lan.put("PASSWORD_ERROR","Password Error");
+		lan.put("USER_EXISTS","User already exists, could not add user.");
+		lan.put("USER_ERROR","User Error");
+		lan.put("PROMPT_OLD_PASSWORD", "Old Password");
+		lan.put("PROMPT_NEW_PASSWORD", "New Password");
+		lan.put("BUTTON_SET_ADMIN", "Set Admin");
+		lan.put("REMOVE_USER", "Remove User");
+		lan.put("REMOVE_USER_PROMPT", "Are you sure you want to remove this user?");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}

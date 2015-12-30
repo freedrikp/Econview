@@ -1,28 +1,32 @@
 package se.freedrikp.econview.gui;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
@@ -32,7 +36,7 @@ public class MenuBar extends JMenuBar {
 	private Database db;
 	private Security sec;
 
-	public MenuBar(final Database db, Security sec) {
+	public MenuBar(final Database db, final Security sec) {
 		super();
 		this.db = db;
 		this.sec = sec;
@@ -127,18 +131,215 @@ public class MenuBar extends JMenuBar {
 					panel.add(pan);
 					map.put(config.getKey(), field);
 				}
-				scrollPane.setPreferredSize(new Dimension(Integer.parseInt(Utilities.getConfig("SETTINGS_CONFIGURATION_PANEL_WIDTH")),Integer.parseInt(Utilities.getConfig("SETTINGS_CONFIGURATION_PANEL_HEIGHT"))));
+				scrollPane.setPreferredSize(new Dimension(
+						Integer.parseInt(Utilities
+								.getConfig("SETTINGS_CONFIGURATION_PANEL_WIDTH")),
+						Integer.parseInt(Utilities
+								.getConfig("SETTINGS_CONFIGURATION_PANEL_HEIGHT"))));
 				int result = JOptionPane.showConfirmDialog(null, scrollPane,
 						Utilities.getString("SETTINGS_CONFIGURATION"),
 						JOptionPane.OK_CANCEL_OPTION);
-				if (result == JOptionPane.OK_OPTION){
-					for (Map.Entry<String, JTextField> entry : map.entrySet()){
-						Utilities.putConfig(entry.getKey(), entry.getValue().getText());
+				if (result == JOptionPane.OK_OPTION) {
+					for (Map.Entry<String, JTextField> entry : map.entrySet()) {
+						Utilities.putConfig(entry.getKey(), entry.getValue()
+								.getText());
 					}
 				}
 			}
 		});
 		mnSettings.add(mntmConfig);
+
+		JMenu users = new JMenu(Utilities.getString("MENUBAR_USERS"));
+		add(users);
+		JMenuItem addUser = new JMenuItem(
+				Utilities.getString("MENUBAR_ADD_USER"));
+		users.add(addUser);
+		addUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JPanel promptPanel = new JPanel();
+				promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_USERNAME") + ":"));
+				JTextField userField = new JTextField(15);
+				promptPanel.add(userField);
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_PASSWORD") + ":"));
+				JPasswordField passField = new JPasswordField(15);
+				promptPanel.add(passField);
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_PASSWORD") + ":"));
+				JPasswordField passField2 = new JPasswordField(15);
+				promptPanel.add(passField2);
+				if (!Arrays.equals(passField.getPassword(),
+						passField2.getPassword())) {
+					JOptionPane.showMessageDialog(null,
+							Utilities.getString("PASSWORDS_NOT_MATCH"),
+							Utilities.getString("PASSWORD_ERROR"),
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				int result = JOptionPane.showConfirmDialog(null, promptPanel,
+						Utilities.getString("USER_DETAILS_PROMPT"),
+						JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					if (!sec.addUser(userField.getText(),
+							new String(passField.getPassword()), false)) {
+						JOptionPane.showMessageDialog(null,
+								Utilities.getString("USER_EXISTS"),
+								Utilities.getString("USER_ERROR"),
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		JMenuItem changePassword = new JMenuItem(
+				Utilities.getString("MENUBAR_CHANGE_PASSWORD"));
+		users.add(changePassword);
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JPanel promptPanel = new JPanel();
+				promptPanel.setLayout(new GridLayout(4, 2, 0, 0));
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_USERNAME") + ":"));
+				promptPanel.add(new JLabel(sec.getUser()));
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_OLD_PASSWORD") + ":"));
+				JPasswordField oldPass = new JPasswordField(15);
+				promptPanel.add(oldPass);
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_NEW_PASSWORD") + ":"));
+				JPasswordField passField = new JPasswordField(15);
+				promptPanel.add(passField);
+				promptPanel.add(new JLabel(Utilities
+						.getString("PROMPT_NEW_PASSWORD") + ":"));
+				JPasswordField passField2 = new JPasswordField(15);
+				promptPanel.add(passField2);
+				int result = JOptionPane.showConfirmDialog(null, promptPanel,
+						Utilities.getString("USER_DETAILS_PROMPT"),
+						JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					if (!Arrays.equals(passField.getPassword(),
+							passField2.getPassword())) {
+						JOptionPane.showMessageDialog(null,
+								Utilities.getString("PASSWORDS_NOT_MATCH"),
+								Utilities.getString("PASSWORD_ERROR"),
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (!sec.changePassword(sec.getUser(),
+							new String(oldPass.getPassword()), new String(
+									passField.getPassword()))) {
+						JOptionPane.showMessageDialog(null,
+								Utilities.getString("PROMPT_ACCESS_DENIED"),
+								Utilities.getString("USER_DETAILS_PROMPT"),
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			}
+		});
+		JMenuItem manageUsers = new JMenuItem(
+				Utilities.getString("MENUBAR_MANAGE_USERS"));
+		users.add(manageUsers);
+		manageUsers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (sec.isAdmin()) {
+					JPanel userPanel = new JPanel();
+					userPanel.setLayout(new GridLayout(1, 2, 0, 0));
+					final JList userList = new JList(sec.listUsers().toArray());
+					userPanel.add(userList);
+
+					JPanel buttons = new JPanel();
+					buttons.setLayout(new GridLayout(3, 1, 0, 0));
+					userPanel.add(buttons);
+
+					JButton setAdmin = new JButton(Utilities
+							.getString("BUTTON_SET_ADMIN"));
+					buttons.add(setAdmin);
+					setAdmin.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							String user = (String) userList.getSelectedValue();
+							if (user != null) {
+								sec.setAdmin(user);
+							}
+						}
+					});
+
+					JButton changePassword = new JButton(Utilities
+							.getString("MENUBAR_CHANGE_PASSWORD"));
+					buttons.add(changePassword);
+					changePassword.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							String user = (String) userList.getSelectedValue();
+							if (user != null) {
+								JPanel promptPanel = new JPanel();
+								promptPanel.setLayout(new GridLayout(2,2,0,0));
+								promptPanel.add(new JLabel(Utilities
+										.getString("PROMPT_NEW_PASSWORD") + ":"));
+								JPasswordField passField = new JPasswordField(
+										15);
+								promptPanel.add(passField);
+								promptPanel.add(new JLabel(Utilities
+										.getString("PROMPT_NEW_PASSWORD") + ":"));
+								JPasswordField passField2 = new JPasswordField(
+										15);
+								promptPanel.add(passField2);
+								int result = JOptionPane.showConfirmDialog(
+										null,
+										promptPanel,
+										Utilities
+												.getString("USER_DETAILS_PROMPT"),
+										JOptionPane.OK_CANCEL_OPTION);
+								if (result == JOptionPane.OK_OPTION) {
+									if (!Arrays.equals(passField.getPassword(),
+											passField2.getPassword())) {
+										JOptionPane
+												.showMessageDialog(
+														null,
+														Utilities
+																.getString("PASSWORDS_NOT_MATCH"),
+														Utilities
+																.getString("PASSWORD_ERROR"),
+														JOptionPane.ERROR_MESSAGE);
+										return;
+									}
+									sec.changePasswordAdmin(user, new String(
+											passField.getPassword()));
+
+								}
+							}
+						}
+
+					});
+
+					JButton removeUser = new JButton(Utilities
+							.getString("REMOVE_USER"));
+					buttons.add(removeUser);
+					removeUser.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							String user = (String) userList.getSelectedValue();
+							if (user != null) {
+								if (JOptionPane.showConfirmDialog(
+										null,
+										Utilities.getString("REMOVE_USER_PROMPT")
+												+ " -- "
+												+ user,
+										Utilities.getString("REMOVE_USER"),
+										JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+									sec.removeUser(user);
+									userList.setListData(sec.listUsers().toArray());
+								}
+							}
+						}
+					});
+
+					JFrame frame = new JFrame(Utilities
+							.getString("MENUBAR_MANAGE_USERS"));
+					frame.setContentPane(userPanel);
+					frame.setVisible(true);
+					frame.pack();
+				}
+			}
+		});
 	}
 
 	private class OpenDatabaseListener implements ActionListener {
@@ -156,7 +357,7 @@ public class MenuBar extends JMenuBar {
 			fc.setDialogTitle(text);
 			int result = fc.showDialog(menuBar, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
-				sec.openFile(fc.getSelectedFile(),db);
+				sec.openFile(fc.getSelectedFile(), db);
 			}
 		}
 	}
@@ -177,32 +378,32 @@ public class MenuBar extends JMenuBar {
 			int result = fc.showDialog(menuBar, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File toFile = fc.getSelectedFile();
-//				File fromFile = db.getFile();
-//				try {
-//					FileInputStream fis = new FileInputStream(fromFile);
-//					FileOutputStream fos = new FileOutputStream(toFile);
-//					ProgressMonitor pm = new ProgressMonitor(menuBar, null,
-//							Utilities.getString("COPYING_DATABASE"), 0,
-//							(int) fromFile.length());
-//					pm.setMillisToPopup(0);
-//					pm.setMillisToDecideToPopup(0);
-//					byte[] buffer = new byte[1024];
-//					int bytesRead = 0;
-//					long totalRead = 0;
-//					while ((bytesRead = fis.read(buffer)) > -1) {
-//						totalRead += bytesRead;
-//						fos.write(buffer, 0, bytesRead);
-//						pm.setProgress((int) totalRead);
-//					}
-//					fos.flush();
-//					fos.close();
-//					fis.close();
-//				
-//				} catch (FileNotFoundException e) {
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
+				// File fromFile = db.getFile();
+				// try {
+				// FileInputStream fis = new FileInputStream(fromFile);
+				// FileOutputStream fos = new FileOutputStream(toFile);
+				// ProgressMonitor pm = new ProgressMonitor(menuBar, null,
+				// Utilities.getString("COPYING_DATABASE"), 0,
+				// (int) fromFile.length());
+				// pm.setMillisToPopup(0);
+				// pm.setMillisToDecideToPopup(0);
+				// byte[] buffer = new byte[1024];
+				// int bytesRead = 0;
+				// long totalRead = 0;
+				// while ((bytesRead = fis.read(buffer)) > -1) {
+				// totalRead += bytesRead;
+				// fos.write(buffer, 0, bytesRead);
+				// pm.setProgress((int) totalRead);
+				// }
+				// fos.flush();
+				// fos.close();
+				// fis.close();
+				//
+				// } catch (FileNotFoundException e) {
+				// e.printStackTrace();
+				// } catch (IOException e) {
+				// e.printStackTrace();
+				// }
 				sec.saveFile(toFile);
 			}
 		}

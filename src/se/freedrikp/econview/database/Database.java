@@ -880,4 +880,8 @@ public class Database extends Observable {
 		}
 		return list;
 	}
+	
+	public void close() throws SQLException{
+		c.close();
+	}
 }

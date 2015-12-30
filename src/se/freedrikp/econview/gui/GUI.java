@@ -7,6 +7,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Observable;
@@ -31,6 +34,7 @@ public class GUI extends JFrame implements Observer {
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
 	private Security sec;
+	private Database db;
 	private final int WIDTH = Integer.parseInt(Utilities
 			.getConfig("WINDOW_WIDTH"));
 	private final int HEIGHT = Integer.parseInt(Utilities
@@ -69,9 +73,10 @@ public class GUI extends JFrame implements Observer {
 		// setResizable(false);
 		// this.dbfile = dbfile;
 		this.sec = sec;
+		this.db = db;
 		sec.addObserver(this);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(new Window(this));
+		addWindowListener(new Window(this,db,sec));
 		// setBounds(100, 100, 1280, 430);
 		// setBounds(100, 100, 1360, 500);
 		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -169,19 +174,29 @@ public class GUI extends JFrame implements Observer {
 
 	public void update(Observable o, Object arg) {
 		setTitle("EconView - " + sec.getFile().getAbsolutePath());
-		repaint();
+//		repaint();
 	}
 
 	private static class Window extends WindowAdapter {
 		private GUI gui;
+		private Security sec;
+		private Database db;
 
-		public Window(GUI gui) {
+		public Window(GUI gui, Database db, Security sec) {
 			this.gui = gui;
+			this.sec = sec;
+			this.db = db;
 		}
 
 		public void windowClosing(WindowEvent e) {
+			try {
+				db.close();
+				sec.close();
+				Files.delete(new File(Utilities.getConfig("DATABASE_FILE")).toPath());
+			} catch (SQLException | IOException e1) {
+				e1.printStackTrace();
+			}
 			gui.dispose();
-			new File(Utilities.getConfig("DATABASE_FILE")).delete();
 			System.exit(0);
 		}
 	}

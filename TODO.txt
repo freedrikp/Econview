@@ -1,6 +1,4 @@
 === TODO ===
-*Fix control panel for users.
-*Investigate possibillity of having a change password feature.
 
 
 ----------------------------------------------------------------------------------
@@ -14,6 +12,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fix control panel for users. v2.0
+
+*Change password feature implemented(salt is renewed so decyrption will be impossible). ---- v2.0
+
 *Fix so database file is removed on exit of the program. ---- v2.0
 
 *There are now users in the system with encrypted databases. ---- v2.0
