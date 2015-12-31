@@ -887,4 +887,32 @@ public class Database extends Observable {
 	public void close() throws SQLException{
 		c.close();
 	}
+	
+	private void deleteEntries(String table){
+		try {
+			c.prepareStatement("DELETE FROM " + table).executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
+	
+	public void deleteAccounts(){
+		deleteEntries("Accounts");
+	}
+	
+	public void deleteTransactions(){
+		deleteEntries("Transactions");
+	}
+	
+	public void clearSpace(){
+		try {
+			c.close();
+			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+			c.prepareStatement("VACUUM").executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

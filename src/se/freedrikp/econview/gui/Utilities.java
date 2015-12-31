@@ -105,6 +105,11 @@ public class Utilities {
 		lan.put("BUTTON_SET_ADMIN", "Set Admin");
 		lan.put("REMOVE_USER", "Remove User");
 		lan.put("REMOVE_USER_PROMPT", "Are you sure you want to remove this user?");
+		lan.put("MENUBAR_DELETE", "Delete");
+		lan.put("MENUBAR_DELETE_ACCOUNTS", "Delete All Accounts");
+		lan.put("MENUBAR_DELETE_TRANSACTIONS", "Delete All Transactions");
+		lan.put("PROMPT_DELETE_ACCOUNTS", "Are you sure you want to delete all accounts?");
+		lan.put("PROMPT_DELETE_TRANSACTIONS", "Are you sure you want to delete all transactions?");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}

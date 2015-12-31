@@ -1,5 +1,4 @@
 === TODO ===
-*Fix all accounts/transactions can be deleted.
 *Implement support for template transactions. (Is this really useful? Multitransactions may have taken over a bit)
 
 ----------------------------------------------------------------------------------
@@ -12,6 +11,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Fix all accounts/transactions can be deleted. ---- v2.1
+
 *Fixed bug so database is closed before opening new db. ---- v2.1
 
 *Fixed so that import is regarded as transaction in database. ---- v2.0

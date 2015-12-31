@@ -272,7 +272,8 @@ public class MenuBar extends JMenuBar {
 							String user = (String) userList.getSelectedValue();
 							if (user != null) {
 								JPanel promptPanel = new JPanel();
-								promptPanel.setLayout(new GridLayout(2,2,0,0));
+								promptPanel
+										.setLayout(new GridLayout(2, 2, 0, 0));
 								promptPanel.add(new JLabel(Utilities
 										.getString("PROMPT_NEW_PASSWORD") + ":"));
 								JPasswordField passField = new JPasswordField(
@@ -320,13 +321,14 @@ public class MenuBar extends JMenuBar {
 							if (user != null) {
 								if (JOptionPane.showConfirmDialog(
 										null,
-										Utilities.getString("REMOVE_USER_PROMPT")
-												+ " -- "
-												+ user,
-										Utilities.getString("REMOVE_USER"),
+										Utilities
+												.getString("REMOVE_USER_PROMPT")
+												+ " -- " + user, Utilities
+												.getString("REMOVE_USER"),
 										JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 									sec.removeUser(user);
-									userList.setListData(sec.listUsers().toArray());
+									userList.setListData(sec.listUsers()
+											.toArray());
 								}
 							}
 						}
@@ -337,6 +339,37 @@ public class MenuBar extends JMenuBar {
 					frame.setContentPane(userPanel);
 					frame.setVisible(true);
 					frame.pack();
+				}
+			}
+		});
+
+		JMenu delete = new JMenu(Utilities.getString("MENUBAR_DELETE"));
+		add(delete);
+
+		JMenuItem deleteAccounts = new JMenuItem(
+				Utilities.getString("MENUBAR_DELETE_ACCOUNTS"));
+		delete.add(deleteAccounts);
+		deleteAccounts.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(null,
+						Utilities.getString("PROMPT_DELETE_ACCOUNTS"),
+						Utilities.getString("MENUBAR_DELETE_ACCOUNTS"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						db.deleteAccounts();
+				}
+			}
+		});
+
+		JMenuItem deleteTransactions = new JMenuItem(
+				Utilities.getString("MENUBAR_DELETE_TRANSACTIONS"));
+		delete.add(deleteTransactions);
+		deleteTransactions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(null,
+						Utilities.getString("PROMPT_DELETE_TRANSACTIONS"),
+						Utilities.getString("MENUBAR_DELETE_TRANSACTIONS"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						db.deleteTransactions();
 				}
 			}
 		});
