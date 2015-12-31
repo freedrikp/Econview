@@ -1,8 +1,8 @@
 === TODO ===
-
+*Fix all accounts/transactions can be deleted.
+*Implement support for template transactions. (Is this really useful? Multitransactions may have taken over a bit)
 
 ----------------------------------------------------------------------------------
-*Implement support for template transactions. (Is this really useful? Multitransactions may have taken over a bit)
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
 === BETWEEN ===
