@@ -110,6 +110,8 @@ public class Utilities {
 		lan.put("MENUBAR_DELETE_TRANSACTIONS", "Delete All Transactions");
 		lan.put("PROMPT_DELETE_ACCOUNTS", "Are you sure you want to delete all accounts?");
 		lan.put("PROMPT_DELETE_TRANSACTIONS", "Are you sure you want to delete all transactions?");
+		lan.put("USER_HEADER_USERNAME","Username");
+		lan.put("USER_HEADER_ADMIN","Admin");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}
@@ -134,6 +136,8 @@ public class Utilities {
 		config.put("DATE_FIELD_HEIGHT", "15");
 		config.put("DIAGRAMS_STYLE_SPLIT_OR_TAB", "TAB");
 		config.put("USERS_DATABASE_FILE", "econview_users.db");
+		config.put("USER_PANEL_WIDTH", "400");
+		config.put("USER_PANEL_HEIGHT", "200");
 	}
 
 	public static String getConfig(String key) {

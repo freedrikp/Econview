@@ -1,6 +1,6 @@
 === TODO ===
 *Implement support for template transactions. (Is this really useful? Multitransactions may have taken over a bit)
-
+*Implement functionality for selecting files when changing password.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -11,6 +11,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Improved manage users panel. Added admin info and switched to jtable. ---- v2.2
+
+*Refactored changePassword. ---- v2.2
+
 *Fix all accounts/transactions can be deleted. ---- v2.1
 
 *Fixed bug so database is closed before opening new db. ---- v2.1

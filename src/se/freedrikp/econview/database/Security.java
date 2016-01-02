@@ -69,7 +69,7 @@ public class Security extends Observable implements Observer {
 			c.prepareStatement(sql).executeUpdate();
 			String user = "admin";
 			String password = "1234";
-			addUser(user, password,true);
+			addUser(user, password, true);
 			c.commit();
 			c.setAutoCommit(true);
 		} catch (SQLException e) {
@@ -195,10 +195,8 @@ public class Security extends Observable implements Observer {
 					encDB = selectedFile;
 					boolean found = false;
 					if (encDB.exists() && encDB.length() > 0) {
-						if (encDB.exists() && encDB.length() > 0) {
-							decrypt(encDB, Utilities.getConfig("DATABASE_FILE"));
-							found = true;
-						}
+						decrypt(encDB, Utilities.getConfig("DATABASE_FILE"));
+						found = true;
 					}
 					db.openFile(new File(Utilities.getConfig("DATABASE_FILE")));
 					if (!found) {
@@ -242,7 +240,7 @@ public class Security extends Observable implements Observer {
 			ps.setString(1, username);
 			ps.setString(2, password);
 			ps.setString(3, salt);
-			int ad = admin ? 1:0;
+			int ad = admin ? 1 : 0;
 			ps.setInt(4, ad);
 			ps.executeUpdate();
 		} catch (SQLException | UnsupportedEncodingException e) {
@@ -255,42 +253,30 @@ public class Security extends Observable implements Observer {
 	public boolean changePassword(String username, String oldPass,
 			String newPass) {
 		try {
-			if (!checkUser(username, oldPass)) {
-				return false;
+			if (checkUser(username, oldPass)) {
+				changePasswordAdmin(username, newPass);
+				return true;
 			}
-
-			byte[] temp = new byte[10];
-			rand.nextBytes(temp);
-			String salt;
-
-			salt = new String(temp, "UTF-8");
-
-			String password = new String(digest.digest((newPass + salt)
-					.getBytes("UTF-8")), "UTF-8");
-			String sql = "UPDATE Users SET password=?, salt=? WHERE username=?";
-			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setString(1, password);
-			ps.setString(2, salt);
-			ps.setString(3, username);
-			ps.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
 		}
-		return true;
+		return false;
 	}
 
 	public String getUser() {
 		return user;
 	}
 
-	public List<String> listUsers() {
+	public List<Object[]> listUsers() {
 		try {
-			String sql = "SELECT username FROM Users";
+			String sql = "SELECT username,admin FROM Users";
 			ResultSet users = c.prepareStatement(sql).executeQuery();
-			ArrayList<String> res = new ArrayList<String>();
+			ArrayList<Object[]> res = new ArrayList<Object[]>();
 			while (users.next()) {
-				res.add(users.getString("username"));
+				Object[] entry = new Object[2];
+				entry[0]=users.getString("username");
+				entry[1]= users.getBoolean("admin");
+				res.add(entry);
 			}
 
 			return res;
@@ -315,11 +301,11 @@ public class Security extends Observable implements Observer {
 
 	public boolean isAdmin() {
 		try {
-		String sql = "SELECT username FROM Users WHERE admin=1";
-		ResultSet results = c.prepareStatement(sql).executeQuery();
-		if (results.next()){
-			return user.equals(results.getString("username"));
-		}
+			String sql = "SELECT username FROM Users WHERE admin=1";
+			ResultSet results = c.prepareStatement(sql).executeQuery();
+			if (results.next()) {
+				return user.equals(results.getString("username"));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -363,8 +349,8 @@ public class Security extends Observable implements Observer {
 			e.printStackTrace();
 		}
 	}
-	
-	public void close() throws SQLException{
+
+	public void close() throws SQLException {
 		c.close();
 	}
 }

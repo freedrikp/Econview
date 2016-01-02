@@ -134,7 +134,7 @@ public class GUI extends JFrame implements Observer {
 
 		public Class<?> getColumnClass(int columnIndex) {
 			if (getRowCount() == 0){
-				return String.class;
+				return Object.class;
 			}
 			return getValueAt(0, columnIndex).getClass();
 		}

@@ -1,6 +1,8 @@
 package se.freedrikp.econview.gui;
 
 import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -18,7 +21,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -26,15 +28,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.gui.GUI.Model;
 
 public class MenuBar extends JMenuBar {
 
 	private Database db;
 	private Security sec;
+	private static final String[] userHeader = {
+		Utilities.getString("USER_HEADER_USERNAME"),
+		Utilities.getString("USER_HEADER_ADMIN") };
+
 
 	public MenuBar(final Database db, final Security sec) {
 		super();
@@ -245,8 +254,18 @@ public class MenuBar extends JMenuBar {
 				if (sec.isAdmin()) {
 					JPanel userPanel = new JPanel();
 					userPanel.setLayout(new GridLayout(1, 2, 0, 0));
-					final JList userList = new JList(sec.listUsers().toArray());
-					userPanel.add(userList);
+					final JTable userTable = new JTable();
+					userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					userTable.setAutoCreateRowSorter(true);
+					Model m = new Model(userHeader,0);
+					for(Object[] row : sec.listUsers()){
+						m.addRow(row);
+					}
+					userTable.setModel(m);
+					JScrollPane scrollPane = new JScrollPane();
+					scrollPane.setViewportView(userTable);
+					GUI.resizeTable(userTable);
+					userPanel.add(scrollPane);
 
 					JPanel buttons = new JPanel();
 					buttons.setLayout(new GridLayout(3, 1, 0, 0));
@@ -257,9 +276,15 @@ public class MenuBar extends JMenuBar {
 					buttons.add(setAdmin);
 					setAdmin.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String user = (String) userList.getSelectedValue();
+							String user = (String) userTable.getModel().getValueAt(userTable.getSelectedRow(), 0);
 							if (user != null) {
 								sec.setAdmin(user);
+								Model m = new Model(userHeader,0);
+								for(Object[] row : sec.listUsers()){
+									m.addRow(row);
+								}
+								userTable.setModel(m);
+								GUI.resizeTable(userTable);
 							}
 						}
 					});
@@ -269,7 +294,7 @@ public class MenuBar extends JMenuBar {
 					buttons.add(changePassword);
 					changePassword.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String user = (String) userList.getSelectedValue();
+							String user = (String) userTable.getModel().getValueAt(userTable.getSelectedRow(), 0);
 							if (user != null) {
 								JPanel promptPanel = new JPanel();
 								promptPanel
@@ -317,7 +342,7 @@ public class MenuBar extends JMenuBar {
 					buttons.add(removeUser);
 					removeUser.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String user = (String) userList.getSelectedValue();
+							String user = (String) userTable.getModel().getValueAt(userTable.getSelectedRow(), 0);
 							if (user != null) {
 								if (JOptionPane.showConfirmDialog(
 										null,
@@ -327,8 +352,12 @@ public class MenuBar extends JMenuBar {
 												.getString("REMOVE_USER"),
 										JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 									sec.removeUser(user);
-									userList.setListData(sec.listUsers()
-											.toArray());
+									Model m = new Model(userHeader,0);
+									for(Object[] row : sec.listUsers()){
+										m.addRow(row);
+									}
+									userTable.setModel(m);
+									GUI.resizeTable(userTable);
 								}
 							}
 						}
@@ -336,9 +365,16 @@ public class MenuBar extends JMenuBar {
 
 					JFrame frame = new JFrame(Utilities
 							.getString("MENUBAR_MANAGE_USERS"));
+					int width = Integer.parseInt(Utilities
+							.getConfig("USER_PANEL_WIDTH"));
+					int height = Integer.parseInt(Utilities
+							.getConfig("USER_PANEL_HEIGHT"));
+					DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
+							.getDefaultScreenDevice().getDisplayMode();
+					frame.setBounds((dm.getWidth() - width) / 2, (dm.getHeight() - height) / 2,
+							width, height);
 					frame.setContentPane(userPanel);
 					frame.setVisible(true);
-					frame.pack();
 				}
 			}
 		});
