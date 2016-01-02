@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -21,6 +21,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -41,9 +42,8 @@ public class MenuBar extends JMenuBar {
 	private Database db;
 	private Security sec;
 	private static final String[] userHeader = {
-		Utilities.getString("USER_HEADER_USERNAME"),
-		Utilities.getString("USER_HEADER_ADMIN") };
-
+			Utilities.getString("USER_HEADER_USERNAME"),
+			Utilities.getString("USER_HEADER_ADMIN") };
 
 	public MenuBar(final Database db, final Security sec) {
 		super();
@@ -235,9 +235,57 @@ public class MenuBar extends JMenuBar {
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
+					final LinkedList<File> files = new LinkedList<File>();
+					files.add(sec.getFile().getAbsoluteFile());
+					JPanel filePanel = new JPanel();
+					filePanel.setLayout(new GridLayout(3, 1, 0, 0));
+					final JList fileList = new JList();
+					fileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					fileList.setListData(files.toArray());
+					filePanel.add(new JLabel(Utilities
+							.getString("CHANGE_PASSWORD_FILES")));
+					JScrollPane scrollPane = new JScrollPane();
+					scrollPane.setViewportView(fileList);
+					filePanel.add(scrollPane);
+					JPanel buttonPanel = new JPanel();
+					JButton addFile = new JButton("+");
+					addFile.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							JFileChooser fc = new JFileChooser(System
+									.getProperty("user.dir"));
+							fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+							fc.setMultiSelectionEnabled(true);
+							int result = fc.showOpenDialog(null);
+							if (result == JFileChooser.APPROVE_OPTION) {
+								for (File f : fc.getSelectedFiles()) {
+									files.add(f);
+								}
+								fileList.setListData(files.toArray());
+								System.out.println("hej");
+							}
+						}
+					});
+					JButton removeFile = new JButton("-");
+					removeFile.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							files.remove(fileList.getSelectedValue());
+							fileList.setListData(files.toArray());
+						}
+					});
+					
+					buttonPanel.add(addFile);
+					buttonPanel.add(removeFile);
+					filePanel.add(buttonPanel);
+
+					if (JOptionPane.showConfirmDialog(null, filePanel,
+							Utilities.getString("MENUBAR_CHANGE_PASSWORD"),
+							JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+						return;
+					}
+
 					if (!sec.changePassword(sec.getUser(),
 							new String(oldPass.getPassword()), new String(
-									passField.getPassword()))) {
+									passField.getPassword()),files)) {
 						JOptionPane.showMessageDialog(null,
 								Utilities.getString("PROMPT_ACCESS_DENIED"),
 								Utilities.getString("USER_DETAILS_PROMPT"),
@@ -255,10 +303,11 @@ public class MenuBar extends JMenuBar {
 					JPanel userPanel = new JPanel();
 					userPanel.setLayout(new GridLayout(1, 2, 0, 0));
 					final JTable userTable = new JTable();
-					userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					userTable
+							.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					userTable.setAutoCreateRowSorter(true);
-					Model m = new Model(userHeader,0);
-					for(Object[] row : sec.listUsers()){
+					Model m = new Model(userHeader, 0);
+					for (Object[] row : sec.listUsers()) {
 						m.addRow(row);
 					}
 					userTable.setModel(m);
@@ -276,11 +325,12 @@ public class MenuBar extends JMenuBar {
 					buttons.add(setAdmin);
 					setAdmin.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String user = (String) userTable.getModel().getValueAt(userTable.getSelectedRow(), 0);
+							String user = (String) userTable.getModel()
+									.getValueAt(userTable.getSelectedRow(), 0);
 							if (user != null) {
 								sec.setAdmin(user);
-								Model m = new Model(userHeader,0);
-								for(Object[] row : sec.listUsers()){
+								Model m = new Model(userHeader, 0);
+								for (Object[] row : sec.listUsers()) {
 									m.addRow(row);
 								}
 								userTable.setModel(m);
@@ -294,7 +344,8 @@ public class MenuBar extends JMenuBar {
 					buttons.add(changePassword);
 					changePassword.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String user = (String) userTable.getModel().getValueAt(userTable.getSelectedRow(), 0);
+							String user = (String) userTable.getModel()
+									.getValueAt(userTable.getSelectedRow(), 0);
 							if (user != null) {
 								JPanel promptPanel = new JPanel();
 								promptPanel
@@ -342,7 +393,8 @@ public class MenuBar extends JMenuBar {
 					buttons.add(removeUser);
 					removeUser.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							String user = (String) userTable.getModel().getValueAt(userTable.getSelectedRow(), 0);
+							String user = (String) userTable.getModel()
+									.getValueAt(userTable.getSelectedRow(), 0);
 							if (user != null) {
 								if (JOptionPane.showConfirmDialog(
 										null,
@@ -352,8 +404,8 @@ public class MenuBar extends JMenuBar {
 												.getString("REMOVE_USER"),
 										JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 									sec.removeUser(user);
-									Model m = new Model(userHeader,0);
-									for(Object[] row : sec.listUsers()){
+									Model m = new Model(userHeader, 0);
+									for (Object[] row : sec.listUsers()) {
 										m.addRow(row);
 									}
 									userTable.setModel(m);
@@ -369,10 +421,11 @@ public class MenuBar extends JMenuBar {
 							.getConfig("USER_PANEL_WIDTH"));
 					int height = Integer.parseInt(Utilities
 							.getConfig("USER_PANEL_HEIGHT"));
-					DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
+					DisplayMode dm = GraphicsEnvironment
+							.getLocalGraphicsEnvironment()
 							.getDefaultScreenDevice().getDisplayMode();
-					frame.setBounds((dm.getWidth() - width) / 2, (dm.getHeight() - height) / 2,
-							width, height);
+					frame.setBounds((dm.getWidth() - width) / 2,
+							(dm.getHeight() - height) / 2, width, height);
 					frame.setContentPane(userPanel);
 					frame.setVisible(true);
 				}
@@ -391,7 +444,7 @@ public class MenuBar extends JMenuBar {
 						Utilities.getString("PROMPT_DELETE_ACCOUNTS"),
 						Utilities.getString("MENUBAR_DELETE_ACCOUNTS"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-						db.deleteAccounts();
+					db.deleteAccounts();
 				}
 			}
 		});
@@ -405,7 +458,7 @@ public class MenuBar extends JMenuBar {
 						Utilities.getString("PROMPT_DELETE_TRANSACTIONS"),
 						Utilities.getString("MENUBAR_DELETE_TRANSACTIONS"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-						db.deleteTransactions();
+					db.deleteTransactions();
 				}
 			}
 		});

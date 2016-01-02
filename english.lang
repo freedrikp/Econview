@@ -42,6 +42,7 @@ ADD_ACCOUNT_CHAIN=Do you wish to add a new account?
 EDIT_TRANSACTION=Edit Transaction
 TRANSACTION_HEADER_ID=ID
 MENUBAR_USERS=Users
+CHANGE_PASSWORD_FILES=Select files to reencrypt with the new password.
 REVENUE_HEADER_YEAR=Year
 MENUBAR_SETTINGS=Settings
 ADD_ACCOUNT_BALANCE=Balance

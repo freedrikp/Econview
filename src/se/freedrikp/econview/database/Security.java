@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.sql.Connection;
@@ -14,7 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -251,10 +255,23 @@ public class Security extends Observable implements Observer {
 	}
 
 	public boolean changePassword(String username, String oldPass,
-			String newPass) {
+			String newPass,List<File> files) {
 		try {
 			if (checkUser(username, oldPass)) {
+				HashMap<String,File> dec = new HashMap<String,File>();
+				for (File f : files){
+					String dest = "econview_temp_"+f.getName();
+					decrypt(f,dest);
+					dec.put(dest,f);
+				}
 				changePasswordAdmin(username, newPass);
+				if (!checkUser(username,newPass)){
+					return false;
+				}
+				for (Map.Entry<String, File> enc : dec.entrySet()){
+					encrypt(enc.getValue(), enc.getKey());
+					Files.delete(new File(enc.getKey()).toPath());
+				}
 				return true;
 			}
 		} catch (Exception e) {

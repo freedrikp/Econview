@@ -112,6 +112,7 @@ public class Utilities {
 		lan.put("PROMPT_DELETE_TRANSACTIONS", "Are you sure you want to delete all transactions?");
 		lan.put("USER_HEADER_USERNAME","Username");
 		lan.put("USER_HEADER_ADMIN","Admin");
+		lan.put("CHANGE_PASSWORD_FILES", "Select files to reencrypt with the new password.");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}
