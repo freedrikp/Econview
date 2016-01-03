@@ -1,6 +1,5 @@
 === TODO ===
 
-*Fix bug with ordering of transactions with equal date
 *Fix bug with selecting in tables when they are sorted.
 
 
@@ -14,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+
+*Fix bug with ordering of transactions with equal date. ---- v2.2
 
 *Refactor TransactionsDialog. ---- v2.2
 
