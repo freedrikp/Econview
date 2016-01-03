@@ -1,5 +1,6 @@
 === TODO ===
 
+*Refactor Security and ManageUsersFrame to follow Observer pattern.
 
 
 ----------------------------------------------------------------------------------
