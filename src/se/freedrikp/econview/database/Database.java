@@ -29,8 +29,9 @@ public class Database extends Observable {
 	private Connection c;
 	private File dbfile;
 	private int showHidden;
-//	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-//			"yyyy-MM-dd");
+
+	// private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+	// "yyyy-MM-dd");
 
 	public Database(String dbfile) {
 		this.dbfile = new File(dbfile);
@@ -233,7 +234,8 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<Object[]> getTransactions(Date fromDate, Date toDate, Collection<String> accounts) {
+	public List<Object[]> getTransactions(Date fromDate, Date toDate,
+			Collection<String> accounts) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			String selectedAccounts = "(";
@@ -246,10 +248,13 @@ public class Database extends Observable {
 				i++;
 			}
 			selectedAccounts += ")";
-//			PreparedStatement ps = c
-//					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?");
-//			ps.setInt(1, showHidden);
-			PreparedStatement ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM","Where accountName IN " + selectedAccounts,fromDate,toDate);
+			// PreparedStatement ps = c
+			// .prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?");
+			// ps.setInt(1, showHidden);
+			PreparedStatement ps = selectBetweenDates(
+					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
+					"Where accountName IN " + selectedAccounts, fromDate,
+					toDate);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[5];
@@ -258,7 +263,7 @@ public class Database extends Observable {
 				row[2] = results.getDouble("transactionAmount");
 				Calendar cal = Calendar.getInstance();
 				cal.set(results.getInt("transactionYear"),
-						results.getInt("transactionMonth")-1,
+						results.getInt("transactionMonth") - 1,
 						results.getInt("transactionDay"), 0, 0, 0);
 				row[3] = cal.getTime();
 				row[4] = results.getString("transactionComment");
@@ -296,7 +301,8 @@ public class Database extends Observable {
 			while (results.next()) {
 				Object[] row = new Object[2];
 				Calendar cal = Calendar.getInstance();
-				cal.set(results.getInt("transactionYear"),results.getInt("transactionMonth")-1,1,0,0,0);
+				cal.set(results.getInt("transactionYear"),
+						results.getInt("transactionMonth") - 1, 1, 0, 0, 0);
 				row[0] = cal.getTime();
 				row[1] = results.getDouble("revenue");
 				list.add(row);
@@ -317,7 +323,7 @@ public class Database extends Observable {
 			while (results.next()) {
 				Object[] row = new Object[2];
 				Calendar cal = Calendar.getInstance();
-				cal.set(results.getInt("transactionYear"),0,1,0,0,0);
+				cal.set(results.getInt("transactionYear"), 0, 1, 0, 0, 0);
 				row[0] = cal.getTime();
 				row[1] = results.getDouble("revenue");
 				list.add(row);
@@ -338,7 +344,8 @@ public class Database extends Observable {
 			while (results.next()) {
 				Object[] row = new Object[3];
 				Calendar cal = Calendar.getInstance();
-				cal.set(results.getInt("transactionYear"),results.getInt("transactionMonth")-1,1,0,0,0);
+				cal.set(results.getInt("transactionYear"),
+						results.getInt("transactionMonth") - 1, 1, 0, 0, 0);
 				row[0] = cal.getTime();
 				row[1] = results.getString("accountName");
 				row[2] = results.getDouble("revenue");
@@ -360,7 +367,7 @@ public class Database extends Observable {
 			while (results.next()) {
 				Object[] row = new Object[3];
 				Calendar cal = Calendar.getInstance();
-				cal.set(results.getInt("transactionYear"),0,1,0,0,0);
+				cal.set(results.getInt("transactionYear"), 0, 1, 0, 0, 0);
 				row[0] = cal.getTime();
 				row[1] = results.getString("accountName");
 				row[2] = results.getDouble("revenue");
@@ -504,16 +511,15 @@ public class Database extends Observable {
 			Map<String, Map<Date, Double>> dataset, double startBalance,
 			String accountName, String consideredAccounts) throws SQLException {
 		Map<Date, Double> datapoints = new TreeMap<Date, Double>();
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(to, startBalance);
 		PreparedStatement ps;
 		Date latest = getNewestTransactionDate();
-		latest = latest !=null ? latest:new Date(); 
+		latest = latest != null ? latest : new Date();
 		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
-					"WHERE accountName IN " + consideredAccounts, from,
-					latest);
+					"WHERE accountName IN " + consideredAccounts, from, latest);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
@@ -538,7 +544,9 @@ public class Database extends Observable {
 		transactions = ps.executeQuery();
 		while (transactions.next()) {
 			Calendar cal = Calendar.getInstance();
-			cal.set(transactions.getInt("transactionYear"),transactions.getInt("transactionMonth") -1,transactions.getInt("transactionDay"),0,0,0);
+			cal.set(transactions.getInt("transactionYear"),
+					transactions.getInt("transactionMonth") - 1,
+					transactions.getInt("transactionDay"), 0, 0, 0);
 			startBalance += transactions.getDouble("transactionAmount");
 			datapoints.put(cal.getTime(), startBalance);
 		}
@@ -742,7 +750,7 @@ public class Database extends Observable {
 	public void openFile(File dbfile) {
 		this.dbfile = dbfile;
 		try {
-			c.close();
+			close();
 			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
 			if (!this.dbfile.exists() || this.dbfile.length() == 0) {// !this.dbfile.exists())
 																		// {
@@ -816,26 +824,42 @@ public class Database extends Observable {
 	}
 
 	public Date getOldestTransactionDate() {
-//		return getTransactionDate("MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day");
+		// return
+		// getTransactionDate("MIN(transactionYear) as year,MIN(transactionMonth) as month,MIN(transactionDay) as day");
 		return getTransactionDate("MIN");
 	}
 
 	public Date getNewestTransactionDate() {
-//		return getTransactionDate("MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day");
+		// return
+		// getTransactionDate("MAX(transactionYear) as year,MAX(transactionMonth) as month,MAX(transactionDay) as day");
 		return getTransactionDate("MAX");
 	}
 
 	private Date getTransactionDate(String sql) {
 		try {
-			String year = "SELECT "+ sql +"(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
-			String month = "SELECT "+ sql +"(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("+ year +") AND accountHidden <= ?";
-			String day = "SELECT "+ sql +"(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("+ month +") AND transactionYear IN ("+ year +") AND accountHidden <= ?";
-			//			PreparedStatement ps = c
-//					.prepareStatement("SELECT "
-//							+ sql
-//							+ " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+			String year = "SELECT "
+					+ sql
+					+ "(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
+			String month = "SELECT "
+					+ sql
+					+ "(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("
+					+ year + ") AND accountHidden <= ?";
+			String day = "SELECT "
+					+ sql
+					+ "(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("
+					+ month + ") AND transactionYear IN (" + year
+					+ ") AND accountHidden <= ?";
+			// PreparedStatement ps = c
+			// .prepareStatement("SELECT "
+			// + sql
+			// +
+			// " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear as year,transactionMonth as month,transactionDay as day FROM Transactions NATURAL JOIN Accounts WHERE transactionYear IN (" + year +") AND transactionMonth IN (" + month +") AND transactionDay IN (" + day +")");
+					.prepareStatement("SELECT transactionYear as year,transactionMonth as month,transactionDay as day FROM Transactions NATURAL JOIN Accounts WHERE transactionYear IN ("
+							+ year
+							+ ") AND transactionMonth IN ("
+							+ month
+							+ ") AND transactionDay IN (" + day + ")");
 			ps.setInt(1, showHidden);
 			ps.setInt(2, showHidden);
 			ps.setInt(3, showHidden);
@@ -847,7 +871,7 @@ public class Database extends Observable {
 			Date date = null;
 			while (result.next()) {
 				Calendar cal = Calendar.getInstance();
-				cal.set(result.getInt("year"), result.getInt("month")-1,
+				cal.set(result.getInt("year"), result.getInt("month") - 1,
 						result.getInt("day"), 0, 0, 0);
 				date = cal.getTime();
 			}
@@ -857,18 +881,20 @@ public class Database extends Observable {
 		}
 		return null;
 	}
-	
-	public List<Object[]> getMultiTransactions(long transactionID,Date transactionDate,String transactionComment) {
+
+	public List<Object[]> getMultiTransactions(long transactionID,
+			Date transactionDate, String transactionComment) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
 					.prepareStatement("SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear = ? AND transactionMonth = ? AND transactionDay = ? AND transactionComment = ? AND transactionID <> ?");
 			ps.setInt(1, showHidden);
-			ps.setString(2, new SimpleDateFormat("yyyy").format(transactionDate));
+			ps.setString(2,
+					new SimpleDateFormat("yyyy").format(transactionDate));
 			ps.setString(3, new SimpleDateFormat("MM").format(transactionDate));
 			ps.setString(4, new SimpleDateFormat("dd").format(transactionDate));
 			ps.setString(5, transactionComment);
-			ps.setLong(6,transactionID);
+			ps.setLong(6, transactionID);
 
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -883,12 +909,19 @@ public class Database extends Observable {
 		}
 		return list;
 	}
-	
-	public void close() throws SQLException{
+
+	public void close() throws SQLException {
+		try {
+			c.close();
+			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+			c.prepareStatement("VACUUM").executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		c.close();
 	}
-	
-	private void deleteEntries(String table){
+
+	private void deleteEntries(String table) {
 		try {
 			c.prepareStatement("DELETE FROM " + table).executeUpdate();
 		} catch (SQLException e) {
@@ -897,22 +930,12 @@ public class Database extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-	
-	public void deleteAccounts(){
+
+	public void deleteAccounts() {
 		deleteEntries("Accounts");
 	}
-	
-	public void deleteTransactions(){
+
+	public void deleteTransactions() {
 		deleteEntries("Transactions");
-	}
-	
-	public void clearSpace(){
-		try {
-			c.close();
-			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-			c.prepareStatement("VACUUM").executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 }

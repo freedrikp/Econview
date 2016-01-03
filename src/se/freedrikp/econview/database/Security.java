@@ -44,9 +44,11 @@ public class Security extends Observable implements Observer {
 	private IvParameterSpec iv;
 	private String user;
 	private File encDB;
+	private String dbfile;
 
 	public Security(String dbfile) {
 		try {
+			this.dbfile = dbfile;
 			File db = new File(dbfile);
 			rand = new SecureRandom();
 			digest = MessageDigest.getInstance("SHA-256");
@@ -57,8 +59,6 @@ public class Security extends Observable implements Observer {
 				initdb();
 			}
 		} catch (Exception e) {
-			// System.err.println(e.getClass().getName() + ": " +
-			// e.getMessage());
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -368,6 +368,13 @@ public class Security extends Observable implements Observer {
 	}
 
 	public void close() throws SQLException {
+		try {
+			c.close();
+			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+			c.prepareStatement("VACUUM").executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		c.close();
 	}
 }

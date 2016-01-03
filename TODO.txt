@@ -10,6 +10,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Refactored vaccum for both userdb and econviewdb. ---- v2.2
+
 *Implement functionality for selecting files when changing password. ---- v2.2
 
 *Improved manage users panel. Added admin info and switched to jtable. ---- v2.2

@@ -193,7 +193,6 @@ public class GUI extends JFrame implements Observer {
 
 		public void windowClosing(WindowEvent e) {
 			try {
-				db.clearSpace();
 				db.close();
 				sec.close();
 				Files.delete(new File(Utilities.getConfig("DATABASE_FILE")).toPath());
