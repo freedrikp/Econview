@@ -51,7 +51,7 @@ public class ManageUsersFrame extends JFrame {
 		setAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userTable.getModel().getValueAt(
-						userTable.getSelectedRow(), 0);
+						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
 				if (user != null) {
 					sec.setAdmin(user);
 					Model m = new Model(userHeader, 0);
@@ -70,7 +70,7 @@ public class ManageUsersFrame extends JFrame {
 		changePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userTable.getModel().getValueAt(
-						userTable.getSelectedRow(), 0);
+						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
 				if (user != null) {
 					JPanel promptPanel = new JPanel();
 					promptPanel.setLayout(new GridLayout(2, 2, 0, 0));
@@ -109,7 +109,7 @@ public class ManageUsersFrame extends JFrame {
 		removeUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userTable.getModel().getValueAt(
-						userTable.getSelectedRow(), 0);
+						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
 				if (user != null) {
 					if (JOptionPane.showConfirmDialog(null,
 							Utilities.getString("REMOVE_USER_PROMPT") + " -- "

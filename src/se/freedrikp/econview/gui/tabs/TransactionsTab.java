@@ -154,10 +154,10 @@ public class TransactionsTab extends JPanel implements Observer {
 					transDialog.showEditDialog(
 							(Date) dateFormat.parse((String) transactionsTable
 									.getModel().getValueAt(
-											transactionsTable.getSelectedRow(),
+											transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()),
 											3)),
 							(String) transactionsTable.getModel().getValueAt(
-									transactionsTable.getSelectedRow(), 4));
+									transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()), 4));
 				} catch (NumberFormatException | ParseException e1) {
 					e1.printStackTrace();
 				}
@@ -176,11 +176,11 @@ public class TransactionsTab extends JPanel implements Observer {
 						Utilities.getString("REMOVE_TRANSACTION_PROMPT")
 								+ " -- "
 								+ transactionsTable.getModel().getValueAt(
-										transactionsTable.getSelectedRow(), 0),
+										transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()), 0),
 						Utilities.getString("REMOVE_TRANSACTION"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeTransaction((long) transactionsTable.getModel()
-							.getValueAt(transactionsTable.getSelectedRow(), 0));
+							.getValueAt(transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()), 0));
 				}
 			}
 		});

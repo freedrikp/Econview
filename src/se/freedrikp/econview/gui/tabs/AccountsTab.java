@@ -79,11 +79,11 @@ public class AccountsTab extends JPanel implements Observer {
 			public void actionPerformed(ActionEvent arg0) {
 				accDialog.showEditDialog(
 						(String) accountsTable.getModel().getValueAt(
-								accountsTable.getSelectedRow(), 0),
+								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0),
 						(String) accountsTable.getModel().getValueAt(
-								accountsTable.getSelectedRow(), 1),
+								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 1),
 						(boolean) accountsTable.getModel().getValueAt(
-								accountsTable.getSelectedRow(), 2));
+								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 2));
 			}
 		});
 		accountsButtonPanel.add(btnEditAccount);
@@ -98,11 +98,11 @@ public class AccountsTab extends JPanel implements Observer {
 						Utilities.getString("REMOVE_ACCOUNT_PROMPT")
 								+ " -- "
 								+ (String) accountsTable.getModel().getValueAt(
-										accountsTable.getSelectedRow(), 0),
+										accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0),
 						Utilities.getString("REMOVE_ACCOUNT"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeAccount((String) accountsTable.getModel()
-							.getValueAt(accountsTable.getSelectedRow(), 0));
+							.getValueAt(accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0));
 				}
 			}
 		});
