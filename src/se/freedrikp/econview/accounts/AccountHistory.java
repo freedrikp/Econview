@@ -4,20 +4,20 @@ import java.util.ArrayList;
 
 public class AccountHistory {
 	private ArrayList<AccountEvent> history;
-	
-	public AccountHistory(){
+
+	public AccountHistory() {
 		history = new ArrayList<AccountEvent>();
 	}
-	
-	public boolean addEvent(AccountEvent acce){
+
+	public boolean addEvent(AccountEvent acce) {
 		return history.add(acce);
 	}
-	
-	public AccountEvent getAccountEvent(int index){
+
+	public AccountEvent getAccountEvent(int index) {
 		return history.get(index);
 	}
-	
-	public int size(){
+
+	public int size() {
 		return history.size();
 	}
 }

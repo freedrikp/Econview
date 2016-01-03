@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.dialogs;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.GUI;
+import se.freedrikp.econview.gui.Utilities;
 
 public class AccountDialog {
 	private JTextField nameField;
@@ -40,7 +42,7 @@ public class AccountDialog {
 		hiddenBox = new JCheckBox(Utilities.getString("ADD_ACCOUNT_HIDDEN")
 				+ " ", false);
 		dialogPanel.add(hiddenBox);
-		
+
 		dialogPanel.add(new JLabel(Utilities.getString("ADD_ACCOUNT_CHAIN")));
 	}
 
@@ -70,10 +72,10 @@ public class AccountDialog {
 		nameField.setText(selectedName);
 		balanceField.setText(selectedBalance);
 		hiddenBox.setSelected(selectedHidden);
-		if (showDialog(selectedName)){
+		if (showDialog(selectedName)) {
 			showAddDialog();
 		}
-		
+
 	}
 
 	public void showAddDialog() {

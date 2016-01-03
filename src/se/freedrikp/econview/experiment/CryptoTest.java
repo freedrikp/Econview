@@ -1,4 +1,5 @@
 package se.freedrikp.econview.experiment;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -44,47 +45,48 @@ public class CryptoTest {
 			System.out.println("After decryption: "
 					+ (new String(decrypted, "UTF-8")));
 
-//			c.init(Cipher.ENCRYPT_MODE, kspec, iv);
-//			File secret = new File("secret.txt");
-//			FileInputStream fis = new FileInputStream(secret);
-//			byte[] buffer = new byte[(int) secret.length()];
-//			int read = 0;
-//			int total = 0;
-//			while (total < secret.length()) {
-//				read = fis.read(buffer, total, buffer.length-total);
-//				total += read;
-//			}
-//			fis.close();
-//			encrypted = c.doFinal(buffer);
-//			FileOutputStream fos = new FileOutputStream("encrypted.txt");
-//			fos.write(encrypted);
-//			fos.flush();
-//			fos.close();
-//
-//			c.init(Cipher.DECRYPT_MODE, kspec, iv);
-//			File enc = new File("encrypted.txt");
-//			fis = new FileInputStream(enc);
-//			buffer = new byte[(int) enc.length()];
-//			read = 0;
-//			total = 0;
-//			while (total < enc.length()) {
-//				read = fis.read(buffer, total, buffer.length-total);
-//				total += read;
-//			}
-//			fis.close();
-//			decrypted = c.doFinal(buffer);
-//			fos = new FileOutputStream("decrypted.txt");
-//			fos.write(decrypted);
-//			fos.flush();
-//			fos.close();
-			
+			// c.init(Cipher.ENCRYPT_MODE, kspec, iv);
+			// File secret = new File("secret.txt");
+			// FileInputStream fis = new FileInputStream(secret);
+			// byte[] buffer = new byte[(int) secret.length()];
+			// int read = 0;
+			// int total = 0;
+			// while (total < secret.length()) {
+			// read = fis.read(buffer, total, buffer.length-total);
+			// total += read;
+			// }
+			// fis.close();
+			// encrypted = c.doFinal(buffer);
+			// FileOutputStream fos = new FileOutputStream("encrypted.txt");
+			// fos.write(encrypted);
+			// fos.flush();
+			// fos.close();
+			//
+			// c.init(Cipher.DECRYPT_MODE, kspec, iv);
+			// File enc = new File("encrypted.txt");
+			// fis = new FileInputStream(enc);
+			// buffer = new byte[(int) enc.length()];
+			// read = 0;
+			// total = 0;
+			// while (total < enc.length()) {
+			// read = fis.read(buffer, total, buffer.length-total);
+			// total += read;
+			// }
+			// fis.close();
+			// decrypted = c.doFinal(buffer);
+			// fos = new FileOutputStream("decrypted.txt");
+			// fos.write(decrypted);
+			// fos.flush();
+			// fos.close();
+
 			c.init(Cipher.ENCRYPT_MODE, kspec, iv);
 			File secret = new File("secret.txt");
 			FileInputStream fis = new FileInputStream(secret);
-			CipherOutputStream cos = new CipherOutputStream(new FileOutputStream("encrypted.txt"),c);
+			CipherOutputStream cos = new CipherOutputStream(
+					new FileOutputStream("encrypted.txt"), c);
 			byte[] buffer = new byte[1024];
 			int read = 0;
-			while((read = fis.read(buffer)) > -1){
+			while ((read = fis.read(buffer)) > -1) {
 				cos.write(buffer, 0, read);
 			}
 			fis.close();
@@ -93,9 +95,10 @@ public class CryptoTest {
 
 			c.init(Cipher.DECRYPT_MODE, kspec, iv);
 			File enc = new File("encrypted.txt");
-			CipherInputStream cis = new CipherInputStream(new FileInputStream(enc),c);
+			CipherInputStream cis = new CipherInputStream(new FileInputStream(
+					enc), c);
 			FileOutputStream fos = new FileOutputStream("decrypted.txt");
-			while((read = cis.read(buffer)) > -1){
+			while ((read = cis.read(buffer)) > -1) {
 				fos.write(buffer, 0, read);
 			}
 			cis.close();

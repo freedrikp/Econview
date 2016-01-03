@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.tabs;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,7 +28,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
+import se.freedrikp.econview.gui.Utilities;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -99,7 +100,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		yearlyRevTable = new JTable();
 		yearlyRevTable.setEnabled(false);
-//		yearlyRevTable.setAutoCreateRowSorter(true);
+		// yearlyRevTable.setAutoCreateRowSorter(true);
 		yearlyRevPane.setViewportView(yearlyRevTable);
 
 		JScrollPane monthlyRevPane = new JScrollPane();
@@ -107,7 +108,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		monthlyRevTable = new JTable();
 		monthlyRevTable.setEnabled(false);
-//		monthlyRevTable.setAutoCreateRowSorter(true);
+		// monthlyRevTable.setAutoCreateRowSorter(true);
 		monthlyRevPane.setViewportView(monthlyRevTable);
 
 		JScrollPane yearlyAccountRevPane = new JScrollPane();
@@ -115,7 +116,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		yearlyAccountRevTable = new JTable();
 		yearlyAccountRevTable.setEnabled(false);
-//		yearlyAccountRevTable.setAutoCreateRowSorter(true);
+		// yearlyAccountRevTable.setAutoCreateRowSorter(true);
 		yearlyAccountRevPane.setViewportView(yearlyAccountRevTable);
 
 		JScrollPane monthlyAccountRevPane = new JScrollPane();
@@ -123,7 +124,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		monthlyAccountRevTable = new JTable();
 		monthlyAccountRevTable.setEnabled(false);
-//		monthlyAccountRevTable.setAutoCreateRowSorter(true);
+		// monthlyAccountRevTable.setAutoCreateRowSorter(true);
 		monthlyAccountRevPane.setViewportView(monthlyAccountRevTable);
 
 		// JScrollPane totalAccountRevPane = new JScrollPane();
@@ -172,7 +173,9 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateFromField = new JTextField(df.format(new Date()));
 		revDateFromField = new JDateChooser(new Date(), dateFormat.toPattern());
-		revDateFromField.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
+		revDateFromField.setMaximumSize(new Dimension(Integer
+				.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
 		sideRevenuePanel.add(revDateFromField);
 		// revDateFromField.setColumns(7);
 
@@ -182,7 +185,9 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateToField = new JTextField(df.format(new Date()));
 		revDateToField = new JDateChooser(new Date(), dateFormat.toPattern());
-		revDateToField.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
+		revDateToField.setMaximumSize(new Dimension(Integer.parseInt(Utilities
+				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
+				.getConfig("DATE_FIELD_HEIGHT"))));
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
@@ -219,8 +224,8 @@ public class RevenueTab extends JPanel implements Observer {
 		customRevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(customRevButton);
 
-//		Component verticalStrut = Box.createVerticalStrut(2000);
-//		sideRevenuePanel.add(verticalStrut);
+		// Component verticalStrut = Box.createVerticalStrut(2000);
+		// sideRevenuePanel.add(verticalStrut);
 
 		update(db, null);
 	}
@@ -256,8 +261,7 @@ public class RevenueTab extends JPanel implements Observer {
 			public int compare(String o1, String o2) {
 				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
 			}
-		}
-		);
+		});
 	}
 
 	private void updateYearlyAccountRevList() {
@@ -274,8 +278,7 @@ public class RevenueTab extends JPanel implements Observer {
 			public int compare(String o1, String o2) {
 				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
 			}
-		}
-		);
+		});
 	}
 
 	private void updateTotalRevLabel() {
@@ -353,8 +356,7 @@ public class RevenueTab extends JPanel implements Observer {
 			public int compare(String o1, String o2) {
 				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
 			}
-		}
-		);
+		});
 	}
 
 	private void updateMonthlyAccountRevList() {
@@ -374,8 +376,7 @@ public class RevenueTab extends JPanel implements Observer {
 			public int compare(String o1, String o2) {
 				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
 			}
-		}
-		);
+		});
 	}
 
 	// private void updateTotalAccountRevList() {

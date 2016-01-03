@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.tabs;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -32,7 +32,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
+import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.dialogs.TransactionDialog;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -74,7 +77,7 @@ public class TransactionsTab extends JPanel implements Observer {
 
 		transactionsTable = new JTable();
 		transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		transactionsTable.setAutoCreateRowSorter(true);
+		// transactionsTable.setAutoCreateRowSorter(true);
 		// transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		transactionsPane.setViewportView(transactionsTable);
 
@@ -85,13 +88,17 @@ public class TransactionsTab extends JPanel implements Observer {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		fromDateChooser = new JDateChooser(cal.getTime(),
 				Utilities.getConfig("FULL_DATE_FORMAT"));
-		fromDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
+		fromDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities
+				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
+				.getConfig("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(fromDateChooser);
 		JLabel dateSepLabel = new JLabel("<->");
 		transactionsViewPanel.add(dateSepLabel);
 		toDateChooser = new JDateChooser(Calendar.getInstance().getTime(),
 				Utilities.getConfig("FULL_DATE_FORMAT"));
-		toDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")),Integer.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
+		toDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities
+				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
+				.getConfig("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(toDateChooser);
 
 		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), true);
@@ -280,8 +287,7 @@ public class TransactionsTab extends JPanel implements Observer {
 			selectedAccounts = new JCheckBox[accounts.size()];
 			for (int i = 0; i < accounts.size(); i++) {
 				String account = accounts.get(i);
-				selectedAccounts[i] = new JCheckBox(account,
-						true);
+				selectedAccounts[i] = new JCheckBox(account, true);
 				oldSelectedAccounts.add(account);
 				transactionsViewAccountPanel.add(selectedAccounts[i]);
 			}
@@ -314,7 +320,6 @@ public class TransactionsTab extends JPanel implements Observer {
 			public int compare(String o1, String o2) {
 				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
 			}
-		}
-		);
+		});
 	}
 }

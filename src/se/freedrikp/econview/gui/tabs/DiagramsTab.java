@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.tabs;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -39,6 +39,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.Utilities;
 
 import com.toedter.calendar.JDateChooser;
 

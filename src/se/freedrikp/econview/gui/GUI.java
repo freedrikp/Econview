@@ -28,6 +28,11 @@ import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.gui.menubar.MenuBar;
+import se.freedrikp.econview.gui.tabs.AccountsTab;
+import se.freedrikp.econview.gui.tabs.DiagramsTab;
+import se.freedrikp.econview.gui.tabs.RevenueTab;
+import se.freedrikp.econview.gui.tabs.TransactionsTab;
 
 public class GUI extends JFrame implements Observer {
 
@@ -76,7 +81,7 @@ public class GUI extends JFrame implements Observer {
 		this.db = db;
 		sec.addObserver(this);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(new Window(this,db,sec));
+		addWindowListener(new Window(this, db, sec));
 		// setBounds(100, 100, 1280, 430);
 		// setBounds(100, 100, 1360, 500);
 		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -84,7 +89,7 @@ public class GUI extends JFrame implements Observer {
 		setBounds((dm.getWidth() - WIDTH) / 2, (dm.getHeight() - HEIGHT) / 2,
 				WIDTH, HEIGHT);
 
-		MenuBar menuBar = new MenuBar(db, sec);
+		MenuBar menuBar = new MenuBar(db, sec, this);
 		setJMenuBar(menuBar);
 
 		contentPane = new JPanel();
@@ -133,7 +138,7 @@ public class GUI extends JFrame implements Observer {
 	public static class Model extends DefaultTableModel {
 
 		public Class<?> getColumnClass(int columnIndex) {
-			if (getRowCount() == 0){
+			if (getRowCount() == 0) {
 				return Object.class;
 			}
 			return getValueAt(0, columnIndex).getClass();
@@ -177,7 +182,7 @@ public class GUI extends JFrame implements Observer {
 
 	public void update(Observable o, Object arg) {
 		setTitle("EconView - " + sec.getFile().getAbsolutePath());
-//		repaint();
+		// repaint();
 	}
 
 	private static class Window extends WindowAdapter {
@@ -195,7 +200,8 @@ public class GUI extends JFrame implements Observer {
 			try {
 				db.close();
 				sec.close();
-				Files.delete(new File(Utilities.getConfig("DATABASE_FILE")).toPath());
+				Files.delete(new File(Utilities.getConfig("DATABASE_FILE"))
+						.toPath());
 			} catch (SQLException | IOException e1) {
 				e1.printStackTrace();
 			}

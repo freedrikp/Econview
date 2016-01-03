@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.sql.Connection;
@@ -255,20 +254,20 @@ public class Security extends Observable implements Observer {
 	}
 
 	public boolean changePassword(String username, String oldPass,
-			String newPass,List<File> files) {
+			String newPass, List<File> files) {
 		try {
 			if (checkUser(username, oldPass)) {
-				HashMap<String,File> dec = new HashMap<String,File>();
-				for (File f : files){
-					String dest = "econview_temp_"+f.getName();
-					decrypt(f,dest);
-					dec.put(dest,f);
+				HashMap<String, File> dec = new HashMap<String, File>();
+				for (File f : files) {
+					String dest = "econview_temp_" + f.getName();
+					decrypt(f, dest);
+					dec.put(dest, f);
 				}
 				changePasswordAdmin(username, newPass);
-				if (!checkUser(username,newPass)){
+				if (!checkUser(username, newPass)) {
 					return false;
 				}
-				for (Map.Entry<String, File> enc : dec.entrySet()){
+				for (Map.Entry<String, File> enc : dec.entrySet()) {
 					encrypt(enc.getValue(), enc.getKey());
 					Files.delete(new File(enc.getKey()).toPath());
 				}
@@ -291,8 +290,8 @@ public class Security extends Observable implements Observer {
 			ArrayList<Object[]> res = new ArrayList<Object[]>();
 			while (users.next()) {
 				Object[] entry = new Object[2];
-				entry[0]=users.getString("username");
-				entry[1]= users.getBoolean("admin");
+				entry[0] = users.getString("username");
+				entry[1] = users.getBoolean("admin");
 				res.add(entry);
 			}
 

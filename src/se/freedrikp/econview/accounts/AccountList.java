@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-
 public class AccountList {
 	private ArrayList<Account> accs;
 	private File f = new File("econdata.dat");
@@ -28,8 +27,8 @@ public class AccountList {
 	public Account getAccount(int index) {
 		return accs.get(index);
 	}
-	
-	public void save(){
+
+	public void save() {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(
 					new FileOutputStream(f));
@@ -39,8 +38,8 @@ public class AccountList {
 			System.exit(1);
 		}
 	}
-	
-	public void load(){
+
+	public void load() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
 			accs = (ArrayList<Account>) in.readObject();

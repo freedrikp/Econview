@@ -6,8 +6,8 @@ public class AccountEvent {
 	private String type;
 	private int amount;
 	private int prevBalance;
-	
-	public AccountEvent(String type, int amount, int prevBalance){
+
+	public AccountEvent(String type, int amount, int prevBalance) {
 		this.type = type;
 		this.amount = amount;
 		this.prevBalance = prevBalance;
@@ -24,5 +24,5 @@ public class AccountEvent {
 	public int getPreviousBalance() {
 		return prevBalance;
 	}
-	
+
 }

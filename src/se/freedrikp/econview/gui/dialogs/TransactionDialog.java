@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.dialogs;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.GUI;
+import se.freedrikp.econview.gui.Utilities;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -185,7 +187,7 @@ public class TransactionDialog {
 		for (Object[] transaction : multiTransactions) {
 			addMultiAccount((String) transaction[1], NumberFormat
 					.getCurrencyInstance().format((Double) transaction[2]));
-			IDs[i++]=(long)transaction[0];
+			IDs[i++] = (long) transaction[0];
 		}
 		dateSelector.setDate(selectedDate);
 		commentField.setText(selectedComment);

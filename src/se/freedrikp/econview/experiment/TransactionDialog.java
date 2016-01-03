@@ -1,6 +1,5 @@
 package se.freedrikp.econview.experiment;
 
-
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 

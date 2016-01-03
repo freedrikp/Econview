@@ -1,6 +1,5 @@
 package se.freedrikp.econview.experiment;
 
-
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -24,7 +23,7 @@ public class AccountDialog extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			AccountDialog dialog = new AccountDialog("","");
+			AccountDialog dialog = new AccountDialog("", "");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -83,7 +82,7 @@ public class AccountDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+
 	}
 
 }

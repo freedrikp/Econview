@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.tabs;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -22,7 +22,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
+import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.dialogs.AccountDialog;
 
 public class AccountsTab extends JPanel implements Observer {
 
@@ -44,7 +47,7 @@ public class AccountsTab extends JPanel implements Observer {
 		this.db = db;
 		db.addObserver(this);
 		setLayout(new GridLayout(0, 2, 0, 0));
-		
+
 		final AccountDialog accDialog = new AccountDialog(db);
 
 		accountsPane = new JScrollPane();
@@ -52,7 +55,7 @@ public class AccountsTab extends JPanel implements Observer {
 
 		accountsTable = new JTable();
 		accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		accountsTable.setAutoCreateRowSorter(true);
+		// accountsTable.setAutoCreateRowSorter(true);
 		accountsPane.setViewportView(accountsTable);
 
 		JPanel accountsButtonPanel = new JPanel();
@@ -134,8 +137,7 @@ public class AccountsTab extends JPanel implements Observer {
 		totalHiddenBalanceLabelText = new JLabel(
 				Utilities.getString("TOTAL_HIDDEN_BALANCE") + ":");
 		accountsButtonPanel.add(totalHiddenBalanceLabelText);
-		totalHiddenBalanceLabelText
-				.setAlignmentX(Component.CENTER_ALIGNMENT);
+		totalHiddenBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		totalHiddenBalanceLabel = new JLabel("");
 		totalHiddenBalanceLabel.setForeground(Color.RED);
@@ -175,7 +177,6 @@ public class AccountsTab extends JPanel implements Observer {
 			public int compare(String o1, String o2) {
 				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
 			}
-		}
-		);
+		});
 	}
 }
