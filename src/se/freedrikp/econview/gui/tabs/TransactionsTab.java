@@ -152,12 +152,6 @@ public class TransactionsTab extends JPanel implements Observer {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					transDialog.showEditDialog(
-							(long) transactionsTable.getModel().getValueAt(
-									transactionsTable.getSelectedRow(), 0),
-							(String) transactionsTable.getModel().getValueAt(
-									transactionsTable.getSelectedRow(), 1),
-							(String) transactionsTable.getModel().getValueAt(
-									transactionsTable.getSelectedRow(), 2),
 							(Date) dateFormat.parse((String) transactionsTable
 									.getModel().getValueAt(
 											transactionsTable.getSelectedRow(),

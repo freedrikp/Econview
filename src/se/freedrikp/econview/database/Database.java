@@ -62,6 +62,11 @@ public class Database extends Observable {
 					+ "transactionYear TEXT," + "transactionMonth TEXT,"
 					+ "transactionDay TEXT," + "transactionComment TEXT" + ")";
 			c.prepareStatement(sql).executeUpdate();
+			sql = "CREATE TABLE StoredTransactions("
+					+ "transactionID INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "accountName TEXT," + "transactionAmount REAL,"
+					+ "transactionComment TEXT" + ")";
+			c.prepareStatement(sql).executeUpdate();
 			c.commit();
 			c.setAutoCommit(true);
 		} catch (SQLException e) {
@@ -882,19 +887,18 @@ public class Database extends Observable {
 		return null;
 	}
 
-	public List<Object[]> getMultiTransactions(long transactionID,
-			Date transactionDate, String transactionComment) {
+	public List<Object[]> getMultiTransactions(Date transactionDate,
+			String transactionComment) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear = ? AND transactionMonth = ? AND transactionDay = ? AND transactionComment = ? AND transactionID <> ?");
+					.prepareStatement("SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear = ? AND transactionMonth = ? AND transactionDay = ? AND transactionComment = ?");
 			ps.setInt(1, showHidden);
 			ps.setString(2,
 					new SimpleDateFormat("yyyy").format(transactionDate));
 			ps.setString(3, new SimpleDateFormat("MM").format(transactionDate));
 			ps.setString(4, new SimpleDateFormat("dd").format(transactionDate));
 			ps.setString(5, transactionComment);
-			ps.setLong(6, transactionID);
 
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -937,5 +941,106 @@ public class Database extends Observable {
 
 	public void deleteTransactions() {
 		deleteEntries("Transactions");
+	}
+
+	public void addStoredTransaction(String accountName,
+			double transactionAmount, String transactionComment) {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("INSERT INTO StoredTransactions(accountName,transactionAmount,transactionComment) VALUES (?,?,?)");
+			ps.setString(1, accountName);
+			ps.setDouble(2, transactionAmount);
+			ps.setString(3, transactionComment);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public void editStoredTransaction(long transactionID, String accountName,
+			double transactionAmount, String transactionComment) {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("UPDATE StoredTransactions SET accountName = ?,transactionAmount = ?,transactionComment = ? WHERE transactionID = ?");
+			ps.setString(1, accountName);
+			ps.setDouble(2, transactionAmount);
+			ps.setString(3, transactionComment);
+			ps.setLong(4, transactionID);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public void removeStoredTransaction(long transactionID) {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("DELETE FROM StoredTransactions WHERE transactionID = ?");
+			ps.setLong(1, transactionID);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public List<String> getStoredTransactionNames() {
+		List<String> res = new ArrayList<String>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT transactionComment FROM StoredTransactions GROUP BY transactionComment");
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				res.add(results.getString("transactionComment"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	public List<Object[]> getStoredTransaction(String transactionComment) {
+		List<Object[]> res = new ArrayList<Object[]>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT transactionID,accountName,transactionAmount FROM StoredTransactions WHERE transactionComment=?");
+			ps.setString(1, transactionComment);
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] entry = new Object[3];
+				entry[0] = results.getLong("transactionID");
+				entry[1] = results.getString("accountName");
+				entry[2] = results.getDouble("transactionAmount");
+				res.add(entry);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	public List<Object[]> getStoredTransactions() {
+		List<Object[]> res = new ArrayList<Object[]>();
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT transactionID,accountName,transactionAmount,transactionComment FROM StoredTransactions");
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] entry = new Object[4];
+				entry[0] = results.getLong("transactionID");
+				entry[1] = results.getString("accountName");
+				entry[2] = results.getDouble("transactionAmount");
+				entry[3] = results.getString("transactionComment");
+				res.add(entry);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 }

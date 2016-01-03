@@ -22,6 +22,7 @@ public class MenuBar extends JMenuBar {
 		add(new SettingsMenu());
 		add(new UsersMenu(sec));
 		add(new DeleteMenu(db));
+		add(new StoredTransactionsMenu(db));
 	}
 
 }

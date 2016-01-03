@@ -117,6 +117,11 @@ public class Utilities {
 		lan.put("USER_HEADER_ADMIN", "Admin");
 		lan.put("CHANGE_PASSWORD_FILES",
 				"Select files to reencrypt with the new password.");
+		lan.put("MENUBAR_STORED_TRANSACTIONS", "Stored Transactions");
+		lan.put("MENUBAR_STORED_TRANSACTIONS_ADD", "Add Stored Transaction");
+		lan.put("MENUBAR_STORED_TRANSACTIONS_EDIT", "Edit Stored Transaction");
+		lan.put("MENUBAR_STORED_TRANSACTIONS_REMOVE",
+				"Remove Stored Transaction");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}

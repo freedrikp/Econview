@@ -1,5 +1,9 @@
 === TODO ===
-*Implement support for template transactions. (Is this really useful? Multitransactions may have taken over a bit)
+
+*Fix bug with ordering of transactions with equal date
+*Fix bug with selecting in tables when they are sorted.
+
+
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -10,6 +14,11 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+
+*Refactor TransactionsDialog. ---- v2.2
+
+*Stored transactions has been implemented. ---- v2.2
+
 *Refactored vaccum for both userdb and econviewdb. ---- v2.2
 
 *Implement functionality for selecting files when changing password. ---- v2.2

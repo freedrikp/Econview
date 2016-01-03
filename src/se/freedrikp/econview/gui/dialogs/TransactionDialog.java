@@ -26,8 +26,6 @@ import se.freedrikp.econview.gui.Utilities;
 import com.toedter.calendar.JDateChooser;
 
 public class TransactionDialog {
-	private JComboBox accountField;
-	private JTextField amountField;
 	private JDateChooser dateSelector;
 	private JTextField commentField;
 	private JScrollPane scrollPane;
@@ -41,7 +39,7 @@ public class TransactionDialog {
 		this.db = db;
 	}
 
-	private void createDialog() {
+	private void createDialog(boolean storedTransaction) {
 		JPanel dialogPanel = new JPanel();
 		dialogPanel.setLayout(new BoxLayout(dialogPanel, BoxLayout.Y_AXIS));
 		multiAccountPanel = new JPanel();
@@ -51,23 +49,6 @@ public class TransactionDialog {
 		multiAccounts.clear();
 		accountValues = db.getAccountNames().toArray();
 
-		accountField = new JComboBox(accountValues);
-
-		JPanel accountPanel = new JPanel();
-		accountPanel.add(new JLabel(Utilities
-				.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
-		accountPanel.add(accountField);
-		multiAccountPanel.add(accountPanel);
-		multiAccounts.add(accountField);
-
-		amountField = new JTextField("", 7);
-
-		JPanel amountPanel = new JPanel();
-		amountPanel.add(new JLabel(Utilities
-				.getString("ADD_TRANSACTION_AMOUNT") + ":"));
-		amountPanel.add(amountField);
-		multiAccountPanel.add(amountPanel);
-		multiAccounts.add(amountField);
 		dialogPanel.add(multiAccountPanel);
 
 		JPanel multiAccountControlPanel = new JPanel();
@@ -96,35 +77,37 @@ public class TransactionDialog {
 		multiAccountControlPanel.add(addMultiAccountButton);
 		dialogPanel.add(multiAccountControlPanel);
 
-		JPanel datePanel = new JPanel();
-		datePanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_DATE")
-				+ ":"));
-		dateSelector = new JDateChooser();
-		dateSelector.setDateFormatString(Utilities
-				.getConfig("FULL_DATE_FORMAT"));
-		datePanel.add(dateSelector);
+		if (!storedTransaction) {
+			JPanel datePanel = new JPanel();
+			datePanel.add(new JLabel(Utilities
+					.getString("ADD_TRANSACTION_DATE") + ":"));
+			dateSelector = new JDateChooser();
+			dateSelector.setDateFormatString(Utilities
+					.getConfig("FULL_DATE_FORMAT"));
+			datePanel.add(dateSelector);
 
-		JButton increaseDate = new JButton("+");
-		increaseDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateSelector.getDate());
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-				dateSelector.setDate(cal.getTime());
-			}
-		});
-		JButton decreaseDate = new JButton("-");
-		decreaseDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateSelector.getDate());
-				cal.add(Calendar.DAY_OF_MONTH, -1);
-				dateSelector.setDate(cal.getTime());
-			}
-		});
-		datePanel.add(increaseDate);
-		datePanel.add(decreaseDate);
-		dialogPanel.add(datePanel);
+			JButton increaseDate = new JButton("+");
+			increaseDate.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(dateSelector.getDate());
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+					dateSelector.setDate(cal.getTime());
+				}
+			});
+			JButton decreaseDate = new JButton("-");
+			decreaseDate.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(dateSelector.getDate());
+					cal.add(Calendar.DAY_OF_MONTH, -1);
+					dateSelector.setDate(cal.getTime());
+				}
+			});
+			datePanel.add(increaseDate);
+			datePanel.add(decreaseDate);
+			dialogPanel.add(datePanel);
+		}
 
 		commentField = new JTextField("", 15);
 		JPanel commentPanel = new JPanel();
@@ -174,16 +157,12 @@ public class TransactionDialog {
 		return result == JOptionPane.YES_OPTION;
 	}
 
-	public void showEditDialog(long transactionID, String selectedAccount,
-			String selectedAmount, Date selectedDate, String selectedComment) {
-		createDialog();
-		accountField.setSelectedItem(selectedAccount);
-		amountField.setText(selectedAmount);
+	public void showEditDialog(Date selectedDate, String selectedComment) {
+		createDialog(false);
 		List<Object[]> multiTransactions = db.getMultiTransactions(
-				transactionID, selectedDate, selectedComment);
-		long[] IDs = new long[multiTransactions.size() + 1];
-		IDs[0] = transactionID;
-		int i = 1;
+				selectedDate, selectedComment);
+		long[] IDs = new long[multiTransactions.size()];
+		int i = 0;
 		for (Object[] transaction : multiTransactions) {
 			addMultiAccount((String) transaction[1], NumberFormat
 					.getCurrencyInstance().format((Double) transaction[2]));
@@ -199,8 +178,8 @@ public class TransactionDialog {
 	public void showAddDialog() {
 		boolean chain;
 		do {
-			createDialog();
-			accountField.setSelectedItem(null);
+			createDialog(false);
+			addMultiAccount(null, null);
 			dateSelector.setDate(new Date());
 			chain = showDialog(new long[0]);
 		} while (chain);
@@ -228,4 +207,73 @@ public class TransactionDialog {
 		multiAccountPanel.revalidate();
 	}
 
+	public void showEditStoredDialog(String selectedComment) {
+		createDialog(true);
+		List<Object[]> multiTransactions = db
+				.getStoredTransaction(selectedComment);
+		long[] IDs = new long[multiTransactions.size()];
+		int i = 0;
+		for (Object[] transaction : multiTransactions) {
+			addMultiAccount((String) transaction[1], NumberFormat
+					.getCurrencyInstance().format((Double) transaction[2]));
+			IDs[i++] = (long) transaction[0];
+		}
+		commentField.setText(selectedComment);
+		if (showStoredDialog(IDs)) {
+			showAddStoredDialog();
+		}
+	}
+
+	public void showAddStoredDialog() {
+		boolean chain;
+		do {
+			createDialog(true);
+			addMultiAccount(null, null);
+			chain = showStoredDialog(new long[0]);
+		} while (chain);
+	}
+
+	private boolean showStoredDialog(long[] IDs) {
+		int result = JOptionPane.showConfirmDialog(null, scrollPane,
+				Utilities.getString("TRANSACTION_DETAILS"),
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+				null);
+
+		if (result == JOptionPane.YES_OPTION || result == JOptionPane.NO_OPTION) {
+			int j = 0;
+			for (int i = 0; i < multiAccounts.size(); i += 2) {
+				if (j >= IDs.length) {
+					db.addStoredTransaction((String) ((JComboBox) multiAccounts
+							.get(i)).getSelectedItem(),
+							GUI.parseAmount(((JTextField) multiAccounts
+									.get(i + 1)).getText()), commentField
+									.getText());
+				} else {
+					db.editStoredTransaction(IDs[j],
+							(String) ((JComboBox) multiAccounts.get(i))
+									.getSelectedItem(), GUI
+									.parseAmount(((JTextField) multiAccounts
+											.get(i + 1)).getText()),
+							commentField.getText());
+				}
+				j++;
+			}
+		}
+		return result == JOptionPane.YES_OPTION;
+	}
+
+	public void showMakeStoredDialog(String selectedComment) {
+		createDialog(false);
+		List<Object[]> multiTransactions = db
+				.getStoredTransaction(selectedComment);
+		for (Object[] transaction : multiTransactions) {
+			addMultiAccount((String) transaction[1], NumberFormat
+					.getCurrencyInstance().format((Double) transaction[2]));
+		}
+		dateSelector.setDate(new Date());
+		commentField.setText(selectedComment);
+		if (showDialog(new long[0])) {
+			showAddDialog();
+		}
+	}
 }
