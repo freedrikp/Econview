@@ -1,5 +1,4 @@
 === TODO ===
-*Maybe add language configuration panel.
 *Implement functionality to extract stored transaction from normal transaction.
 *Add option to turn security on/off.
 *Ask for user when starting for first time.
@@ -14,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Add language configuration panel. ---- v2.4
+
 *Create release script. ---- v2.4
 
 *Fixed bug in DiagramsTab with Layout. ---- v2.3

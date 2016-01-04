@@ -92,6 +92,8 @@ public class Utilities {
 		lan.put("MENUBAR_SETTINGS", "Settings");
 		lan.put("MENUBAR_SETTINGS_CONFIGURATION", "Configuration");
 		lan.put("SETTINGS_CONFIGURATION", "Configuration Settings");
+		lan.put("MENUBAR_SETTINGS_LANGUAGE", "Language");
+		lan.put("SETTINGS_LANGUAGE", "Language Settings");
 		lan.put("MENUBAR_USERS", "Users");
 		lan.put("MENUBAR_ADD_USER", "Add User");
 		lan.put("MENUBAR_CHANGE_PASSWORD", "Change Password");
@@ -138,8 +140,8 @@ public class Utilities {
 		config.put("FULL_DATE_FORMAT", "yyyy-MM-dd");
 		config.put("MONTH_FORMAT", "MMMM");
 		config.put("YEAR_FORMAT", "yyyy");
-		config.put("SETTINGS_CONFIGURATION_PANEL_WIDTH", "400");
-		config.put("SETTINGS_CONFIGURATION_PANEL_HEIGHT", "600");
+		config.put("SETTINGS_PANEL_WIDTH", "400");
+		config.put("SETTINGS_PANEL_HEIGHT", "600");
 		config.put("ADD_TRANSACTION_PANEL_WIDTH", "500");
 		config.put("ADD_TRANSACTION_PANEL_HEIGHT", "400");
 		config.put("DATE_FIELD_WIDTH", "150");
@@ -276,5 +278,14 @@ public class Utilities {
 		getConfig("UNKNOWN");
 		return config;
 	}
+	
+	public static Map<String, String> listAllStrings() {
+		getString("UNKNOWN");
+		return lang.get(Utilities.getConfig("LANGUAGE"));
+	}
 
+	public static void putString(String key, String string) {
+		lang.get(Utilities.getConfig("LANGUAGE")).put(key, string);
+		writeDefaultLanguage();
+	}
 }
