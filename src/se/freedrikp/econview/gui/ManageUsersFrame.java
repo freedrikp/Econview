@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,26 +22,24 @@ import javax.swing.ListSelectionModel;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.GUI.Model;
 
-public class ManageUsersFrame extends JFrame {
+public class ManageUsersFrame extends JFrame implements Observer{
 	private static final String[] userHeader = {
 			Utilities.getString("USER_HEADER_USERNAME"),
 			Utilities.getString("USER_HEADER_ADMIN") };
+	private Security sec;
+	private JTable userTable;
 
 	public ManageUsersFrame(final Security sec) {
 		Utilities.getString("MENUBAR_MANAGE_USERS");
 		JPanel userPanel = new JPanel();
 		userPanel.setLayout(new GridLayout(1, 2, 0, 0));
-		final JTable userTable = new JTable();
+		this.sec = sec;
+		sec.addObserver(this);
+		userTable = new JTable();
 		userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		userTable.setAutoCreateRowSorter(true);
-		Model m = new Model(userHeader, 0);
-		for (Object[] row : sec.listUsers()) {
-			m.addRow(row);
-		}
-		userTable.setModel(m);
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(userTable);
-		GUI.resizeTable(userTable);
 		userPanel.add(scrollPane);
 
 		JPanel buttons = new JPanel();
@@ -54,12 +54,6 @@ public class ManageUsersFrame extends JFrame {
 						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
 				if (user != null) {
 					sec.setAdmin(user);
-					Model m = new Model(userHeader, 0);
-					for (Object[] row : sec.listUsers()) {
-						m.addRow(row);
-					}
-					userTable.setModel(m);
-					GUI.resizeTable(userTable);
 				}
 			}
 		});
@@ -116,12 +110,6 @@ public class ManageUsersFrame extends JFrame {
 									+ user, Utilities.getString("REMOVE_USER"),
 							JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 						sec.removeUser(user);
-						Model m = new Model(userHeader, 0);
-						for (Object[] row : sec.listUsers()) {
-							m.addRow(row);
-						}
-						userTable.setModel(m);
-						GUI.resizeTable(userTable);
 					}
 				}
 			}
@@ -135,6 +123,16 @@ public class ManageUsersFrame extends JFrame {
 				width, height);
 		setContentPane(userPanel);
 		setVisible(true);
+		update(sec,null);
+	}
+
+	public void update(Observable o, Object arg) {
+		Model m = new Model(userHeader, 0);
+		for (Object[] row : sec.listUsers()) {
+			m.addRow(row);
+		}
+		userTable.setModel(m);
+		GUI.resizeTable(userTable);
 	}
 
 }

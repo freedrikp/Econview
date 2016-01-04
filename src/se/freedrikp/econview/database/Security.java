@@ -146,6 +146,8 @@ public class Security extends Observable implements Observer {
 				key = new SecretKeySpec(Arrays.copyOfRange(temp, 16, 32), "AES");
 				iv = new IvParameterSpec(Arrays.copyOfRange(temp, 0, 16));
 				this.user = username;
+				setChanged();
+				notifyObservers();
 				return true;
 			}
 		}
@@ -250,6 +252,8 @@ public class Security extends Observable implements Observer {
 			e.printStackTrace();
 			return false;
 		}
+		setChanged();
+		notifyObservers();
 		return true;
 	}
 
@@ -271,6 +275,8 @@ public class Security extends Observable implements Observer {
 					encrypt(enc.getValue(), enc.getKey());
 					Files.delete(new File(enc.getKey()).toPath());
 				}
+				setChanged();
+				notifyObservers();
 				return true;
 			}
 		} catch (Exception e) {
@@ -308,6 +314,8 @@ public class Security extends Observable implements Observer {
 			PreparedStatement ps = c.prepareStatement(sql);
 			ps.setString(1, username);
 			ps.executeUpdate();
+			setChanged();
+			notifyObservers();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -343,6 +351,8 @@ public class Security extends Observable implements Observer {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		setChanged();
+		notifyObservers();
 	}
 
 	public void changePasswordAdmin(String username, String password) {
@@ -364,6 +374,8 @@ public class Security extends Observable implements Observer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		setChanged();
+		notifyObservers();
 	}
 
 	public void close() throws SQLException {

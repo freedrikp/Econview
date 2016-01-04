@@ -1,6 +1,5 @@
 === TODO ===
 
-*Refactor Security and ManageUsersFrame to follow Observer pattern.
 
 
 ----------------------------------------------------------------------------------
@@ -13,6 +12,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Refactor Security and ManageUsersFrame to follow Observer pattern. ---- v2.2
+
 *Fix bug with selecting in tables when they are sorted. ---- v2.2
 
 *Fix bug with ordering of transactions with equal date. ---- v2.2
