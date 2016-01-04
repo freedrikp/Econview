@@ -28,6 +28,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.AccountSelectorPanel;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.Utilities;
@@ -55,13 +56,8 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private JDateChooser revDateToField;
 
-	// private JComboBox accountRevBox;
 
-	private JCheckBox[] selectedAccounts;
-
-	private JCheckBox allAccounts;
-
-	private JPanel customRevAccountPanel;
+	private AccountSelectorPanel customRevAccountPanel;
 	private static final String[] monthlyRevHeader = {
 			Utilities.getString("REVENUE_HEADER_YEAR"),
 			Utilities.getString("REVENUE_HEADER_MONTH"),
@@ -191,6 +187,14 @@ public class RevenueTab extends JPanel implements Observer {
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
+
+		// accountRevBox = new JComboBox();
+		// sideRevenuePanel.add(accountRevBox);
+
+		customRevAccountPanel = new AccountSelectorPanel(db,false,false);
+		customRevAccountPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		sideRevenuePanel.add(new JScrollPane(customRevAccountPanel));
+
 		JButton customRevButton = new JButton(
 				Utilities.getString("CUSTOM_REVENUE"));
 		customRevButton.addActionListener(new ActionListener() {
@@ -198,29 +202,6 @@ public class RevenueTab extends JPanel implements Observer {
 				update(db, null);
 			}
 		});
-
-		// accountRevBox = new JComboBox();
-		// sideRevenuePanel.add(accountRevBox);
-
-		customRevAccountPanel = new JPanel();
-		customRevAccountPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		customRevAccountPanel.setLayout(new BoxLayout(customRevAccountPanel,
-				BoxLayout.Y_AXIS));
-		sideRevenuePanel.add(new JScrollPane(customRevAccountPanel));
-
-		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), false);
-
-		allAccounts.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				boolean select = e.getStateChange() == ItemEvent.SELECTED;
-				for (JCheckBox checkBox : selectedAccounts) {
-					checkBox.setSelected(select);
-					// update(db,null);
-				}
-			}
-
-		});
-
 		customRevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(customRevButton);
 
@@ -311,30 +292,11 @@ public class RevenueTab extends JPanel implements Observer {
 		// (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
 		// selectedAccount = "";
 		// }
-		customRevAccountPanel.removeAll();
-		List<String> accounts = db.getAccountNames();
-		HashSet<String> oldSelectedAccounts = new HashSet<String>();
-		if (selectedAccounts != null) {
-			for (JCheckBox checkBox : selectedAccounts) {
-				if (checkBox.isSelected()) {
-					oldSelectedAccounts.add(checkBox.getText());
-				}
-			}
-		}
-
-		customRevAccountPanel.add(allAccounts);
-		customRevAccountPanel.add(new JSeparator());
-		selectedAccounts = new JCheckBox[accounts.size()];
-		for (int i = 0; i < accounts.size(); i++) {
-			String account = accounts.get(i);
-			selectedAccounts[i] = new JCheckBox(account,
-					oldSelectedAccounts.contains(account));
-			customRevAccountPanel.add(selectedAccounts[i]);
-		}
-
+		
 		customRevLabel.setText(NumberFormat.getCurrencyInstance().format(
 				db.getRevenue(revDateFromField.getDate(),
-						revDateToField.getDate(), oldSelectedAccounts)));
+						revDateToField.getDate(), customRevAccountPanel.getSelectedAccounts())));
+		
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }

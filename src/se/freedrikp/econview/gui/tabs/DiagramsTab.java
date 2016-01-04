@@ -39,6 +39,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.AccountSelectorPanel;
 import se.freedrikp.econview.gui.Utilities;
 
 import com.toedter.calendar.JDateChooser;
@@ -51,7 +52,7 @@ public class DiagramsTab extends JPanel implements Observer {
 	private JPanel diagramsThisMonthPanel;
 	private JDateChooser diagFromDateField;
 	private JDateChooser diagToDateField;
-	private JPanel diagAccountsPanel;
+	private AccountSelectorPanel diagAccountsPanel;
 	private JPanel customDiagPanel;
 	// private final int DIAGRAM_WIDTH = 350;
 	// private final int DIAGRAM_HEIGHT = 175;
@@ -65,9 +66,6 @@ public class DiagramsTab extends JPanel implements Observer {
 			.getConfig("CUSTOM_DIAGRAM_WIDTH"));
 	private final int CUSTOM_DIAGRAM_HEIGHT = Integer.parseInt(Utilities
 			.getConfig("CUSTOM_DIAGRAM_HEIGHT"));
-	private JCheckBox[] selectedAccounts;
-	private JCheckBox allAccounts;
-	private JCheckBox total;
 	private final SimpleDateFormat dateFormat;
 
 	public DiagramsTab(final Database db) {
@@ -142,28 +140,9 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
 
-		diagAccountsPanel = new JPanel();
-		diagAccountsPanel.setLayout(new BoxLayout(diagAccountsPanel,
-				BoxLayout.Y_AXIS));
+		diagAccountsPanel = new AccountSelectorPanel(db,false,true);
 		diagAccountsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		diagramControlPanel.add(new JScrollPane(diagAccountsPanel));
-
-		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"), false);
-		// allAccounts.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		allAccounts.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				boolean select = e.getStateChange() == ItemEvent.SELECTED;
-				for (JCheckBox checkBox : selectedAccounts) {
-					checkBox.setSelected(select);
-					// update(db,null);
-				}
-			}
-
-		});
-
-		total = new JCheckBox(Utilities.getString("TOTAL_ACCOUNT_NAME"), true);
-		// total.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		JButton btnCustomDiagram = new JButton(
 				Utilities.getString("CUSTOM_DIAGRAM"));
@@ -193,17 +172,8 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagramsThisMonthPanel.removeAll();
 		diagramsThisYearPanel.removeAll();
 		customDiagPanel.removeAll();
-		diagAccountsPanel.removeAll();
 
 		List<String> accounts = db.getAccountNames();
-		HashSet<String> oldSelectedAccounts = new HashSet<String>();
-		if (selectedAccounts != null) {
-			for (JCheckBox checkBox : selectedAccounts) {
-				if (checkBox.isSelected()) {
-					oldSelectedAccounts.add(checkBox.getText());
-				}
-			}
-		}
 
 		Calendar start = Calendar.getInstance();
 		Calendar end = Calendar.getInstance();
@@ -243,25 +213,16 @@ public class DiagramsTab extends JPanel implements Observer {
 		// df.parse(diagFromDateField.getText()),
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
 
+		
 		generateDiagram(diagFromDateField.getDate(), diagToDateField.getDate(),
 				Utilities.getString("CUSTOM_DIAGRAM"), customDiagPanel,
 				CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT,
-				oldSelectedAccounts, total.isSelected());
+				diagAccountsPanel.getSelectedAccounts(), diagAccountsPanel.isTotalSelected());
+		
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }
 
-		diagAccountsPanel.add(allAccounts);
-		diagAccountsPanel.add(total);
-		diagAccountsPanel.add(new JSeparator());
-
-		selectedAccounts = new JCheckBox[accounts.size()];
-		for (int i = 0; i < accounts.size(); i++) {
-			String account = accounts.get(i);
-			selectedAccounts[i] = new JCheckBox(account,
-					oldSelectedAccounts.contains(account));
-			diagAccountsPanel.add(selectedAccounts[i]);
-		}
 	}
 
 	private void generateDiagram(Date from, Date to, String title,
