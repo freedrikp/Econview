@@ -57,11 +57,20 @@ public class GUI extends JFrame implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Security security = new Security(Utilities
-							.getConfig("USERS_DATABASE_FILE"));
-					Database db = security.openDatabase(Utilities
-							.getConfig("DATABASE_FILE"));
-					GUI frame = new GUI(db, security);
+					boolean secure = Boolean.parseBoolean(Utilities.getConfig(
+							"SECURITY_TRUE_FALSE").toLowerCase());
+					GUI frame;
+					if (secure) {
+						Security security = new Security(Utilities
+								.getConfig("USERS_DATABASE_FILE"));
+						Database db = security.openDatabase(Utilities
+								.getConfig("DATABASE_FILE"));
+						frame = new GUI(db, security);
+					}else{
+						Database db = new Database(Utilities
+								.getConfig("DATABASE_FILE"));
+						frame = new GUI(db, null);
+					}
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -79,7 +88,11 @@ public class GUI extends JFrame implements Observer {
 		// this.dbfile = dbfile;
 		this.sec = sec;
 		this.db = db;
-		sec.addObserver(this);
+		if (sec != null){
+			sec.addObserver(this);			
+		}else{
+			db.addObserver(this);
+		}
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new Window(this, db, sec));
 		// setBounds(100, 100, 1280, 430);
@@ -181,7 +194,13 @@ public class GUI extends JFrame implements Observer {
 	}
 
 	public void update(Observable o, Object arg) {
-		setTitle("EconView - " + sec.getFile().getAbsolutePath());
+		String file;
+		if (sec != null){
+			file = sec.getFile().getAbsolutePath();			
+		}else{
+			file = db.getFile().getAbsolutePath();
+		}
+		setTitle("EconView - " + file);
 		// repaint();
 	}
 
@@ -199,9 +218,11 @@ public class GUI extends JFrame implements Observer {
 		public void windowClosing(WindowEvent e) {
 			try {
 				db.close();
-				sec.close();
-				Files.delete(new File(Utilities.getConfig("DATABASE_FILE"))
-						.toPath());
+				if (sec != null){
+					sec.close();
+					Files.delete(new File(Utilities.getConfig("DATABASE_FILE"))
+					.toPath());					
+				}
 			} catch (SQLException | IOException e1) {
 				e1.printStackTrace();
 			}

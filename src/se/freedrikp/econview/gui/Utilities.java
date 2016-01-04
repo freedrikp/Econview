@@ -150,6 +150,7 @@ public class Utilities {
 		config.put("USERS_DATABASE_FILE", "econview_users.db");
 		config.put("USER_PANEL_WIDTH", "400");
 		config.put("USER_PANEL_HEIGHT", "200");
+		config.put("SECURITY_TRUE_FALSE","TRUE");
 	}
 
 	public static String getConfig(String key) {

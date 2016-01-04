@@ -3,10 +3,15 @@ package se.freedrikp.econview.gui.menubar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
@@ -47,7 +52,11 @@ public class FileMenu extends JMenu {
 			fc.setDialogTitle(text);
 			int result = fc.showDialog(gui, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
-				sec.openFile(fc.getSelectedFile(), db);
+				if (sec != null) {
+					sec.openFile(fc.getSelectedFile(), db);
+				} else {
+					db.openFile(fc.getSelectedFile());
+				}
 			}
 		}
 	}
@@ -68,33 +77,37 @@ public class FileMenu extends JMenu {
 			int result = fc.showDialog(gui, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File toFile = fc.getSelectedFile();
-				// File fromFile = db.getFile();
-				// try {
-				// FileInputStream fis = new FileInputStream(fromFile);
-				// FileOutputStream fos = new FileOutputStream(toFile);
-				// ProgressMonitor pm = new ProgressMonitor(menuBar, null,
-				// Utilities.getString("COPYING_DATABASE"), 0,
-				// (int) fromFile.length());
-				// pm.setMillisToPopup(0);
-				// pm.setMillisToDecideToPopup(0);
-				// byte[] buffer = new byte[1024];
-				// int bytesRead = 0;
-				// long totalRead = 0;
-				// while ((bytesRead = fis.read(buffer)) > -1) {
-				// totalRead += bytesRead;
-				// fos.write(buffer, 0, bytesRead);
-				// pm.setProgress((int) totalRead);
-				// }
-				// fos.flush();
-				// fos.close();
-				// fis.close();
-				//
-				// } catch (FileNotFoundException e) {
-				// e.printStackTrace();
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// }
-				sec.saveFile(toFile);
+				if (sec != null) {
+					sec.saveFile(toFile);
+				} else {
+					File fromFile = db.getFile();
+					try {
+						FileInputStream fis = new FileInputStream(fromFile);
+						FileOutputStream fos = new FileOutputStream(toFile);
+						ProgressMonitor pm = new ProgressMonitor(gui, null,
+								Utilities.getString("COPYING_DATABASE"), 0,
+								(int) fromFile.length());
+						pm.setMillisToPopup(0);
+						pm.setMillisToDecideToPopup(0);
+						byte[] buffer = new byte[1024];
+						int bytesRead = 0;
+						long totalRead = 0;
+						while ((bytesRead = fis.read(buffer)) > -1) {
+							totalRead += bytesRead;
+							fos.write(buffer, 0, bytesRead);
+							pm.setProgress((int) totalRead);
+						}
+						fos.flush();
+						fos.close();
+						fis.close();
+
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
 			}
 		}
 	}
