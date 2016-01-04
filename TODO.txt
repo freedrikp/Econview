@@ -1,5 +1,4 @@
 === TODO ===
-*Create release script.
 *Maybe add language configuration panel.
 *Implement functionality to extract stored transaction from normal transaction.
 *Add option to turn security on/off.
@@ -15,6 +14,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Create release script. ---- v2.4
+
 *Fixed bug in DiagramsTab with Layout. ---- v2.3
 
 *Improve AccountSelectorPanel. ---- v2.2
