@@ -48,24 +48,31 @@ public class UsersMenu extends JMenu {
 						.getString("PROMPT_PASSWORD") + ":"));
 				JPasswordField passField2 = new JPasswordField(15);
 				promptPanel.add(passField2);
-				if (!Arrays.equals(passField.getPassword(),
-						passField2.getPassword())) {
-					JOptionPane.showMessageDialog(null,
-							Utilities.getString("PASSWORDS_NOT_MATCH"),
-							Utilities.getString("PASSWORD_ERROR"),
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				int result = JOptionPane.showConfirmDialog(null, promptPanel,
-						Utilities.getString("USER_DETAILS_PROMPT"),
-						JOptionPane.OK_CANCEL_OPTION);
-				if (result == JOptionPane.OK_OPTION) {
-					if (!sec.addUser(userField.getText(),
-							new String(passField.getPassword()), false)) {
-						JOptionPane.showMessageDialog(null,
-								Utilities.getString("USER_EXISTS"),
-								Utilities.getString("USER_ERROR"),
-								JOptionPane.ERROR_MESSAGE);
+				boolean matched = false;
+				while (!matched) {
+					int result = JOptionPane.showConfirmDialog(null,
+							promptPanel,
+							Utilities.getString("USER_DETAILS_PROMPT"),
+							JOptionPane.OK_CANCEL_OPTION);
+					if (result == JOptionPane.OK_OPTION) {
+						if (!Arrays.equals(passField.getPassword(),
+								passField2.getPassword())) {
+							JOptionPane.showMessageDialog(null,
+									Utilities.getString("PASSWORDS_NOT_MATCH"),
+									Utilities.getString("PASSWORD_ERROR"),
+									JOptionPane.ERROR_MESSAGE);
+						}else{							
+							if (!sec.addUser(userField.getText(), new String(
+									passField.getPassword()), false)) {
+								JOptionPane.showMessageDialog(null,
+										Utilities.getString("USER_EXISTS"),
+										Utilities.getString("USER_ERROR"),
+										JOptionPane.ERROR_MESSAGE);
+							}
+							matched = true;
+						}
+					}else{
+						matched = true;
 					}
 				}
 			}
