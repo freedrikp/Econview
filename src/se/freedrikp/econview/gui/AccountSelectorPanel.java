@@ -16,13 +16,13 @@ import javax.swing.JSeparator;
 
 import se.freedrikp.econview.database.Database;
 
-public class AccountSelectorPanel extends JPanel implements Observer {
+public class AccountSelectorPanel extends JPanel implements Observer,ItemListener {
 	private Database db;
 	private boolean startState;
 	private boolean includeTotal;
 	private JCheckBox allAccounts;
 	private JCheckBox total;
-	private JCheckBox[] selectedAccounts;
+	private JCheckBox[] accountBoxes;
 
 	public AccountSelectorPanel(Database db, boolean startState,
 			boolean includeTotal) {
@@ -37,16 +37,8 @@ public class AccountSelectorPanel extends JPanel implements Observer {
 				startState);
 		// allAccounts.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		allAccounts.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				boolean select = e.getStateChange() == ItemEvent.SELECTED;
-					for (JCheckBox checkBox : selectedAccounts) {
-						checkBox.setSelected(select);
-						// update(db,null);
-					}
-				}
+		allAccounts.addItemListener(this);
 
-		});
 		if (includeTotal) {
 			total = new JCheckBox(Utilities.getString("TOTAL_ACCOUNT_NAME"),
 					startState);
@@ -60,8 +52,8 @@ public class AccountSelectorPanel extends JPanel implements Observer {
 
 		List<String> accounts = db.getAccountNames();
 		HashSet<String> oldSelectedAccounts = new HashSet<String>();
-		if (selectedAccounts != null) {
-			for (JCheckBox checkBox : selectedAccounts) {
+		if (accountBoxes != null) {
+			for (JCheckBox checkBox : accountBoxes) {
 				if (checkBox.isSelected()) {
 					oldSelectedAccounts.add(checkBox.getText());
 				}
@@ -74,37 +66,31 @@ public class AccountSelectorPanel extends JPanel implements Observer {
 		}
 		add(new JSeparator());
 
-		boolean first = selectedAccounts == null;
+		boolean first = accountBoxes == null;
 
-		selectedAccounts = new JCheckBox[accounts.size()];
+		accountBoxes = new JCheckBox[accounts.size()];
 		for (int i = 0; i < accounts.size(); i++) {
 			String account = accounts.get(i);
 			boolean state = first ? startState : oldSelectedAccounts
 					.contains(account);
-			selectedAccounts[i] = new JCheckBox(account, state);
-//			selectedAccounts[i].addItemListener(new ItemListener() {
-//				public void itemStateChanged(ItemEvent e) {
-//					if (e.getStateChange() == ItemEvent.DESELECTED) {
-//						allAccounts.setSelected(false);
-//					} else {
-////						boolean allSelected = true;
-////						for (JCheckBox checkBox : selectedAccounts) {
-////							if (!checkBox.isSelected()) {
-////								allSelected = false;
-////							}
-////						}
-////						allAccounts.setSelected(allSelected);
-//					}
-//
-//				}
-//			});
-			add(selectedAccounts[i]);
+			accountBoxes[i] = new JCheckBox(account, state);
+			accountBoxes[i].addItemListener(this);
+			add(accountBoxes[i]);
 		}
+		removeListeners();
+		boolean allSelected = true;
+		for (JCheckBox checkBox : accountBoxes) {
+			if (!checkBox.isSelected()) {
+				allSelected = false;
+			}
+		}
+		allAccounts.setSelected(allSelected);
+		addListeners();
 	}
 
 	public Collection<String> getSelectedAccounts() {
 		Set<String> accounts = new HashSet<String>();
-		for (JCheckBox checkBox : selectedAccounts) {
+		for (JCheckBox checkBox : accountBoxes) {
 			if (checkBox.isSelected()) {
 				accounts.add(checkBox.getText());
 			}
@@ -115,5 +101,47 @@ public class AccountSelectorPanel extends JPanel implements Observer {
 	public boolean isTotalSelected() {
 		return includeTotal && total.isSelected();
 	}
+
+
+		public void itemStateChanged(ItemEvent e) {
+			removeListeners();
+			if (e.getSource() == allAccounts) {
+				boolean select = e.getStateChange() == ItemEvent.SELECTED;
+				for (JCheckBox checkBox : accountBoxes) {
+					checkBox.setSelected(select);
+					// update(db,null);
+				}
+			
+			} else {
+				if (e.getStateChange() == ItemEvent.DESELECTED) {
+					allAccounts.setSelected(false);
+				} else {
+					boolean allSelected = true;
+					for (JCheckBox checkBox : accountBoxes) {
+						if (!checkBox.isSelected()) {
+							allSelected = false;
+						}
+					}
+					allAccounts.setSelected(allSelected);
+				}
+
+			}
+			addListeners();
+		}
+		
+		private void removeListeners(){
+			for (JCheckBox box : accountBoxes){
+				box.removeItemListener(this);
+			}
+			allAccounts.removeItemListener(this);
+		}
+		
+		private void addListeners(){
+			for (JCheckBox box : accountBoxes){
+				box.addItemListener(this);
+			}
+			allAccounts.addItemListener(this);
+		}
+	
 
 }

@@ -1,5 +1,6 @@
 === TODO ===
-*Improve AccountSelectorPanel.
+*Create release script.
+*Maybe add language configuration panel.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -10,6 +11,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Improve AccountSelectorPanel. ---- v2.2
+
 *Refactor out AccountSelectorPanel. ---- v2.2
 
 *Refactor Security and ManageUsersFrame to follow Observer pattern. ---- v2.2
