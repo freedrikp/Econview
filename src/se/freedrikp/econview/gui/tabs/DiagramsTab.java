@@ -74,7 +74,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		db.addObserver(this);
 		dateFormat = new SimpleDateFormat(
 				Utilities.getConfig("FULL_DATE_FORMAT"));
-
+		setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
 		diagramsLastYearPanel = new JPanel();
 		diagramsLastMonthPanel = new JPanel();
 		diagramsThisYearPanel = new JPanel();
