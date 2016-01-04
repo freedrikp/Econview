@@ -3,6 +3,7 @@
 *Maybe add language configuration panel.
 *Implement functionality to extract stored transaction from normal transaction.
 *Add option to turn security on/off.
+*Ask for user when starting for first time.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
