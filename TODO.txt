@@ -1,5 +1,4 @@
 === TODO ===
-*Ask for user when starting for first time.
 *Separate GUI parts from Security.
 *Change TransactionDialog to allow removal of single-transactions. All removed means entire transaction removed.
 ----------------------------------------------------------------------------------
@@ -12,6 +11,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Ask for user when starting for first time. ---- v2.4
+
 *Add option to turn security on/off. ---- v2.4
 
 *Implement functionality to extract stored transaction from normal transaction. ---- v2.4

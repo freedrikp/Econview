@@ -70,9 +70,47 @@ public class Security extends Observable implements Observer {
 					+ "password TEXT," + "salt TEXT,"
 					+ "admin INTEGER DEFAULT 0)";
 			c.prepareStatement(sql).executeUpdate();
-			String user = "admin";
-			String password = "1234";
-			addUser(user, password, true);
+
+			JPanel promptPanel = new JPanel();
+			promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
+			promptPanel.add(new JLabel(Utilities.getString("PROMPT_USERNAME")
+					+ ":"));
+			JTextField userField = new JTextField(15);
+			promptPanel.add(userField);
+			promptPanel.add(new JLabel(Utilities.getString("PROMPT_PASSWORD")
+					+ ":"));
+			JPasswordField passField = new JPasswordField(15);
+			promptPanel.add(passField);
+			promptPanel.add(new JLabel(Utilities.getString("PROMPT_PASSWORD")
+					+ ":"));
+			JPasswordField passField2 = new JPasswordField(15);
+			promptPanel.add(passField2);
+			boolean matched = false;
+			while (!matched) {
+				int result = JOptionPane.showConfirmDialog(null, promptPanel,
+						Utilities.getString("USER_DETAILS_PROMPT"),
+						JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					if (!Arrays.equals(passField.getPassword(),
+							passField2.getPassword())) {
+						JOptionPane.showMessageDialog(null,
+								Utilities.getString("PASSWORDS_NOT_MATCH"),
+								Utilities.getString("PASSWORD_ERROR"),
+								JOptionPane.ERROR_MESSAGE);
+
+					} else {
+						addUser(userField.getText(),
+								new String(passField.getPassword()), true);
+						matched = true;
+					}
+				} else {
+					String user = "admin";
+					String password = "1234";
+					addUser(user, password, true);
+					matched = true;
+				}
+			}
+
 			c.commit();
 			c.setAutoCommit(true);
 		} catch (SQLException e) {
