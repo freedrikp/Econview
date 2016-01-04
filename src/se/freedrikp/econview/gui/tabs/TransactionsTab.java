@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -219,6 +221,20 @@ public class TransactionsTab extends JPanel implements Observer {
 		statisticsPanel.add(numWithDrawalsPanel);
 
 		transactionsButtonPanel.add(statisticsPanel);
+		
+		transactionsTable.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.getClickCount() == 2){
+					int selection = transactionsTable.getSelectedRow();
+					if (selection >= 0){
+						String account = (String)transactionsTable.getModel().getValueAt(transactionsTable.convertRowIndexToModel(selection), 1);
+						double amount = GUI.parseAmount((String)transactionsTable.getModel().getValueAt(transactionsTable.convertRowIndexToModel(selection), 2));
+						String comment = (String)transactionsTable.getModel().getValueAt(transactionsTable.convertRowIndexToModel(selection), 4);
+						transDialog.showAddStoredDialog(account, amount, comment);
+					}
+				}
+			}
+		});
 
 		update(db, null);
 	}

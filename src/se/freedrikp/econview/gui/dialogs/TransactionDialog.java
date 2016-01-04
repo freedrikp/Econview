@@ -232,6 +232,16 @@ public class TransactionDialog {
 			chain = showStoredDialog(new long[0]);
 		} while (chain);
 	}
+	
+	public void showAddStoredDialog(String account, double amount, String comment) {
+			createDialog(true);
+			addMultiAccount(account,NumberFormat
+					.getCurrencyInstance().format(amount));
+			commentField.setText(comment);
+			if (showStoredDialog(new long[0])) {
+				showAddStoredDialog();
+			}
+	}
 
 	private boolean showStoredDialog(long[] IDs) {
 		int result = JOptionPane.showConfirmDialog(null, scrollPane,
