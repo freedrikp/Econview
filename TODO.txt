@@ -2,6 +2,7 @@
 *Add option to turn security on/off.
 *Ask for user when starting for first time.
 *Separate GUI parts from Security.
+*Change TransactionDialog to allow removal of single-transactions. All removed means entire transaction removed.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
