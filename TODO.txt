@@ -1,6 +1,8 @@
 === TODO ===
 *Create release script.
 *Maybe add language configuration panel.
+*Implement functionality to extract stored transaction from normal transaction.
+*Add option to turn security on/off.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
