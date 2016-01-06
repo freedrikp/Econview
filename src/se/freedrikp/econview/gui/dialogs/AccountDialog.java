@@ -1,7 +1,10 @@
 package se.freedrikp.econview.gui.dialogs;
 
+import java.text.NumberFormat;
+
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,7 +24,7 @@ public class AccountDialog extends DatabaseDialog{
 		super(db,Utilities.getString("ACCOUNT_DETAILS"),Utilities.getString("ADD_ACCOUNT_CHAIN"));
 	}
 	
-	protected void createDialog(JPanel dialogPanel) {
+	protected JComponent createDialog(JPanel dialogPanel) {
 		nameField = new JTextField("", 15);
 		JPanel namePanel = new JPanel();
 		namePanel
@@ -39,15 +42,16 @@ public class AccountDialog extends DatabaseDialog{
 		hiddenBox = new JCheckBox(Utilities.getString("ADD_ACCOUNT_HIDDEN")
 				+ " ", false);
 		dialogPanel.add(hiddenBox);
+		return dialogPanel;
 	}
 
-	protected void doAddDatabaseAction(Database db) {
+	protected void doAddDatabaseAction() {
 			db.addAccount(nameField.getText(),
 					GUI.parseAmount(balanceField.getText()),
 					hiddenBox.isSelected());
 	}
 	
-	protected void doEditDatabaseAction(Database db) {
+	protected void doEditDatabaseAction() {
 			db.editAccount(oldName, nameField.getText(),
 					GUI.parseAmount(balanceField.getText()),
 					hiddenBox.isSelected());
@@ -61,6 +65,12 @@ public class AccountDialog extends DatabaseDialog{
 	}
 
 	protected void setAddSpecifics(JPanel dialogPanel) {
+	}
+
+	protected void setAddSpecifics(JPanel dialogPanel, Object[] input) {
+		nameField.setText((String)input[0]);
+		balanceField.setText(NumberFormat.getCurrencyInstance().format((double)input[1]));
+		hiddenBox.setSelected((boolean)input[2]);
 	}
 	
 //	private JTextField nameField;

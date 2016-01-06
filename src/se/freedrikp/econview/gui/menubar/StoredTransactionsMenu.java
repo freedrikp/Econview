@@ -23,11 +23,13 @@ import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
+import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.TransactionDialog;
 
 public class StoredTransactionsMenu extends JMenu implements Observer {
 	private Database db;
-	private TransactionDialog td;
+	// private TransactionDialog td;
 	private JMenu editStoredTransaction;
 	private static final String[] transactionHeader = {
 			Utilities.getString("TRANSACTION_HEADER_ID"),
@@ -41,13 +43,14 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 		super(Utilities.getString("MENUBAR_STORED_TRANSACTIONS"));
 		this.db = db;
 		db.addObserver(this);
-		td = new TransactionDialog(db);
+		// td = new TransactionDialog(db);
 
 		addStoredTransaction = new JMenuItem(
 				Utilities.getString("MENUBAR_STORED_TRANSACTIONS_ADD"));
 		addStoredTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				td.showAddStoredDialog();
+				// td.showAddStoredDialog();
+				new StoredTransactionDialog(db).showAddDialog();
 
 			}
 		});
@@ -129,7 +132,18 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 									(double) trans[2], new Date(), transaction);
 						}
 					} else {
-						td.showMakeStoredDialog(transaction);
+						// td.showMakeStoredDialog(transaction);
+						List<Object[]> multiTransactions = db
+								.getStoredTransaction(transaction);
+						Object[] input = new Object[multiTransactions.size() * 2 + 2];
+						int i = 0;
+						for (Object[] trans : multiTransactions) {
+							input[i++] = trans[1];
+							input[i++] = trans[2];
+						}
+						input[multiTransactions.size() * 2 ] = transaction;
+						input[multiTransactions.size() * 2 + 1] = new Date();
+						new NormalTransactionDialog(db).showAddDialog(input);
 					}
 
 				}
@@ -140,7 +154,9 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 			editItem.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					td.showEditStoredDialog(transaction);
+					// td.showEditStoredDialog(transaction);
+					new StoredTransactionDialog(db)
+							.showEditDialog(new Object[] { transaction });
 				}
 			});
 		}

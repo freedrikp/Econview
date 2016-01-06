@@ -1,6 +1,7 @@
 package se.freedrikp.econview.gui.dialogs;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -9,7 +10,7 @@ import se.freedrikp.econview.database.Database;
 
 public abstract class DatabaseDialog {
 
-	private Database db;
+	protected Database db;
 	private String title;
 	private String chainQuestion;
 	private JPanel dialogPanel;
@@ -23,33 +24,33 @@ public abstract class DatabaseDialog {
 		dialogPanel.setLayout(new BoxLayout(dialogPanel, BoxLayout.Y_AXIS));
 	}
 
-	protected abstract void createDialog(JPanel dialogPanel);
+	protected abstract JComponent createDialog(JPanel dialogPanel);
 
-	private boolean showDialog(JPanel dialogPanel) {
-		int result = JOptionPane.showConfirmDialog(null, dialogPanel, title,
+	private boolean showDialog(JComponent comp) {
+		int result = JOptionPane.showConfirmDialog(null, comp, title,
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 				null);
 
 		if (result == JOptionPane.YES_OPTION || result == JOptionPane.NO_OPTION) {
 			if (addNotEdit){
-				doAddDatabaseAction(db);
+				doAddDatabaseAction();
 			}else{
-				doEditDatabaseAction(db);
+				doEditDatabaseAction();
 			}
 		}
 		return result == JOptionPane.YES_OPTION;
 	}
 
-	protected abstract void doAddDatabaseAction(Database db);
-	protected abstract void doEditDatabaseAction(Database db);
+	protected abstract void doAddDatabaseAction();
+	protected abstract void doEditDatabaseAction();
 
 	public void showEditDialog(Object[] input) {
 		addNotEdit = false;
 		dialogPanel.removeAll();
-		createDialog(dialogPanel);
+		JComponent comp = createDialog(dialogPanel);
 		dialogPanel.add(new JLabel(chainQuestion));
 		setEditSpecifics(dialogPanel, input);
-		if (showDialog(dialogPanel)) {
+		if (showDialog(comp)) {
 			showAddDialog();
 		}
 
@@ -58,17 +59,30 @@ public abstract class DatabaseDialog {
 	protected abstract void setEditSpecifics(JPanel dialogPanel, Object[] input);
 
 	protected abstract void setAddSpecifics(JPanel dialogPanel);
+	
+	protected abstract void setAddSpecifics(JPanel dialogPanel, Object[] input);
 
 	public void showAddDialog() {
 		boolean chain;
 		do {
 			addNotEdit = true;
 			dialogPanel.removeAll();
-			createDialog(dialogPanel);
+			JComponent comp = createDialog(dialogPanel);
 			dialogPanel.add(new JLabel(chainQuestion));
 			setAddSpecifics(dialogPanel);
-			chain = showDialog(dialogPanel);
+			chain = showDialog(comp);
 		} while (chain);
+	}
+	
+	public void showAddDialog(Object[] input) {
+			addNotEdit = true;
+			dialogPanel.removeAll();
+			JComponent comp = createDialog(dialogPanel);
+			dialogPanel.add(new JLabel(chainQuestion));
+			setAddSpecifics(dialogPanel,input);
+			if (showDialog(comp)) {
+				showAddDialog();
+			}
 	}
 
 }

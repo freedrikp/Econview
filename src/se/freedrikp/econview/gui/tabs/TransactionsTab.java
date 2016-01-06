@@ -36,6 +36,8 @@ import se.freedrikp.econview.gui.AccountSelectorPanel;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
+import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.TransactionDialog;
 
 import com.toedter.calendar.JDateChooser;
@@ -70,7 +72,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		// setLayout(new GridLayout(0, 3, 0, 0));
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-		final TransactionDialog transDialog = new TransactionDialog(db);
+//		final TransactionDialog transDialog = new TransactionDialog(db);
 		transactionsPane = new JScrollPane();
 		add(transactionsPane);
 
@@ -124,7 +126,8 @@ public class TransactionsTab extends JPanel implements Observer {
 		btnAddTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				transDialog.showAddDialog();
+//				transDialog.showAddDialog();
+				new NormalTransactionDialog(db).showAddDialog();
 			}
 		});
 		transactionsButtonPanel.setLayout(new BoxLayout(
@@ -137,13 +140,20 @@ public class TransactionsTab extends JPanel implements Observer {
 		btnEditTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					transDialog.showEditDialog(
-							(Date) dateFormat.parse((String) transactionsTable
-									.getModel().getValueAt(
-											transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()),
-											3)),
-							(String) transactionsTable.getModel().getValueAt(
-									transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()), 4));
+//					transDialog.showEditDialog(
+//							(Date) dateFormat.parse((String) transactionsTable
+//									.getModel().getValueAt(
+//											transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()),
+//											3)),
+//							(String) transactionsTable.getModel().getValueAt(
+//									transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()), 4));
+					
+					new NormalTransactionDialog(db).showEditDialog(new Object[]{
+							transactionsTable.getModel().getValueAt(
+									transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()), 4),dateFormat.parse((String) transactionsTable
+											.getModel().getValueAt(
+													transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()),
+													3))});
 				} catch (NumberFormatException | ParseException e1) {
 					e1.printStackTrace();
 				}
@@ -230,7 +240,8 @@ public class TransactionsTab extends JPanel implements Observer {
 						String account = (String)transactionsTable.getModel().getValueAt(transactionsTable.convertRowIndexToModel(selection), 1);
 						double amount = GUI.parseAmount((String)transactionsTable.getModel().getValueAt(transactionsTable.convertRowIndexToModel(selection), 2));
 						String comment = (String)transactionsTable.getModel().getValueAt(transactionsTable.convertRowIndexToModel(selection), 4);
-						transDialog.showAddStoredDialog(account, amount, comment);
+//						transDialog.showAddStoredDialog(account, amount, comment);
+						new StoredTransactionDialog(db).showAddDialog(new Object[]{account,amount,comment});
 					}
 				}
 			}
