@@ -2,7 +2,6 @@ package se.freedrikp.econview.gui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,8 +81,9 @@ public class NormalTransactionDialog extends TransactionDialog {
 	}
 
 	protected void setAddSpecifics(JPanel dialogPanel, Object[] input) {
-		super.setAddSpecifics(dialogPanel, Arrays.copyOf(input, input.length-1));
-		dateSelector.setDate((Date)input[input.length-1]);
+		super.setAddSpecifics(dialogPanel,
+				Arrays.copyOf(input, input.length - 1));
+		dateSelector.setDate((Date) input[input.length - 1]);
 	}
 
 }

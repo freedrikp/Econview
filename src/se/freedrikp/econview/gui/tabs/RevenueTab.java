@@ -6,20 +6,15 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,7 +50,6 @@ public class RevenueTab extends JPanel implements Observer {
 	private JDateChooser revDateFromField;
 
 	private JDateChooser revDateToField;
-
 
 	private AccountSelectorPanel customRevAccountPanel;
 	private static final String[] monthlyRevHeader = {
@@ -187,11 +181,10 @@ public class RevenueTab extends JPanel implements Observer {
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
-
 		// accountRevBox = new JComboBox();
 		// sideRevenuePanel.add(accountRevBox);
 
-		customRevAccountPanel = new AccountSelectorPanel(db,false,false);
+		customRevAccountPanel = new AccountSelectorPanel(db, false, false);
 		customRevAccountPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(new JScrollPane(customRevAccountPanel));
 
@@ -292,11 +285,12 @@ public class RevenueTab extends JPanel implements Observer {
 		// (selectedAccount.equals(Utilities.getString("ALL_ACCOUNTS"))) {
 		// selectedAccount = "";
 		// }
-		
+
 		customRevLabel.setText(NumberFormat.getCurrencyInstance().format(
 				db.getRevenue(revDateFromField.getDate(),
-						revDateToField.getDate(), customRevAccountPanel.getSelectedAccounts())));
-		
+						revDateToField.getDate(),
+						customRevAccountPanel.getSelectedAccounts())));
+
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }

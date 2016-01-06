@@ -61,7 +61,7 @@ public class UsersMenu extends JMenu {
 									Utilities.getString("PASSWORDS_NOT_MATCH"),
 									Utilities.getString("PASSWORD_ERROR"),
 									JOptionPane.ERROR_MESSAGE);
-						}else{							
+						} else {
 							if (!sec.addUser(userField.getText(), new String(
 									passField.getPassword()), false)) {
 								JOptionPane.showMessageDialog(null,
@@ -71,7 +71,7 @@ public class UsersMenu extends JMenu {
 							}
 							matched = true;
 						}
-					}else{
+					} else {
 						matched = true;
 					}
 				}

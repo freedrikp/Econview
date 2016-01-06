@@ -66,7 +66,7 @@ public class GUI extends JFrame implements Observer {
 						Database db = security.openDatabase(Utilities
 								.getConfig("DATABASE_FILE"));
 						frame = new GUI(db, security);
-					}else{
+					} else {
 						Database db = new Database(Utilities
 								.getConfig("DATABASE_FILE"));
 						frame = new GUI(db, null);
@@ -88,9 +88,9 @@ public class GUI extends JFrame implements Observer {
 		// this.dbfile = dbfile;
 		this.sec = sec;
 		this.db = db;
-		if (sec != null){
-			sec.addObserver(this);			
-		}else{
+		if (sec != null) {
+			sec.addObserver(this);
+		} else {
 			db.addObserver(this);
 		}
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -195,9 +195,9 @@ public class GUI extends JFrame implements Observer {
 
 	public void update(Observable o, Object arg) {
 		String file;
-		if (sec != null){
-			file = sec.getFile().getAbsolutePath();			
-		}else{
+		if (sec != null) {
+			file = sec.getFile().getAbsolutePath();
+		} else {
 			file = db.getFile().getAbsolutePath();
 		}
 		setTitle("EconView - " + file);
@@ -218,10 +218,10 @@ public class GUI extends JFrame implements Observer {
 		public void windowClosing(WindowEvent e) {
 			try {
 				db.close();
-				if (sec != null){
+				if (sec != null) {
 					sec.close();
 					Files.delete(new File(Utilities.getConfig("DATABASE_FILE"))
-					.toPath());					
+							.toPath());
 				}
 			} catch (SQLException | IOException e1) {
 				e1.printStackTrace();

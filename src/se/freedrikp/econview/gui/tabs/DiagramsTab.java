@@ -4,14 +4,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,11 +17,9 @@ import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
@@ -74,7 +69,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		db.addObserver(this);
 		dateFormat = new SimpleDateFormat(
 				Utilities.getConfig("FULL_DATE_FORMAT"));
-		setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		diagramsLastYearPanel = new JPanel();
 		diagramsLastMonthPanel = new JPanel();
 		diagramsThisYearPanel = new JPanel();
@@ -140,7 +135,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
 
-		diagAccountsPanel = new AccountSelectorPanel(db,false,true);
+		diagAccountsPanel = new AccountSelectorPanel(db, false, true);
 		diagAccountsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		diagramControlPanel.add(new JScrollPane(diagAccountsPanel));
 
@@ -213,12 +208,12 @@ public class DiagramsTab extends JPanel implements Observer {
 		// df.parse(diagFromDateField.getText()),
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
 
-		
 		generateDiagram(diagFromDateField.getDate(), diagToDateField.getDate(),
 				Utilities.getString("CUSTOM_DIAGRAM"), customDiagPanel,
 				CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT,
-				diagAccountsPanel.getSelectedAccounts(), diagAccountsPanel.isTotalSelected());
-		
+				diagAccountsPanel.getSelectedAccounts(),
+				diagAccountsPanel.isTotalSelected());
+
 		// } catch (ParseException e) {
 		// e.printStackTrace();
 		// }

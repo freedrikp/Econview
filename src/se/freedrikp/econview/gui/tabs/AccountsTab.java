@@ -48,7 +48,7 @@ public class AccountsTab extends JPanel implements Observer {
 		db.addObserver(this);
 		setLayout(new GridLayout(0, 2, 0, 0));
 
-//		final AccountDialog accDialog = new AccountDialog(db);
+		// final AccountDialog accDialog = new AccountDialog(db);
 
 		accountsPane = new JScrollPane();
 		add(accountsPane);
@@ -65,7 +65,7 @@ public class AccountsTab extends JPanel implements Observer {
 		btnAddAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				accDialog.showAddDialog();
+				// accDialog.showAddDialog();
 				new AccountDialog(db).showAddDialog();
 			}
 		});
@@ -78,20 +78,29 @@ public class AccountsTab extends JPanel implements Observer {
 		btnEditAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				accDialog.showEditDialog(
-//						(String) accountsTable.getModel().getValueAt(
-//								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0),
-//						(String) accountsTable.getModel().getValueAt(
-//								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 1),
-//						(boolean) accountsTable.getModel().getValueAt(
-//								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 2));
-				new AccountDialog(db).showEditDialog(new Object[]{
+				// accDialog.showEditDialog(
+				// (String) accountsTable.getModel().getValueAt(
+				// accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()),
+				// 0),
+				// (String) accountsTable.getModel().getValueAt(
+				// accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()),
+				// 1),
+				// (boolean) accountsTable.getModel().getValueAt(
+				// accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()),
+				// 2));
+				new AccountDialog(db).showEditDialog(new Object[] {
 						accountsTable.getModel().getValueAt(
-								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0),
+								accountsTable
+										.convertRowIndexToModel(accountsTable
+												.getSelectedRow()), 0),
 						accountsTable.getModel().getValueAt(
-								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 1),
+								accountsTable
+										.convertRowIndexToModel(accountsTable
+												.getSelectedRow()), 1),
 						accountsTable.getModel().getValueAt(
-								accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 2)});
+								accountsTable
+										.convertRowIndexToModel(accountsTable
+												.getSelectedRow()), 2) });
 			}
 		});
 		accountsButtonPanel.add(btnEditAccount);
@@ -105,12 +114,21 @@ public class AccountsTab extends JPanel implements Observer {
 						null,
 						Utilities.getString("REMOVE_ACCOUNT_PROMPT")
 								+ " -- "
-								+ (String) accountsTable.getModel().getValueAt(
-										accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0),
-						Utilities.getString("REMOVE_ACCOUNT"),
+								+ (String) accountsTable
+										.getModel()
+										.getValueAt(
+												accountsTable
+														.convertRowIndexToModel(accountsTable
+																.getSelectedRow()),
+												0), Utilities
+								.getString("REMOVE_ACCOUNT"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-					db.removeAccount((String) accountsTable.getModel()
-							.getValueAt(accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()), 0));
+					db.removeAccount((String) accountsTable
+							.getModel()
+							.getValueAt(
+									accountsTable
+											.convertRowIndexToModel(accountsTable
+													.getSelectedRow()), 0));
 				}
 			}
 		});

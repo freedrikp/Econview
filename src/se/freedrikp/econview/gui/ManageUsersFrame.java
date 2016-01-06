@@ -22,7 +22,7 @@ import javax.swing.ListSelectionModel;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.GUI.Model;
 
-public class ManageUsersFrame extends JFrame implements Observer{
+public class ManageUsersFrame extends JFrame implements Observer {
 	private static final String[] userHeader = {
 			Utilities.getString("USER_HEADER_USERNAME"),
 			Utilities.getString("USER_HEADER_ADMIN") };
@@ -51,7 +51,8 @@ public class ManageUsersFrame extends JFrame implements Observer{
 		setAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userTable.getModel().getValueAt(
-						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
+						userTable.convertRowIndexToModel(userTable
+								.getSelectedRow()), 0);
 				if (user != null) {
 					sec.setAdmin(user);
 				}
@@ -64,7 +65,8 @@ public class ManageUsersFrame extends JFrame implements Observer{
 		changePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userTable.getModel().getValueAt(
-						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
+						userTable.convertRowIndexToModel(userTable
+								.getSelectedRow()), 0);
 				if (user != null) {
 					JPanel promptPanel = new JPanel();
 					promptPanel.setLayout(new GridLayout(2, 2, 0, 0));
@@ -103,7 +105,8 @@ public class ManageUsersFrame extends JFrame implements Observer{
 		removeUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userTable.getModel().getValueAt(
-						userTable.convertRowIndexToModel(userTable.getSelectedRow()), 0);
+						userTable.convertRowIndexToModel(userTable
+								.getSelectedRow()), 0);
 				if (user != null) {
 					if (JOptionPane.showConfirmDialog(null,
 							Utilities.getString("REMOVE_USER_PROMPT") + " -- "
@@ -123,7 +126,7 @@ public class ManageUsersFrame extends JFrame implements Observer{
 				width, height);
 		setContentPane(userPanel);
 		setVisible(true);
-		update(sec,null);
+		update(sec, null);
 	}
 
 	public void update(Observable o, Object arg) {

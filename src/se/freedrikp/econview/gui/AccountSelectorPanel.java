@@ -16,7 +16,8 @@ import javax.swing.JSeparator;
 
 import se.freedrikp.econview.database.Database;
 
-public class AccountSelectorPanel extends JPanel implements Observer,ItemListener {
+public class AccountSelectorPanel extends JPanel implements Observer,
+		ItemListener {
 	private Database db;
 	private boolean startState;
 	private boolean includeTotal;
@@ -102,46 +103,44 @@ public class AccountSelectorPanel extends JPanel implements Observer,ItemListene
 		return includeTotal && total.isSelected();
 	}
 
+	public void itemStateChanged(ItemEvent e) {
+		removeListeners();
+		if (e.getSource() == allAccounts) {
+			boolean select = e.getStateChange() == ItemEvent.SELECTED;
+			for (JCheckBox checkBox : accountBoxes) {
+				checkBox.setSelected(select);
+				// update(db,null);
+			}
 
-		public void itemStateChanged(ItemEvent e) {
-			removeListeners();
-			if (e.getSource() == allAccounts) {
-				boolean select = e.getStateChange() == ItemEvent.SELECTED;
-				for (JCheckBox checkBox : accountBoxes) {
-					checkBox.setSelected(select);
-					// update(db,null);
-				}
-			
+		} else {
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				allAccounts.setSelected(false);
 			} else {
-				if (e.getStateChange() == ItemEvent.DESELECTED) {
-					allAccounts.setSelected(false);
-				} else {
-					boolean allSelected = true;
-					for (JCheckBox checkBox : accountBoxes) {
-						if (!checkBox.isSelected()) {
-							allSelected = false;
-						}
+				boolean allSelected = true;
+				for (JCheckBox checkBox : accountBoxes) {
+					if (!checkBox.isSelected()) {
+						allSelected = false;
 					}
-					allAccounts.setSelected(allSelected);
 				}
+				allAccounts.setSelected(allSelected);
+			}
 
-			}
-			addListeners();
 		}
-		
-		private void removeListeners(){
-			for (JCheckBox box : accountBoxes){
-				box.removeItemListener(this);
-			}
-			allAccounts.removeItemListener(this);
+		addListeners();
+	}
+
+	private void removeListeners() {
+		for (JCheckBox box : accountBoxes) {
+			box.removeItemListener(this);
 		}
-		
-		private void addListeners(){
-			for (JCheckBox box : accountBoxes){
-				box.addItemListener(this);
-			}
-			allAccounts.addItemListener(this);
+		allAccounts.removeItemListener(this);
+	}
+
+	private void addListeners() {
+		for (JCheckBox box : accountBoxes) {
+			box.addItemListener(this);
 		}
-	
+		allAccounts.addItemListener(this);
+	}
 
 }

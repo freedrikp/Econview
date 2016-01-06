@@ -1,14 +1,12 @@
 package se.freedrikp.econview.gui.dialogs;
 
-import java.text.NumberFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.JPanel;
 
 import se.freedrikp.econview.database.Database;
 
-public class StoredTransactionDialog extends TransactionDialog{
+public class StoredTransactionDialog extends TransactionDialog {
 
 	public StoredTransactionDialog(Database db) {
 		super(db);
@@ -19,8 +17,9 @@ public class StoredTransactionDialog extends TransactionDialog{
 	}
 
 	protected List<Object[]> getMultiTransactions(Object[] input) {
-		return db.getStoredTransaction((String)input[0]);
+		return db.getStoredTransaction((String) input[0]);
 	}
+
 	protected void addDatabaseHelper(String account, double amount,
 			String comment) {
 		db.addStoredTransaction(account, amount, comment);
@@ -31,7 +30,7 @@ public class StoredTransactionDialog extends TransactionDialog{
 		db.editStoredTransaction(id, account, amount, comment);
 	}
 
-	protected void setAddSpecifics(JPanel dialogPanel,Object[] input) {
+	protected void setAddSpecifics(JPanel dialogPanel, Object[] input) {
 		super.setAddSpecifics(dialogPanel, input);
 	}
 

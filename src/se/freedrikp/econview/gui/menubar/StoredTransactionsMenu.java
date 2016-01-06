@@ -25,7 +25,6 @@ import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.Utilities;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
-import se.freedrikp.econview.gui.dialogs.TransactionDialog;
 
 public class StoredTransactionsMenu extends JMenu implements Observer {
 	private Database db;
@@ -141,7 +140,7 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 							input[i++] = trans[1];
 							input[i++] = trans[2];
 						}
-						input[multiTransactions.size() * 2 ] = transaction;
+						input[multiTransactions.size() * 2] = transaction;
 						input[multiTransactions.size() * 2 + 1] = new Date();
 						new NormalTransactionDialog(db).showAddDialog(input);
 					}

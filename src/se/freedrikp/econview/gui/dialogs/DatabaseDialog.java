@@ -32,9 +32,9 @@ public abstract class DatabaseDialog {
 				null);
 
 		if (result == JOptionPane.YES_OPTION || result == JOptionPane.NO_OPTION) {
-			if (addNotEdit){
+			if (addNotEdit) {
 				doAddDatabaseAction();
-			}else{
+			} else {
 				doEditDatabaseAction();
 			}
 		}
@@ -42,6 +42,7 @@ public abstract class DatabaseDialog {
 	}
 
 	protected abstract void doAddDatabaseAction();
+
 	protected abstract void doEditDatabaseAction();
 
 	public void showEditDialog(Object[] input) {
@@ -59,7 +60,7 @@ public abstract class DatabaseDialog {
 	protected abstract void setEditSpecifics(JPanel dialogPanel, Object[] input);
 
 	protected abstract void setAddSpecifics(JPanel dialogPanel);
-	
+
 	protected abstract void setAddSpecifics(JPanel dialogPanel, Object[] input);
 
 	public void showAddDialog() {
@@ -73,16 +74,16 @@ public abstract class DatabaseDialog {
 			chain = showDialog(comp);
 		} while (chain);
 	}
-	
+
 	public void showAddDialog(Object[] input) {
-			addNotEdit = true;
-			dialogPanel.removeAll();
-			JComponent comp = createDialog(dialogPanel);
-			dialogPanel.add(new JLabel(chainQuestion));
-			setAddSpecifics(dialogPanel,input);
-			if (showDialog(comp)) {
-				showAddDialog();
-			}
+		addNotEdit = true;
+		dialogPanel.removeAll();
+		JComponent comp = createDialog(dialogPanel);
+		dialogPanel.add(new JLabel(chainQuestion));
+		setAddSpecifics(dialogPanel, input);
+		if (showDialog(comp)) {
+			showAddDialog();
+		}
 	}
 
 }
