@@ -52,20 +52,20 @@ public class TransactionDialog {
 		dialogPanel.add(multiAccountPanel);
 
 		JPanel multiAccountControlPanel = new JPanel();
-		JButton removeMultiAccountButton = new JButton("-");
+//		JButton removeMultiAccountButton = new JButton("-");
 		JButton addMultiAccountButton = new JButton("+");
 
-		removeMultiAccountButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (multiAccounts.size() >= 4) {
-					multiAccountPanel.remove(multiAccounts.removeLast()
-							.getParent());
-					multiAccountPanel.remove(multiAccounts.removeLast()
-							.getParent());
-				}
-				multiAccountPanel.revalidate();
-			}
-		});
+//		removeMultiAccountButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				if (multiAccounts.size() >= 4) {
+//					multiAccountPanel.remove(multiAccounts.removeLast()
+//							.getParent());
+//					multiAccountPanel.remove(multiAccounts.removeLast()
+//							.getParent());
+//				}
+//				multiAccountPanel.revalidate();
+//			}
+//		});
 
 		addMultiAccountButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -73,7 +73,7 @@ public class TransactionDialog {
 			}
 		});
 
-		multiAccountControlPanel.add(removeMultiAccountButton);
+//		multiAccountControlPanel.add(removeMultiAccountButton);
 		multiAccountControlPanel.add(addMultiAccountButton);
 		dialogPanel.add(multiAccountControlPanel);
 
@@ -186,21 +186,35 @@ public class TransactionDialog {
 	}
 
 	private void addMultiAccount(String selectedAccount, String selectedAmount) {
-		JComboBox accountField = new JComboBox(accountValues);
+		final JComboBox accountField = new JComboBox(accountValues);
 		accountField.setSelectedItem(selectedAccount);
-		JPanel accountPanel = new JPanel();
+		final JPanel accountPanel = new JPanel();
 		accountPanel.add(new JLabel(Utilities
 				.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
 		accountPanel.add(accountField);
 		multiAccountPanel.add(accountPanel);
 		multiAccounts.add(accountField);
 
-		JTextField amountField = new JTextField("", 7);
+		final JTextField amountField = new JTextField("", 7);
 		amountField.setText(selectedAmount);
-		JPanel amountPanel = new JPanel();
+		final JPanel amountPanel = new JPanel();
 		amountPanel.add(new JLabel(Utilities
 				.getString("ADD_TRANSACTION_AMOUNT") + ":"));
 		amountPanel.add(amountField);
+		
+		JButton removeButton = new JButton("-");
+		amountPanel.add(removeButton);
+		removeButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				multiAccountPanel.remove(accountPanel);
+				multiAccountPanel.remove(amountPanel);
+				multiAccounts.remove(accountField);
+				multiAccounts.remove(amountField);
+				multiAccountPanel.revalidate();
+			}
+		});
+		
 		multiAccountPanel.add(amountPanel);
 		multiAccounts.add(amountField);
 
