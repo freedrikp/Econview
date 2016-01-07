@@ -1,5 +1,6 @@
 package se.freedrikp.econview.gui.dialogs;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -150,15 +151,36 @@ public abstract class TransactionDialog extends DatabaseDialog {
 		}
 		commentField.setText((String) input[input.length - 1]);
 	}
+	
+	protected JComponent addMultiAccount(String selectedAccount, String selectedAmount){
+		return addMultiAccount(selectedAccount, selectedAmount,multiAccountPanel.getComponentCount());
+	}
 
-	protected JComponent addMultiAccount(String selectedAccount, String selectedAmount) {
+	private JComponent addMultiAccount(String selectedAccount, String selectedAmount,int index) {
 		final JComboBox accountField = new JComboBox(accountValues);
 		accountField.setSelectedItem(selectedAccount);
 		final JPanel accountPanel = new JPanel();
 		accountPanel.add(new JLabel(Utilities
 				.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
 		accountPanel.add(accountField);
-		multiAccountPanel.add(accountPanel);
+		
+		JButton addButton = new JButton("+");
+		accountPanel.add(addButton);
+		addButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Component[] cs = multiAccountPanel.getComponents();
+				int j = -1;
+				for (int i = 0; i < cs.length; i++){
+					if (multiAccountPanel.getComponent(i).equals(accountPanel)){
+						j = i;
+						break;
+					}
+				}
+				addMultiAccount(null, null,j);
+			}
+		});
+		
+		multiAccountPanel.add(accountPanel,index);
 		multiAccounts.add(accountField);
 
 		final JTextField amountField = new JTextField("", 7);
@@ -183,7 +205,7 @@ public abstract class TransactionDialog extends DatabaseDialog {
 				multiAccountPanel.revalidate();
 			}
 		});
-		multiAccountPanel.add(amountPanel);
+		multiAccountPanel.add(amountPanel,index+1);
 		multiAccounts.add(amountField);
 
 		multiAccountPanel.revalidate();
