@@ -1,6 +1,6 @@
 === TODO ===
 *Separate GUI parts from Security.
-*Change TransactionDialog to allow removal of single-transactions. All removed means entire transaction removed.
+*Add delete all stored transactions functionality.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -11,6 +11,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Change TransactionDialog to allow removal of single-transactions. All removed means entire transaction removed. ---- v2.5
+
 *Fixed bug when adding users and passwords dont match. --- v2.4
 
 *Ask for user when starting for first time. ---- v2.4

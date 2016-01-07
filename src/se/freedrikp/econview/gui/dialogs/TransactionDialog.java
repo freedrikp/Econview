@@ -4,8 +4,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -26,7 +30,8 @@ public abstract class TransactionDialog extends DatabaseDialog {
 	private List<JComponent> multiAccounts;
 	private Object[] accountValues;
 	private JTextField commentField;
-	private long[] IDs;
+	private Map<JComponent,Long> IDs;
+	private Set<JComponent> toRemove;
 
 	public TransactionDialog(Database db) {
 		super(db, Utilities.getString("TRANSACTION_DETAILS"), Utilities
@@ -89,12 +94,27 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 	protected void doEditDatabaseAction() {
 		for (int i = 0, j = 0; i < multiAccounts.size(); i += 2, j++) {
-			editDatabaseHelper(IDs[j],
-					(String) ((JComboBox) multiAccounts.get(i))
-							.getSelectedItem(),
-					GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
-							.getText()), commentField.getText());
+			JComboBox accountField = (JComboBox) multiAccounts.get(i);
+			if (IDs.containsKey(accountField)){
+				editDatabaseHelper(IDs.get(accountField),
+						(String) accountField
+						.getSelectedItem(),
+						GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
+								.getText()), commentField.getText());				
+			}else{
+				addDatabaseHelper((String) accountField
+						.getSelectedItem(),
+						GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
+								.getText()), commentField.getText());
+			}
 		}
+		for (JComponent c: toRemove){
+			if (IDs.containsKey(c)){
+				removeDatabaseHelper(IDs.get(c));
+			}
+		}
+		IDs = null;
+		toRemove = null;
 	}
 
 	protected abstract void addDatabaseHelper(String account, double amount,
@@ -102,15 +122,17 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 	protected abstract void editDatabaseHelper(long id, String account,
 			double amount, String comment);
+	
+	protected abstract void removeDatabaseHelper(long id);
 
 	protected void setEditSpecifics(JPanel dialogPanel, Object[] input) {
 		List<Object[]> multiTransactions = getMultiTransactions(input);
-		IDs = new long[multiTransactions.size()];
+		IDs = new HashMap<JComponent,Long>();
+		toRemove = new HashSet<JComponent>();
 		int i = 0;
 		for (Object[] transaction : multiTransactions) {
-			addMultiAccount((String) transaction[1], NumberFormat
-					.getCurrencyInstance().format((Double) transaction[2]));
-			IDs[i++] = (long) transaction[0];
+			IDs.put(addMultiAccount((String) transaction[1], NumberFormat
+					.getCurrencyInstance().format((Double) transaction[2])),(long) transaction[0]);
 		}
 		commentField.setText((String) input[0]);
 	}
@@ -129,7 +151,7 @@ public abstract class TransactionDialog extends DatabaseDialog {
 		commentField.setText((String) input[input.length - 1]);
 	}
 
-	protected void addMultiAccount(String selectedAccount, String selectedAmount) {
+	protected JComponent addMultiAccount(String selectedAccount, String selectedAmount) {
 		final JComboBox accountField = new JComboBox(accountValues);
 		accountField.setSelectedItem(selectedAccount);
 		final JPanel accountPanel = new JPanel();
@@ -155,6 +177,9 @@ public abstract class TransactionDialog extends DatabaseDialog {
 				multiAccountPanel.remove(amountPanel);
 				multiAccounts.remove(accountField);
 				multiAccounts.remove(amountField);
+				if(toRemove != null){
+					toRemove.add(accountField);
+				}
 				multiAccountPanel.revalidate();
 			}
 		});
@@ -162,6 +187,8 @@ public abstract class TransactionDialog extends DatabaseDialog {
 		multiAccounts.add(amountField);
 
 		multiAccountPanel.revalidate();
+		
+		return accountField;
 	}
 
 	// private JDateChooser dateSelector;

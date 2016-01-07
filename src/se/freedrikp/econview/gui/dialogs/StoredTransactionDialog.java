@@ -34,4 +34,8 @@ public class StoredTransactionDialog extends TransactionDialog {
 		super.setAddSpecifics(dialogPanel, input);
 	}
 
+	protected void removeDatabaseHelper(long id) {
+		db.removeStoredTransaction(id);
+	}
+
 }

@@ -86,4 +86,8 @@ public class NormalTransactionDialog extends TransactionDialog {
 		dateSelector.setDate((Date) input[input.length - 1]);
 	}
 
+	protected void removeDatabaseHelper(long id) {
+		db.removeTransaction(id);
+	}
+
 }
