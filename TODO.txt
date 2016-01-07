@@ -1,6 +1,7 @@
 === TODO ===
 *Separate GUI parts from Security.
 *Add delete all stored transactions functionality.
+*Implement add multiaccount button in between every multiaccount, as with the remove button.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
