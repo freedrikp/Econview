@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -247,7 +248,7 @@ public class TransactionsTab extends JPanel implements Observer {
 
 		transactionsTable.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (e.getClickCount() == 2) {
+				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
 					int selection = transactionsTable.getSelectedRow();
 					if (selection >= 0) {
 						String account = (String) transactionsTable
@@ -273,6 +274,37 @@ public class TransactionsTab extends JPanel implements Observer {
 						new StoredTransactionDialog(db)
 								.showAddDialog(new Object[] { account, amount,
 										comment });
+					}
+				}else if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON3) {
+					int selection = transactionsTable.getSelectedRow();
+					if (selection >= 0) {			
+						String comment = (String) transactionsTable
+								.getModel()
+								.getValueAt(
+										transactionsTable
+												.convertRowIndexToModel(selection),
+										4);
+						// transDialog.showAddStoredDialog(account, amount,
+						// comment);
+						try {
+							List<Object[]> transactions = db.getMultiTransactions(dateFormat.parse((String)transactionsTable
+									.getModel()
+									.getValueAt(
+											transactionsTable
+													.convertRowIndexToModel(selection),
+											3)), comment);
+						Object[] transaction = new Object[transactions.size()*2+1];
+						int i = 0;
+						for (Object[] t :transactions){
+							transaction[i++]=t[1];
+							transaction[i++]=t[2];
+						}
+						transaction[transactions.size()*2] =  comment;
+						new StoredTransactionDialog(db)
+								.showAddDialog(transaction);
+						} catch (ParseException e1) {
+							e1.printStackTrace();
+						}
 					}
 				}
 			}

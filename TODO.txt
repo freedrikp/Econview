@@ -1,6 +1,5 @@
 === TODO ===
 *Separate GUI parts from Security.
-*Triple click on transaction should prepare stored transaction with multitransactions.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -11,6 +10,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Double right click on transaction should prepare stored transaction with multitransactions. ---- v2.5
+
 *Implement add multiaccount button in between every multiaccount, as with the remove button. ---- v2.5
 
 *Add delete all stored transactions functionality. ---- v2.5
