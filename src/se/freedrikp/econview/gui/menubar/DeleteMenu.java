@@ -42,6 +42,20 @@ public class DeleteMenu extends JMenu {
 				}
 			}
 		});
+		
+		JMenuItem deleteStoredTransactions = new JMenuItem(
+				Utilities.getString("MENUBAR_DELETE_STORED_TRANSACTIONS"));
+		add(deleteStoredTransactions);
+		deleteStoredTransactions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(null,
+						Utilities.getString("PROMPT_DELETE_STORED_TRANSACTIONS"),
+						Utilities.getString("MENUBAR_DELETE_STORED_TRANSACTIONS"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+					db.deleteStoredTransactions();
+				}
+			}
+		});
 	}
 
 }

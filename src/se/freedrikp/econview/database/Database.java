@@ -942,6 +942,11 @@ public class Database extends Observable {
 	public void deleteTransactions() {
 		deleteEntries("Transactions");
 	}
+	
+	
+	public void deleteStoredTransactions() {
+		deleteEntries("StoredTransactions");
+	}
 
 	public void addStoredTransaction(String accountName,
 			double transactionAmount, String transactionComment) {

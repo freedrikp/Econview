@@ -124,6 +124,9 @@ public class Utilities {
 		lan.put("MENUBAR_STORED_TRANSACTIONS_EDIT", "Edit Stored Transaction");
 		lan.put("MENUBAR_STORED_TRANSACTIONS_REMOVE",
 				"Remove Stored Transaction");
+		lan.put("MENUBAR_DELETE_STORED_TRANSACTIONS", "Delete All Stored Transactions");
+		lan.put("PROMPT_DELETE_STORED_TRANSACTIONS",
+				"Are you sure you want to delete all stored transactions?");
 
 		lang.put(getConfig("LANGUAGE"), lan);
 	}
