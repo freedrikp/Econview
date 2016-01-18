@@ -7,15 +7,15 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 public class HiddenMenu extends JMenu {
 
 	public HiddenMenu(final Database db) {
-		super(Utilities.getString("MENUBAR_HIDDEN"));
+		super(Language.getString("MENUBAR_HIDDEN"));
 
 		final JCheckBoxMenuItem mntmShowHidden = new JCheckBoxMenuItem(
-				Utilities.getString("MENUBAR_HIDDEN_SHOW_HIDDEN"),
+				Language.getString("MENUBAR_HIDDEN_SHOW_HIDDEN"),
 				db.getShowHidden());
 		mntmShowHidden.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

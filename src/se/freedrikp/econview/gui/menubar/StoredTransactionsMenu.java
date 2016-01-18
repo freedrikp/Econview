@@ -22,7 +22,7 @@ import javax.swing.table.TableRowSorter;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 
@@ -31,21 +31,21 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 	// private TransactionDialog td;
 	private JMenu editStoredTransaction;
 	private static final String[] transactionHeader = {
-			Utilities.getString("TRANSACTION_HEADER_ID"),
-			Utilities.getString("TRANSACTION_HEADER_ACCOUNT"),
-			Utilities.getString("TRANSACTION_HEADER_AMOUNT"),
-			Utilities.getString("TRANSACTION_HEADER_COMMENT") };
+			Language.getString("TRANSACTION_HEADER_ID"),
+			Language.getString("TRANSACTION_HEADER_ACCOUNT"),
+			Language.getString("TRANSACTION_HEADER_AMOUNT"),
+			Language.getString("TRANSACTION_HEADER_COMMENT") };
 	private JMenuItem addStoredTransaction;
 	private JMenuItem removeStoredTransaction;
 
 	public StoredTransactionsMenu(final Database db) {
-		super(Utilities.getString("MENUBAR_STORED_TRANSACTIONS"));
+		super(Language.getString("MENUBAR_STORED_TRANSACTIONS"));
 		this.db = db;
 		db.addObserver(this);
 		// td = new TransactionDialog(db);
 
 		addStoredTransaction = new JMenuItem(
-				Utilities.getString("MENUBAR_STORED_TRANSACTIONS_ADD"));
+				Language.getString("MENUBAR_STORED_TRANSACTIONS_ADD"));
 		addStoredTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// td.showAddStoredDialog();
@@ -55,10 +55,10 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 		});
 
 		editStoredTransaction = new JMenu(
-				Utilities.getString("MENUBAR_STORED_TRANSACTIONS_EDIT"));
+				Language.getString("MENUBAR_STORED_TRANSACTIONS_EDIT"));
 
 		removeStoredTransaction = new JMenuItem(
-				Utilities.getString("MENUBAR_STORED_TRANSACTIONS_REMOVE"));
+				Language.getString("MENUBAR_STORED_TRANSACTIONS_REMOVE"));
 		removeStoredTransaction.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -91,8 +91,7 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 				int result = JOptionPane.showConfirmDialog(
 						null,
 						transactionsPane,
-						Utilities
-								.getString("MENUBAR_STORED_TRANSACTIONS_REMOVE"),
+						Language.getString("MENUBAR_STORED_TRANSACTIONS_REMOVE"),
 						JOptionPane.OK_CANCEL_OPTION);
 				if (result == JOptionPane.OK_OPTION) {
 					int rows[] = transactionsTable.getSelectedRows();

@@ -24,9 +24,10 @@ import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountSelectorPanel;
+import se.freedrikp.econview.gui.Configuration;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -53,21 +54,21 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private AccountSelectorPanel customRevAccountPanel;
 	private static final String[] monthlyRevHeader = {
-			Utilities.getString("REVENUE_HEADER_YEAR"),
-			Utilities.getString("REVENUE_HEADER_MONTH"),
-			Utilities.getString("REVENUE_HEADER_REVENUE") };
+			Language.getString("REVENUE_HEADER_YEAR"),
+			Language.getString("REVENUE_HEADER_MONTH"),
+			Language.getString("REVENUE_HEADER_REVENUE") };
 	private static final String[] yearlyRevHeader = {
-			Utilities.getString("REVENUE_HEADER_YEAR"),
-			Utilities.getString("REVENUE_HEADER_REVENUE") };
+			Language.getString("REVENUE_HEADER_YEAR"),
+			Language.getString("REVENUE_HEADER_REVENUE") };
 	private static final String[] monthlyAccountRevHeader = {
-			Utilities.getString("REVENUE_HEADER_YEAR"),
-			Utilities.getString("REVENUE_HEADER_MONTH"),
-			Utilities.getString("REVENUE_HEADER_ACCOUNT"),
-			Utilities.getString("REVENUE_HEADER_REVENUE") };
+			Language.getString("REVENUE_HEADER_YEAR"),
+			Language.getString("REVENUE_HEADER_MONTH"),
+			Language.getString("REVENUE_HEADER_ACCOUNT"),
+			Language.getString("REVENUE_HEADER_REVENUE") };
 	private static final String[] yearlyAccountRevHeader = {
-			Utilities.getString("REVENUE_HEADER_YEAR"),
-			Utilities.getString("REVENUE_HEADER_ACCOUNT"),
-			Utilities.getString("REVENUE_HEADER_REVENUE") };
+			Language.getString("REVENUE_HEADER_YEAR"),
+			Language.getString("REVENUE_HEADER_ACCOUNT"),
+			Language.getString("REVENUE_HEADER_REVENUE") };
 	// private static final String[] totalAccountRevHeader = {
 	// Utilities.getString("REVENUE_HEADER_ACCOUNT"),
 	// Utilities.getString("REVENUE_HEADER_REVENUE") };
@@ -80,9 +81,11 @@ public class RevenueTab extends JPanel implements Observer {
 		this.db = db;
 		db.addObserver(this);
 		dateFormat = new SimpleDateFormat(
-				Utilities.getConfig("FULL_DATE_FORMAT"));
-		monthFormat = new SimpleDateFormat(Utilities.getConfig("MONTH_FORMAT"));
-		yearFormat = new SimpleDateFormat(Utilities.getConfig("YEAR_FORMAT"));
+				Configuration.getString("FULL_DATE_FORMAT"));
+		monthFormat = new SimpleDateFormat(
+				Configuration.getString("MONTH_FORMAT"));
+		yearFormat = new SimpleDateFormat(
+				Configuration.getString("YEAR_FORMAT"));
 		setLayout(new GridLayout(1, 0, 0, 0));
 
 		JScrollPane yearlyRevPane = new JScrollPane();
@@ -129,8 +132,8 @@ public class RevenueTab extends JPanel implements Observer {
 		sideRevenuePanel.setLayout(new BoxLayout(sideRevenuePanel,
 				BoxLayout.Y_AXIS));
 
-		JLabel lblTotalRevenue = new JLabel(
-				Utilities.getString("TOTAL_REVENUE") + ":");
+		JLabel lblTotalRevenue = new JLabel(Language.getString("TOTAL_REVENUE")
+				+ ":");
 		lblTotalRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(lblTotalRevenue);
 
@@ -145,7 +148,7 @@ public class RevenueTab extends JPanel implements Observer {
 		// SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 		JLabel lblCustomRevenue = new JLabel(
-				Utilities.getString("CUSTOM_REVENUE") + ":");
+				Language.getString("CUSTOM_REVENUE") + ":");
 		lblCustomRevenue.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sideRevenuePanel.add(lblCustomRevenue);
 
@@ -164,8 +167,8 @@ public class RevenueTab extends JPanel implements Observer {
 		// revDateFromField = new JTextField(df.format(new Date()));
 		revDateFromField = new JDateChooser(new Date(), dateFormat.toPattern());
 		revDateFromField.setMaximumSize(new Dimension(Integer
-				.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")), Integer
-				.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
+				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		sideRevenuePanel.add(revDateFromField);
 		// revDateFromField.setColumns(7);
 
@@ -175,9 +178,9 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateToField = new JTextField(df.format(new Date()));
 		revDateToField = new JDateChooser(new Date(), dateFormat.toPattern());
-		revDateToField.setMaximumSize(new Dimension(Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_HEIGHT"))));
+		revDateToField.setMaximumSize(new Dimension(Integer
+				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		sideRevenuePanel.add(revDateToField);
 		// revDateToField.setColumns(7);
 
@@ -189,7 +192,7 @@ public class RevenueTab extends JPanel implements Observer {
 		sideRevenuePanel.add(new JScrollPane(customRevAccountPanel));
 
 		JButton customRevButton = new JButton(
-				Utilities.getString("CUSTOM_REVENUE"));
+				Language.getString("CUSTOM_REVENUE"));
 		customRevButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);

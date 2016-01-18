@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 import javax.swing.ProgressMonitor;
 
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 public class Database extends Observable {
 	private Connection c;
@@ -488,7 +488,7 @@ public class Database extends Observable {
 			}
 			if (includeTotal) {
 				buildDiagramDataset(from, to, dataset, totalStartBalance,
-						Utilities.getString("TOTAL_ACCOUNT_NAME"),
+						Language.getString("TOTAL_ACCOUNT_NAME"),
 						selectedAccounts);
 				// HashMap<String,Double> total = new HashMap<String,Double>();
 				// for (Map<String,Double> map : dataset.values()){
@@ -521,7 +521,7 @@ public class Database extends Observable {
 		PreparedStatement ps;
 		Date latest = getNewestTransactionDate();
 		latest = latest != null ? latest : new Date();
-		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
+		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
 					"WHERE accountName IN " + consideredAccounts, from, latest);
@@ -536,7 +536,7 @@ public class Database extends Observable {
 			startBalance -= transactions.getDouble("Amount");
 		}
 		datapoints.put(from, startBalance);
-		if (accountName.equals(Utilities.getString("TOTAL_ACCOUNT_NAME"))) {
+		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"WHERE accountName IN " + consideredAccounts, from, to);
@@ -662,7 +662,7 @@ public class Database extends Observable {
 			}
 			pw.println(totalCount);
 			ProgressMonitor pm = new ProgressMonitor(null,
-					Utilities.getString("EXPORTING_DATABASE"), "", 0, 100);
+					Language.getString("EXPORTING_DATABASE"), "", 0, 100);
 			final float percent = 100.0f / totalCount;
 			float progress = 0;
 			pm.setMillisToPopup(0);
@@ -711,7 +711,7 @@ public class Database extends Observable {
 				totalCount = Long.parseLong(scan.nextLine());
 			}
 			ProgressMonitor pm = new ProgressMonitor(null,
-					Utilities.getString("IMPORTING_DATABASE"), "", 0, 100);
+					Language.getString("IMPORTING_DATABASE"), "", 0, 100);
 			pm.setMillisToPopup(0);
 			pm.setMillisToDecideToPopup(0);
 			final float percent = 100.0f / totalCount;
@@ -942,8 +942,7 @@ public class Database extends Observable {
 	public void deleteTransactions() {
 		deleteEntries("Transactions");
 	}
-	
-	
+
 	public void deleteStoredTransactions() {
 		deleteEntries("StoredTransactions");
 	}

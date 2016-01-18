@@ -34,14 +34,14 @@ public class AccountSelectorPanel extends JPanel implements Observer,
 		this.includeTotal = includeTotal;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		allAccounts = new JCheckBox(Utilities.getString("ALL_ACCOUNTS"),
+		allAccounts = new JCheckBox(Language.getString("ALL_ACCOUNTS"),
 				startState);
 		// allAccounts.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		allAccounts.addItemListener(this);
 
 		if (includeTotal) {
-			total = new JCheckBox(Utilities.getString("TOTAL_ACCOUNT_NAME"),
+			total = new JCheckBox(Language.getString("TOTAL_ACCOUNT_NAME"),
 					startState);
 		}
 		// total.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -35,7 +35,8 @@ import org.jfree.data.time.TimeSeriesCollection;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountSelectorPanel;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Configuration;
+import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -53,14 +54,12 @@ public class DiagramsTab extends JPanel implements Observer {
 	// private final int DIAGRAM_HEIGHT = 175;
 	// private final int CUSTOM_DIAGRAM_WIDTH = 480;
 	// private final int CUSTOM_DIAGRAM_HEIGHT = 350;
-	private final int DIAGRAM_WIDTH = Integer.parseInt(Utilities
-			.getConfig("DIAGRAM_WIDTH"));
-	private final int DIAGRAM_HEIGHT = Integer.parseInt(Utilities
-			.getConfig("DIAGRAM_HEIGHT"));
-	private final int CUSTOM_DIAGRAM_WIDTH = Integer.parseInt(Utilities
-			.getConfig("CUSTOM_DIAGRAM_WIDTH"));
-	private final int CUSTOM_DIAGRAM_HEIGHT = Integer.parseInt(Utilities
-			.getConfig("CUSTOM_DIAGRAM_HEIGHT"));
+	private final int DIAGRAM_WIDTH = Configuration.getInt("DIAGRAM_WIDTH");
+	private final int DIAGRAM_HEIGHT = Configuration.getInt("DIAGRAM_HEIGHT");
+	private final int CUSTOM_DIAGRAM_WIDTH = Configuration
+			.getInt("CUSTOM_DIAGRAM_WIDTH");
+	private final int CUSTOM_DIAGRAM_HEIGHT = Configuration
+			.getInt("CUSTOM_DIAGRAM_HEIGHT");
 	private final SimpleDateFormat dateFormat;
 
 	public DiagramsTab(final Database db) {
@@ -68,7 +67,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		this.db = db;
 		db.addObserver(this);
 		dateFormat = new SimpleDateFormat(
-				Utilities.getConfig("FULL_DATE_FORMAT"));
+				Configuration.getString("FULL_DATE_FORMAT"));
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		diagramsLastYearPanel = new JPanel();
 		diagramsLastMonthPanel = new JPanel();
@@ -82,7 +81,8 @@ public class DiagramsTab extends JPanel implements Observer {
 				BoxLayout.X_AXIS));
 		diagramsThisYearPanel.setLayout(new BoxLayout(diagramsThisYearPanel,
 				BoxLayout.X_AXIS));
-		if (Utilities.getConfig("DIAGRAMS_STYLE_SPLIT_OR_TAB").equals("SPLIT")) {
+		if (Configuration.getString("DIAGRAMS_STYLE_SPLIT_OR_TAB").equals(
+				"SPLIT")) {
 			JSplitPane diagramYearSplitPane = new JSplitPane(
 					JSplitPane.VERTICAL_SPLIT, diagramsLastYearPanel,
 					diagramsThisYearPanel);
@@ -93,12 +93,11 @@ public class DiagramsTab extends JPanel implements Observer {
 					JSplitPane.HORIZONTAL_SPLIT, diagramYearSplitPane,
 					diagramMonthSplitPane);
 			add(diagramSplitPane);
-		} else if (Utilities.getConfig("DIAGRAMS_STYLE_SPLIT_OR_TAB").equals(
-				"TAB")) {
+		} else if (Configuration.getString("DIAGRAMS_STYLE_SPLIT_OR_TAB")
+				.equals("TAB")) {
 			JTabbedPane diagrams = new JTabbedPane();
-			diagrams.add(Utilities.getString("LAST_YEAR"),
-					diagramsLastYearPanel);
-			diagrams.add(Utilities.getString("LAST_MONTH"),
+			diagrams.add(Language.getString("LAST_YEAR"), diagramsLastYearPanel);
+			diagrams.add(Language.getString("LAST_MONTH"),
 					diagramsLastMonthPanel);
 			diagrams.add(
 					Integer.toString(Calendar.getInstance().get(Calendar.YEAR)),
@@ -118,8 +117,8 @@ public class DiagramsTab extends JPanel implements Observer {
 		// diagFromDateField = new JTextField(df.format(new Date()));
 		diagFromDateField = new JDateChooser(new Date(), dateFormat.toPattern());
 		diagFromDateField.setMaximumSize(new Dimension(Integer
-				.parseInt(Utilities.getConfig("DATE_FIELD_WIDTH")), Integer
-				.parseInt(Utilities.getConfig("DATE_FIELD_HEIGHT"))));
+				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		diagramControlPanel.add(diagFromDateField);
 		// diagFromDateField.setColumns(10);
 
@@ -129,9 +128,9 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		// diagToDateField = new JTextField(df.format(new Date()));
 		diagToDateField = new JDateChooser(new Date(), dateFormat.toPattern());
-		diagToDateField.setMaximumSize(new Dimension(Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_HEIGHT"))));
+		diagToDateField.setMaximumSize(new Dimension(Integer
+				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		diagramControlPanel.add(diagToDateField);
 		// diagToDateField.setColumns(10);
 
@@ -140,7 +139,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagramControlPanel.add(new JScrollPane(diagAccountsPanel));
 
 		JButton btnCustomDiagram = new JButton(
-				Utilities.getString("CUSTOM_DIAGRAM"));
+				Language.getString("CUSTOM_DIAGRAM"));
 		btnCustomDiagram.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);
@@ -195,13 +194,13 @@ public class DiagramsTab extends JPanel implements Observer {
 		end = Calendar.getInstance();
 		start.add(Calendar.YEAR, -1);
 		generateDiagram(start.getTime(), end.getTime(),
-				Utilities.getString("LAST_YEAR"), diagramsLastYearPanel,
+				Language.getString("LAST_YEAR"), diagramsLastYearPanel,
 				DIAGRAM_WIDTH, DIAGRAM_HEIGHT, accounts, true);
 		start = Calendar.getInstance();
 		end = Calendar.getInstance();
 		start.add(Calendar.MONTH, -1);
 		generateDiagram(start.getTime(), end.getTime(),
-				Utilities.getString("LAST_MONTH"), diagramsLastMonthPanel,
+				Language.getString("LAST_MONTH"), diagramsLastMonthPanel,
 				DIAGRAM_WIDTH, DIAGRAM_HEIGHT, accounts, true);
 		// try {
 		// generateDiagram(
@@ -209,7 +208,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
 
 		generateDiagram(diagFromDateField.getDate(), diagToDateField.getDate(),
-				Utilities.getString("CUSTOM_DIAGRAM"), customDiagPanel,
+				Language.getString("CUSTOM_DIAGRAM"), customDiagPanel,
 				CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT,
 				diagAccountsPanel.getSelectedAccounts(),
 				diagAccountsPanel.isTotalSelected());
@@ -254,8 +253,8 @@ public class DiagramsTab extends JPanel implements Observer {
 			collection.addSeries(series);
 		}
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(title,
-				Utilities.getString("DIAGRAM_DATE"),
-				Utilities.getString("DIAGRAM_BALANCE"), collection);
+				Language.getString("DIAGRAM_DATE"),
+				Language.getString("DIAGRAM_BALANCE"), collection);
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
 		daxis.setRange(from, to);

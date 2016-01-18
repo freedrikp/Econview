@@ -40,10 +40,8 @@ public class GUI extends JFrame implements Observer {
 	// private JLabel revDateLabel;
 	private Security sec;
 	private Database db;
-	private final int WIDTH = Integer.parseInt(Utilities
-			.getConfig("WINDOW_WIDTH"));
-	private final int HEIGHT = Integer.parseInt(Utilities
-			.getConfig("WINDOW_HEIGHT"));
+	private final int WIDTH = Configuration.getInt("WINDOW_WIDTH");
+	private final int HEIGHT = Configuration.getInt("WINDOW_HEIGHT");
 
 	/**
 	 * Launch the application.
@@ -57,18 +55,18 @@ public class GUI extends JFrame implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					boolean secure = Boolean.parseBoolean(Utilities.getConfig(
-							"SECURITY_TRUE_FALSE").toLowerCase());
+					boolean secure = Configuration
+							.getBoolean("SECURITY_TRUE_FALSE");
 					GUI frame;
 					if (secure) {
-						Security security = new Security(Utilities
-								.getConfig("USERS_DATABASE_FILE"));
-						Database db = security.openDatabase(Utilities
-								.getConfig("DATABASE_FILE"));
+						Security security = new Security(Configuration
+								.getString("USERS_DATABASE_FILE"));
+						Database db = security.openDatabase(Configuration
+								.getString("DATABASE_FILE"));
 						frame = new GUI(db, security);
 					} else {
-						Database db = new Database(Utilities
-								.getConfig("DATABASE_FILE"));
+						Database db = new Database(Configuration
+								.getString("DATABASE_FILE"));
 						frame = new GUI(db, null);
 					}
 					frame.setVisible(true);
@@ -117,19 +115,19 @@ public class GUI extends JFrame implements Observer {
 		// tabbedPane.addTab("Start", null, startPanel, null);
 
 		AccountsTab accountsPanel = new AccountsTab(db);
-		tabbedPane.addTab(Utilities.getString("ACCOUNTS_TAB_NAME"), null,
+		tabbedPane.addTab(Language.getString("ACCOUNTS_TAB_NAME"), null,
 				accountsPanel, null);
 
 		TransactionsTab transactionsPanel = new TransactionsTab(db);
-		tabbedPane.addTab(Utilities.getString("TRANSACTIONS_TAB_NAME"), null,
+		tabbedPane.addTab(Language.getString("TRANSACTIONS_TAB_NAME"), null,
 				transactionsPanel, null);
 
 		RevenueTab revenuePanel = new RevenueTab(db);
-		tabbedPane.addTab(Utilities.getString("REVENUES_TAB_NAME"), null,
+		tabbedPane.addTab(Language.getString("REVENUES_TAB_NAME"), null,
 				revenuePanel, null);
 
 		DiagramsTab diagramsPanel = new DiagramsTab(db);
-		tabbedPane.addTab(Utilities.getString("DIAGRAMS_TAB_NAME"), null,
+		tabbedPane.addTab(Language.getString("DIAGRAMS_TAB_NAME"), null,
 				diagramsPanel, null);
 
 		update(db, null);
@@ -220,8 +218,8 @@ public class GUI extends JFrame implements Observer {
 				db.close();
 				if (sec != null) {
 					sec.close();
-					Files.delete(new File(Utilities.getConfig("DATABASE_FILE"))
-							.toPath());
+					Files.delete(new File(Configuration
+							.getString("DATABASE_FILE")).toPath());
 				}
 			} catch (SQLException | IOException e1) {
 				e1.printStackTrace();

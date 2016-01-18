@@ -32,7 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Configuration;
+import se.freedrikp.econview.gui.Language;
 
 public class Security extends Observable implements Observer {
 	private Connection c;
@@ -73,29 +74,29 @@ public class Security extends Observable implements Observer {
 
 			JPanel promptPanel = new JPanel();
 			promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
-			promptPanel.add(new JLabel(Utilities.getString("PROMPT_USERNAME")
+			promptPanel.add(new JLabel(Language.getString("PROMPT_USERNAME")
 					+ ":"));
 			JTextField userField = new JTextField(15);
 			promptPanel.add(userField);
-			promptPanel.add(new JLabel(Utilities.getString("PROMPT_PASSWORD")
+			promptPanel.add(new JLabel(Language.getString("PROMPT_PASSWORD")
 					+ ":"));
 			JPasswordField passField = new JPasswordField(15);
 			promptPanel.add(passField);
-			promptPanel.add(new JLabel(Utilities.getString("PROMPT_PASSWORD")
+			promptPanel.add(new JLabel(Language.getString("PROMPT_PASSWORD")
 					+ ":"));
 			JPasswordField passField2 = new JPasswordField(15);
 			promptPanel.add(passField2);
 			boolean matched = false;
 			while (!matched) {
 				int result = JOptionPane.showConfirmDialog(null, promptPanel,
-						Utilities.getString("USER_DETAILS_PROMPT"),
+						Language.getString("USER_DETAILS_PROMPT"),
 						JOptionPane.OK_CANCEL_OPTION);
 				if (result == JOptionPane.OK_OPTION) {
 					if (!Arrays.equals(passField.getPassword(),
 							passField2.getPassword())) {
 						JOptionPane.showMessageDialog(null,
-								Utilities.getString("PASSWORDS_NOT_MATCH"),
-								Utilities.getString("PASSWORD_ERROR"),
+								Language.getString("PASSWORDS_NOT_MATCH"),
+								Language.getString("PASSWORD_ERROR"),
 								JOptionPane.ERROR_MESSAGE);
 
 					} else {
@@ -144,15 +145,15 @@ public class Security extends Observable implements Observer {
 		JPanel promptPanel = new JPanel();
 		promptPanel.setLayout(new GridLayout(2, 2, 0, 0));
 		promptPanel
-				.add(new JLabel(Utilities.getString("PROMPT_USERNAME") + ":"));
+				.add(new JLabel(Language.getString("PROMPT_USERNAME") + ":"));
 		JTextField userField = new JTextField(15);
 		promptPanel.add(userField);
 		promptPanel
-				.add(new JLabel(Utilities.getString("PROMPT_PASSWORD") + ":"));
+				.add(new JLabel(Language.getString("PROMPT_PASSWORD") + ":"));
 		JPasswordField passField = new JPasswordField(15);
 		promptPanel.add(passField);
 		int result = JOptionPane.showConfirmDialog(null, promptPanel,
-				Utilities.getString("USER_DETAILS_PROMPT"),
+				Language.getString("USER_DETAILS_PROMPT"),
 				JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
 			if (checkUser(userField.getText(),
@@ -160,8 +161,8 @@ public class Security extends Observable implements Observer {
 				return true;
 			} else {
 				JOptionPane.showMessageDialog(null,
-						Utilities.getString("PROMPT_ACCESS_DENIED"),
-						Utilities.getString("USER_DETAILS_PROMPT"),
+						Language.getString("PROMPT_ACCESS_DENIED"),
+						Language.getString("USER_DETAILS_PROMPT"),
 						JOptionPane.WARNING_MESSAGE);
 			}
 		}
@@ -224,7 +225,7 @@ public class Security extends Observable implements Observer {
 
 	public void update(Observable o, Object arg) {
 		try {
-			encrypt(encDB, Utilities.getConfig("DATABASE_FILE"));
+			encrypt(encDB, Configuration.getString("DATABASE_FILE"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -234,16 +235,17 @@ public class Security extends Observable implements Observer {
 		try {
 			if (authenticate()) {
 				db.close();
-				if (new File(Utilities.getConfig("DATABASE_FILE")).delete()) {
+				if (new File(Configuration.getString("DATABASE_FILE")).delete()) {
 					encDB = selectedFile;
 					boolean found = false;
 					if (encDB.exists() && encDB.length() > 0) {
-						decrypt(encDB, Utilities.getConfig("DATABASE_FILE"));
+						decrypt(encDB, Configuration.getString("DATABASE_FILE"));
 						found = true;
 					}
-					db.openFile(new File(Utilities.getConfig("DATABASE_FILE")));
+					db.openFile(new File(Configuration
+							.getString("DATABASE_FILE")));
 					if (!found) {
-						encrypt(encDB, Utilities.getConfig("DATABASE_FILE"));
+						encrypt(encDB, Configuration.getString("DATABASE_FILE"));
 					}
 					setChanged();
 					notifyObservers();
@@ -257,7 +259,7 @@ public class Security extends Observable implements Observer {
 	public void saveFile(File toFile) {
 		try {
 			if (authenticate()) {
-				encrypt(toFile, Utilities.getConfig("DATABASE_FILE"));
+				encrypt(toFile, Configuration.getString("DATABASE_FILE"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -15,15 +15,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Configuration;
+import se.freedrikp.econview.gui.Language;
 
 public class SettingsMenu extends JMenu {
 
 	public SettingsMenu() {
-		super(Utilities.getString("MENUBAR_SETTINGS"));
+		super(Language.getString("MENUBAR_SETTINGS"));
 
 		JMenuItem mntmConfig = new JMenuItem(
-				Utilities.getString("MENUBAR_SETTINGS_CONFIGURATION"));
+				Language.getString("MENUBAR_SETTINGS_CONFIGURATION"));
 		mntmConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showSettingsPanel(true);
@@ -32,7 +33,7 @@ public class SettingsMenu extends JMenu {
 		add(mntmConfig);
 
 		JMenuItem mntmLanguage = new JMenuItem(
-				Utilities.getString("MENUBAR_SETTINGS_LANGUAGE"));
+				Language.getString("MENUBAR_SETTINGS_LANGUAGE"));
 		mntmLanguage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showSettingsPanel(false);
@@ -47,8 +48,8 @@ public class SettingsMenu extends JMenu {
 		JScrollPane scrollPane = new JScrollPane();
 		HashMap<String, JTextField> map = new HashMap<String, JTextField>();
 		scrollPane.setViewportView(panel);
-		Map<String, String> list = configurationNotLanguage ? Utilities
-				.listAllConfigs() : Utilities.listAllStrings();
+		Map<String, String> list = configurationNotLanguage ? Configuration
+				.listAllConfigs() : Language.listAllStrings();
 		for (Map.Entry<String, String> entry : list.entrySet()) {
 			JPanel pan = new JPanel();
 			pan.add(new JLabel(entry.getKey() + ":"));
@@ -58,21 +59,21 @@ public class SettingsMenu extends JMenu {
 			panel.add(pan);
 			map.put(entry.getKey(), field);
 		}
-		scrollPane.setPreferredSize(new Dimension(Integer.parseInt(Utilities
-				.getConfig("SETTINGS_PANEL_WIDTH")), Integer.parseInt(Utilities
-				.getConfig("SETTINGS_PANEL_HEIGHT"))));
-		String title = configurationNotLanguage ? Utilities
-				.getString("SETTINGS_CONFIGURATION") : Utilities
+		scrollPane.setPreferredSize(new Dimension(Configuration
+				.getInt("SETTINGS_PANEL_WIDTH"), Configuration
+				.getInt("SETTINGS_PANEL_HEIGHT")));
+		String title = configurationNotLanguage ? Language
+				.getString("SETTINGS_CONFIGURATION") : Language
 				.getString("SETTINGS_LANGUAGE");
 		int result = JOptionPane.showConfirmDialog(null, scrollPane, title,
 				JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
 			for (Map.Entry<String, JTextField> entry : map.entrySet()) {
 				if (configurationNotLanguage) {
-					Utilities.putConfig(entry.getKey(), entry.getValue()
+					Configuration.putConfig(entry.getKey(), entry.getValue()
 							.getText());
 				} else {
-					Utilities.putString(entry.getKey(), entry.getValue()
+					Language.putString(entry.getKey(), entry.getValue()
 							.getText());
 				}
 			}

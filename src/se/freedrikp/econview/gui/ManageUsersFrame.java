@@ -24,13 +24,13 @@ import se.freedrikp.econview.gui.GUI.Model;
 
 public class ManageUsersFrame extends JFrame implements Observer {
 	private static final String[] userHeader = {
-			Utilities.getString("USER_HEADER_USERNAME"),
-			Utilities.getString("USER_HEADER_ADMIN") };
+			Language.getString("USER_HEADER_USERNAME"),
+			Language.getString("USER_HEADER_ADMIN") };
 	private Security sec;
 	private JTable userTable;
 
 	public ManageUsersFrame(final Security sec) {
-		Utilities.getString("MENUBAR_MANAGE_USERS");
+		Language.getString("MENUBAR_MANAGE_USERS");
 		JPanel userPanel = new JPanel();
 		userPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		this.sec = sec;
@@ -46,7 +46,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 		buttons.setLayout(new GridLayout(3, 1, 0, 0));
 		userPanel.add(buttons);
 
-		JButton setAdmin = new JButton(Utilities.getString("BUTTON_SET_ADMIN"));
+		JButton setAdmin = new JButton(Language.getString("BUTTON_SET_ADMIN"));
 		buttons.add(setAdmin);
 		setAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -60,7 +60,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 		});
 
 		JButton changePassword = new JButton(
-				Utilities.getString("MENUBAR_CHANGE_PASSWORD"));
+				Language.getString("MENUBAR_CHANGE_PASSWORD"));
 		buttons.add(changePassword);
 		changePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -70,24 +70,24 @@ public class ManageUsersFrame extends JFrame implements Observer {
 				if (user != null) {
 					JPanel promptPanel = new JPanel();
 					promptPanel.setLayout(new GridLayout(2, 2, 0, 0));
-					promptPanel.add(new JLabel(Utilities
+					promptPanel.add(new JLabel(Language
 							.getString("PROMPT_NEW_PASSWORD") + ":"));
 					JPasswordField passField = new JPasswordField(15);
 					promptPanel.add(passField);
-					promptPanel.add(new JLabel(Utilities
+					promptPanel.add(new JLabel(Language
 							.getString("PROMPT_NEW_PASSWORD") + ":"));
 					JPasswordField passField2 = new JPasswordField(15);
 					promptPanel.add(passField2);
 					int result = JOptionPane.showConfirmDialog(null,
 							promptPanel,
-							Utilities.getString("USER_DETAILS_PROMPT"),
+							Language.getString("USER_DETAILS_PROMPT"),
 							JOptionPane.OK_CANCEL_OPTION);
 					if (result == JOptionPane.OK_OPTION) {
 						if (!Arrays.equals(passField.getPassword(),
 								passField2.getPassword())) {
 							JOptionPane.showMessageDialog(null,
-									Utilities.getString("PASSWORDS_NOT_MATCH"),
-									Utilities.getString("PASSWORD_ERROR"),
+									Language.getString("PASSWORDS_NOT_MATCH"),
+									Language.getString("PASSWORD_ERROR"),
 									JOptionPane.ERROR_MESSAGE);
 							return;
 						}
@@ -100,7 +100,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 
 		});
 
-		JButton removeUser = new JButton(Utilities.getString("REMOVE_USER"));
+		JButton removeUser = new JButton(Language.getString("REMOVE_USER"));
 		buttons.add(removeUser);
 		removeUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -109,8 +109,8 @@ public class ManageUsersFrame extends JFrame implements Observer {
 								.getSelectedRow()), 0);
 				if (user != null) {
 					if (JOptionPane.showConfirmDialog(null,
-							Utilities.getString("REMOVE_USER_PROMPT") + " -- "
-									+ user, Utilities.getString("REMOVE_USER"),
+							Language.getString("REMOVE_USER_PROMPT") + " -- "
+									+ user, Language.getString("REMOVE_USER"),
 							JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 						sec.removeUser(user);
 					}
@@ -118,8 +118,8 @@ public class ManageUsersFrame extends JFrame implements Observer {
 			}
 		});
 
-		int width = Integer.parseInt(Utilities.getConfig("USER_PANEL_WIDTH"));
-		int height = Integer.parseInt(Utilities.getConfig("USER_PANEL_HEIGHT"));
+		int width = Configuration.getInt("USER_PANEL_WIDTH");
+		int height = Configuration.getInt("USER_PANEL_HEIGHT");
 		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
 				.getDefaultScreenDevice().getDisplayMode();
 		setBounds((dm.getWidth() - width) / 2, (dm.getHeight() - height) / 2,

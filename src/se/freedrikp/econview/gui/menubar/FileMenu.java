@@ -16,23 +16,23 @@ import javax.swing.ProgressMonitor;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 public class FileMenu extends JMenu {
 	private Database db;
 	private Security sec;
 
 	public FileMenu(Database db, Security sec, GUI gui) {
-		super(Utilities.getString("MENUBAR_FILE"));
+		super(Language.getString("MENUBAR_FILE"));
 		this.db = db;
 		this.sec = sec;
 		JMenuItem mntmOpenDatabase = new JMenuItem(
-				Utilities.getString("MENUBAR_FILE_OPEN_DATABASE"));
+				Language.getString("MENUBAR_FILE_OPEN_DATABASE"));
 		mntmOpenDatabase.addActionListener(new OpenDatabaseListener(gui));
 		add(mntmOpenDatabase);
 
 		JMenuItem mntmSaveDatabaseAs = new JMenuItem(
-				Utilities.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
+				Language.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
 		mntmSaveDatabaseAs.addActionListener(new SaveDatabaseListener(gui));
 		add(mntmSaveDatabaseAs);
 	}
@@ -85,7 +85,7 @@ public class FileMenu extends JMenu {
 						FileInputStream fis = new FileInputStream(fromFile);
 						FileOutputStream fos = new FileOutputStream(toFile);
 						ProgressMonitor pm = new ProgressMonitor(gui, null,
-								Utilities.getString("COPYING_DATABASE"), 0,
+								Language.getString("COPYING_DATABASE"), 0,
 								(int) fromFile.length());
 						pm.setMillisToPopup(0);
 						pm.setMillisToDecideToPopup(0);

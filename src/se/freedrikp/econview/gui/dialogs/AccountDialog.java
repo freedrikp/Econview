@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 public class AccountDialog extends DatabaseDialog {
 	private JTextField nameField;
@@ -19,26 +19,25 @@ public class AccountDialog extends DatabaseDialog {
 	private String oldName;
 
 	public AccountDialog(Database db) {
-		super(db, Utilities.getString("ACCOUNT_DETAILS"), Utilities
+		super(db, Language.getString("ACCOUNT_DETAILS"), Language
 				.getString("ADD_ACCOUNT_CHAIN"));
 	}
 
 	protected JComponent createDialog(JPanel dialogPanel) {
 		nameField = new JTextField("", 15);
 		JPanel namePanel = new JPanel();
-		namePanel
-				.add(new JLabel(Utilities.getString("ADD_ACCOUNT_NAME") + ":"));
+		namePanel.add(new JLabel(Language.getString("ADD_ACCOUNT_NAME") + ":"));
 		namePanel.add(nameField);
 		dialogPanel.add(namePanel);
 
 		balanceField = new JTextField("", 7);
 		JPanel balancePanel = new JPanel();
-		balancePanel.add(new JLabel(Utilities.getString("ADD_ACCOUNT_BALANCE")
+		balancePanel.add(new JLabel(Language.getString("ADD_ACCOUNT_BALANCE")
 				+ ":"));
 		balancePanel.add(balanceField);
 		dialogPanel.add(balancePanel);
 
-		hiddenBox = new JCheckBox(Utilities.getString("ADD_ACCOUNT_HIDDEN")
+		hiddenBox = new JCheckBox(Language.getString("ADD_ACCOUNT_HIDDEN")
 				+ " ", false);
 		dialogPanel.add(hiddenBox);
 		return dialogPanel;

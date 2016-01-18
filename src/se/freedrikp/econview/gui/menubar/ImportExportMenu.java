@@ -11,15 +11,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 public class ImportExportMenu extends JMenu {
 
 	public ImportExportMenu(final Database db) {
-		super(Utilities.getString("MENUBAR_IMPORT_EXPORT"));
+		super(Language.getString("MENUBAR_IMPORT_EXPORT"));
 
 		JMenuItem mntmImport = new JMenuItem(
-				Utilities.getString("MENUBAR_IMPORT_EXPORT_IMPORT"));
+				Language.getString("MENUBAR_IMPORT_EXPORT_IMPORT"));
 		mntmImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(System
@@ -39,7 +39,7 @@ public class ImportExportMenu extends JMenu {
 		add(mntmImport);
 
 		JMenuItem mntmExport = new JMenuItem(
-				Utilities.getString("MENUBAR_IMPORT_EXPORT_EXPORT"));
+				Language.getString("MENUBAR_IMPORT_EXPORT_EXPORT"));
 		mntmExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(System

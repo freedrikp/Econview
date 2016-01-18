@@ -24,7 +24,7 @@ import javax.swing.table.TableRowSorter;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.AccountDialog;
 
 public class AccountsTab extends JPanel implements Observer {
@@ -36,9 +36,9 @@ public class AccountsTab extends JPanel implements Observer {
 	private JLabel totalVisibleBalanceLabel;
 	private JLabel totalHiddenBalanceLabel;
 	private static final String[] accountHeader = {
-			Utilities.getString("ACCOUNT_HEADER_ACCOUNT"),
-			Utilities.getString("ACCOUNT_HEADER_BALANCE"),
-			Utilities.getString("ACCOUNT_HEADER_HIDDEN") };
+			Language.getString("ACCOUNT_HEADER_ACCOUNT"),
+			Language.getString("ACCOUNT_HEADER_BALANCE"),
+			Language.getString("ACCOUNT_HEADER_HIDDEN") };
 	private JLabel totalBalanceLabelText;
 	private JLabel totalHiddenBalanceLabelText;
 
@@ -61,7 +61,7 @@ public class AccountsTab extends JPanel implements Observer {
 		JPanel accountsButtonPanel = new JPanel();
 		add(accountsButtonPanel);
 
-		JButton btnAddAccount = new JButton(Utilities.getString("ADD_ACCOUNT"));
+		JButton btnAddAccount = new JButton(Language.getString("ADD_ACCOUNT"));
 		btnAddAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -73,8 +73,7 @@ public class AccountsTab extends JPanel implements Observer {
 				BoxLayout.Y_AXIS));
 		accountsButtonPanel.add(btnAddAccount);
 
-		JButton btnEditAccount = new JButton(
-				Utilities.getString("EDIT_ACCOUNT"));
+		JButton btnEditAccount = new JButton(Language.getString("EDIT_ACCOUNT"));
 		btnEditAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -106,13 +105,13 @@ public class AccountsTab extends JPanel implements Observer {
 		accountsButtonPanel.add(btnEditAccount);
 
 		JButton btnRemoveAccount = new JButton(
-				Utilities.getString("REMOVE_ACCOUNT"));
+				Language.getString("REMOVE_ACCOUNT"));
 		btnRemoveAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (JOptionPane.showConfirmDialog(
 						null,
-						Utilities.getString("REMOVE_ACCOUNT_PROMPT")
+						Language.getString("REMOVE_ACCOUNT_PROMPT")
 								+ " -- "
 								+ (String) accountsTable
 										.getModel()
@@ -120,7 +119,7 @@ public class AccountsTab extends JPanel implements Observer {
 												accountsTable
 														.convertRowIndexToModel(accountsTable
 																.getSelectedRow()),
-												0), Utilities
+												0), Language
 								.getString("REMOVE_ACCOUNT"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeAccount((String) accountsTable
@@ -137,7 +136,7 @@ public class AccountsTab extends JPanel implements Observer {
 		accountsButtonPanel.add(new JSeparator());
 
 		JLabel totalVisibleBalanceLabelText = new JLabel(
-				Utilities.getString("TOTAL_VISIBLE_BALANCE") + ":");
+				Language.getString("TOTAL_VISIBLE_BALANCE") + ":");
 		accountsButtonPanel.add(totalVisibleBalanceLabelText);
 		totalVisibleBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -148,7 +147,7 @@ public class AccountsTab extends JPanel implements Observer {
 
 		accountsButtonPanel.add(new JSeparator());
 
-		totalBalanceLabelText = new JLabel(Utilities.getString("TOTAL_BALANCE")
+		totalBalanceLabelText = new JLabel(Language.getString("TOTAL_BALANCE")
 				+ ":");
 		accountsButtonPanel.add(totalBalanceLabelText);
 		totalBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -161,7 +160,7 @@ public class AccountsTab extends JPanel implements Observer {
 		accountsButtonPanel.add(new JSeparator());
 
 		totalHiddenBalanceLabelText = new JLabel(
-				Utilities.getString("TOTAL_HIDDEN_BALANCE") + ":");
+				Language.getString("TOTAL_HIDDEN_BALANCE") + ":");
 		accountsButtonPanel.add(totalHiddenBalanceLabelText);
 		totalHiddenBalanceLabelText.setAlignmentX(Component.CENTER_ALIGNMENT);
 

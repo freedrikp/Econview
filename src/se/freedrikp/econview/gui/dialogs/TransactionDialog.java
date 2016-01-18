@@ -22,8 +22,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.Configuration;
 import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 
 public abstract class TransactionDialog extends DatabaseDialog {
 
@@ -31,11 +32,11 @@ public abstract class TransactionDialog extends DatabaseDialog {
 	private List<JComponent> multiAccounts;
 	private Object[] accountValues;
 	private JTextField commentField;
-	private Map<JComponent,Long> IDs;
+	private Map<JComponent, Long> IDs;
 	private Set<JComponent> toRemove;
 
 	public TransactionDialog(Database db) {
-		super(db, Utilities.getString("TRANSACTION_DETAILS"), Utilities
+		super(db, Language.getString("TRANSACTION_DETAILS"), Language
 				.getString("ADD_TRANSACTION_CHAIN"));
 	}
 
@@ -66,18 +67,16 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 		commentField = new JTextField("", 15);
 		JPanel commentPanel = new JPanel();
-		commentPanel.add(new JLabel(Utilities
+		commentPanel.add(new JLabel(Language
 				.getString("ADD_TRANSACTION_COMMENT") + ":"));
 		commentPanel.add(commentField);
 		dialogPanel.add(commentPanel);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(dialogPanel);
-		scrollPane
-				.setPreferredSize(new Dimension(Integer.parseInt(Utilities
-						.getConfig("ADD_TRANSACTION_PANEL_WIDTH")), Integer
-						.parseInt(Utilities
-								.getConfig("ADD_TRANSACTION_PANEL_HEIGHT"))));
+		scrollPane.setPreferredSize(new Dimension(Configuration
+				.getInt("ADD_TRANSACTION_PANEL_WIDTH"), Configuration
+				.getInt("ADD_TRANSACTION_PANEL_HEIGHT")));
 		return scrollPane;
 	}
 
@@ -96,21 +95,19 @@ public abstract class TransactionDialog extends DatabaseDialog {
 	protected void doEditDatabaseAction() {
 		for (int i = 0, j = 0; i < multiAccounts.size(); i += 2, j++) {
 			JComboBox accountField = (JComboBox) multiAccounts.get(i);
-			if (IDs.containsKey(accountField)){
+			if (IDs.containsKey(accountField)) {
 				editDatabaseHelper(IDs.get(accountField),
-						(String) accountField
-						.getSelectedItem(),
+						(String) accountField.getSelectedItem(),
 						GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
-								.getText()), commentField.getText());				
-			}else{
-				addDatabaseHelper((String) accountField
-						.getSelectedItem(),
+								.getText()), commentField.getText());
+			} else {
+				addDatabaseHelper((String) accountField.getSelectedItem(),
 						GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
 								.getText()), commentField.getText());
 			}
 		}
-		for (JComponent c: toRemove){
-			if (IDs.containsKey(c)){
+		for (JComponent c : toRemove) {
+			if (IDs.containsKey(c)) {
 				removeDatabaseHelper(IDs.get(c));
 			}
 		}
@@ -123,17 +120,18 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 	protected abstract void editDatabaseHelper(long id, String account,
 			double amount, String comment);
-	
+
 	protected abstract void removeDatabaseHelper(long id);
 
 	protected void setEditSpecifics(JPanel dialogPanel, Object[] input) {
 		List<Object[]> multiTransactions = getMultiTransactions(input);
-		IDs = new HashMap<JComponent,Long>();
+		IDs = new HashMap<JComponent, Long>();
 		toRemove = new HashSet<JComponent>();
 		int i = 0;
 		for (Object[] transaction : multiTransactions) {
 			IDs.put(addMultiAccount((String) transaction[1], NumberFormat
-					.getCurrencyInstance().format((Double) transaction[2])),(long) transaction[0]);
+					.getCurrencyInstance().format((Double) transaction[2])),
+					(long) transaction[0]);
 		}
 		commentField.setText((String) input[0]);
 	}
@@ -151,43 +149,46 @@ public abstract class TransactionDialog extends DatabaseDialog {
 		}
 		commentField.setText((String) input[input.length - 1]);
 	}
-	
-	protected JComponent addMultiAccount(String selectedAccount, String selectedAmount){
-		return addMultiAccount(selectedAccount, selectedAmount,multiAccountPanel.getComponentCount());
+
+	protected JComponent addMultiAccount(String selectedAccount,
+			String selectedAmount) {
+		return addMultiAccount(selectedAccount, selectedAmount,
+				multiAccountPanel.getComponentCount());
 	}
 
-	private JComponent addMultiAccount(String selectedAccount, String selectedAmount,int index) {
+	private JComponent addMultiAccount(String selectedAccount,
+			String selectedAmount, int index) {
 		final JComboBox accountField = new JComboBox(accountValues);
 		accountField.setSelectedItem(selectedAccount);
 		final JPanel accountPanel = new JPanel();
-		accountPanel.add(new JLabel(Utilities
+		accountPanel.add(new JLabel(Language
 				.getString("ADD_TRANSACTION_ACCOUNT") + ":"));
 		accountPanel.add(accountField);
-		
+
 		JButton addButton = new JButton("+");
 		accountPanel.add(addButton);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Component[] cs = multiAccountPanel.getComponents();
 				int j = -1;
-				for (int i = 0; i < cs.length; i++){
-					if (multiAccountPanel.getComponent(i).equals(accountPanel)){
+				for (int i = 0; i < cs.length; i++) {
+					if (multiAccountPanel.getComponent(i).equals(accountPanel)) {
 						j = i;
 						break;
 					}
 				}
-				addMultiAccount(null, null,j);
+				addMultiAccount(null, null, j);
 			}
 		});
-		
-		multiAccountPanel.add(accountPanel,index);
+
+		multiAccountPanel.add(accountPanel, index);
 		multiAccounts.add(accountField);
 
 		final JTextField amountField = new JTextField("", 7);
 		amountField.setText(selectedAmount);
 		final JPanel amountPanel = new JPanel();
-		amountPanel.add(new JLabel(Utilities
-				.getString("ADD_TRANSACTION_AMOUNT") + ":"));
+		amountPanel.add(new JLabel(Language.getString("ADD_TRANSACTION_AMOUNT")
+				+ ":"));
 		amountPanel.add(amountField);
 
 		JButton removeButton = new JButton("-");
@@ -199,17 +200,17 @@ public abstract class TransactionDialog extends DatabaseDialog {
 				multiAccountPanel.remove(amountPanel);
 				multiAccounts.remove(accountField);
 				multiAccounts.remove(amountField);
-				if(toRemove != null){
+				if (toRemove != null) {
 					toRemove.add(accountField);
 				}
 				multiAccountPanel.revalidate();
 			}
 		});
-		multiAccountPanel.add(amountPanel,index+1);
+		multiAccountPanel.add(amountPanel, index + 1);
 		multiAccounts.add(amountField);
 
 		multiAccountPanel.revalidate();
-		
+
 		return accountField;
 	}
 

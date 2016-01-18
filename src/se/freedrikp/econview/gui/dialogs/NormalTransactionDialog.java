@@ -12,7 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Configuration;
+import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -26,11 +27,11 @@ public class NormalTransactionDialog extends TransactionDialog {
 
 	protected void addDatePanel(JPanel dialogPanel) {
 		JPanel datePanel = new JPanel();
-		datePanel.add(new JLabel(Utilities.getString("ADD_TRANSACTION_DATE")
+		datePanel.add(new JLabel(Language.getString("ADD_TRANSACTION_DATE")
 				+ ":"));
 		dateSelector = new JDateChooser();
-		dateSelector.setDateFormatString(Utilities
-				.getConfig("FULL_DATE_FORMAT"));
+		dateSelector.setDateFormatString(Configuration
+				.getString("FULL_DATE_FORMAT"));
 		datePanel.add(dateSelector);
 
 		JButton increaseDate = new JButton("+");

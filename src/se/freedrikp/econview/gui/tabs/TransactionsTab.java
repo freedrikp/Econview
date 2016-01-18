@@ -30,9 +30,10 @@ import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountSelectorPanel;
+import se.freedrikp.econview.gui.Configuration;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.GUI.Model;
-import se.freedrikp.econview.gui.Utilities;
+import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 
@@ -44,11 +45,11 @@ public class TransactionsTab extends JPanel implements Observer {
 	private JScrollPane transactionsPane;
 	private JTable transactionsTable;
 	private static final String[] transactionHeader = {
-			Utilities.getString("TRANSACTION_HEADER_ID"),
-			Utilities.getString("TRANSACTION_HEADER_ACCOUNT"),
-			Utilities.getString("TRANSACTION_HEADER_AMOUNT"),
-			Utilities.getString("TRANSACTION_HEADER_DATE"),
-			Utilities.getString("TRANSACTION_HEADER_COMMENT") };
+			Language.getString("TRANSACTION_HEADER_ID"),
+			Language.getString("TRANSACTION_HEADER_ACCOUNT"),
+			Language.getString("TRANSACTION_HEADER_AMOUNT"),
+			Language.getString("TRANSACTION_HEADER_DATE"),
+			Language.getString("TRANSACTION_HEADER_COMMENT") };
 	private JLabel oldestDate;
 	private JLabel newestDate;
 	private JLabel numTransactions;
@@ -64,7 +65,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		this.db = db;
 		db.addObserver(this);
 		dateFormat = new SimpleDateFormat(
-				Utilities.getConfig("FULL_DATE_FORMAT"));
+				Configuration.getString("FULL_DATE_FORMAT"));
 		// setLayout(new GridLayout(0, 3, 0, 0));
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -84,25 +85,25 @@ public class TransactionsTab extends JPanel implements Observer {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		fromDateChooser = new JDateChooser(cal.getTime(),
-				Utilities.getConfig("FULL_DATE_FORMAT"));
-		fromDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_HEIGHT"))));
+				Configuration.getString("FULL_DATE_FORMAT"));
+		fromDateChooser.setMaximumSize(new Dimension(Integer
+				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(fromDateChooser);
 		JLabel dateSepLabel = new JLabel("<->");
 		transactionsViewPanel.add(dateSepLabel);
 		toDateChooser = new JDateChooser(Calendar.getInstance().getTime(),
-				Utilities.getConfig("FULL_DATE_FORMAT"));
-		toDateChooser.setMaximumSize(new Dimension(Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_WIDTH")), Integer.parseInt(Utilities
-				.getConfig("DATE_FIELD_HEIGHT"))));
+				Configuration.getString("FULL_DATE_FORMAT"));
+		toDateChooser.setMaximumSize(new Dimension(Integer
+				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
+				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(toDateChooser);
 
 		accountSelectorPanel = new AccountSelectorPanel(db, true, false);
 
 		transactionsViewPanel.add(new JScrollPane(accountSelectorPanel));
 		JButton updateTransactionsView = new JButton(
-				Utilities.getString("UPDATE_TRANSACTIONS_VIEW"));
+				Language.getString("UPDATE_TRANSACTIONS_VIEW"));
 		updateTransactionsView.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update(db, null);
@@ -117,7 +118,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		add(transactionsButtonPanel);
 
 		JButton btnAddTransaction = new JButton(
-				Utilities.getString("ADD_TRANSACTION"));
+				Language.getString("ADD_TRANSACTION"));
 		btnAddTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAddTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -130,7 +131,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		transactionsButtonPanel.add(btnAddTransaction);
 
 		JButton btnEditTransaction = new JButton(
-				Utilities.getString("EDIT_TRANSACTION"));
+				Language.getString("EDIT_TRANSACTION"));
 		btnEditTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEditTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -168,13 +169,13 @@ public class TransactionsTab extends JPanel implements Observer {
 		transactionsButtonPanel.add(btnEditTransaction);
 
 		JButton btnRemoveTransaction = new JButton(
-				Utilities.getString("REMOVE_TRANSACTION"));
+				Language.getString("REMOVE_TRANSACTION"));
 		btnRemoveTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (JOptionPane.showConfirmDialog(
 						null,
-						Utilities.getString("REMOVE_TRANSACTION_PROMPT")
+						Language.getString("REMOVE_TRANSACTION_PROMPT")
 								+ " -- "
 								+ transactionsTable
 										.getModel()
@@ -182,7 +183,7 @@ public class TransactionsTab extends JPanel implements Observer {
 												transactionsTable
 														.convertRowIndexToModel(transactionsTable
 																.getSelectedRow()),
-												0), Utilities
+												0), Language
 								.getString("REMOVE_TRANSACTION"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeTransaction((long) transactionsTable
@@ -200,7 +201,7 @@ public class TransactionsTab extends JPanel implements Observer {
 				BoxLayout.Y_AXIS));
 
 		JPanel oldestDatePanel = new JPanel();
-		oldestDatePanel.add(new JLabel(Utilities
+		oldestDatePanel.add(new JLabel(Language
 				.getString("OLDEST_TRANSACTION_DATE") + ": "));
 		oldestDate = new JLabel();
 		oldestDate.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -209,7 +210,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		statisticsPanel.add(oldestDatePanel);
 
 		JPanel newestDatePanel = new JPanel();
-		newestDatePanel.add(new JLabel(Utilities
+		newestDatePanel.add(new JLabel(Language
 				.getString("NEWEST_TRANSACTION_DATE") + ": "));
 		newestDate = new JLabel();
 		newestDate.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -218,7 +219,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		statisticsPanel.add(newestDatePanel);
 
 		JPanel numTransactionsPanel = new JPanel();
-		numTransactionsPanel.add(new JLabel(Utilities
+		numTransactionsPanel.add(new JLabel(Language
 				.getString("NUMBER_OF_TRANSACTIONS") + ": "));
 		numTransactions = new JLabel();
 		numTransactions.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -227,7 +228,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		statisticsPanel.add(numTransactionsPanel);
 
 		JPanel numDepositsPanel = new JPanel();
-		numDepositsPanel.add(new JLabel(Utilities
+		numDepositsPanel.add(new JLabel(Language
 				.getString("NUMBER_OF_DEPOSITS") + ": "));
 		numDeposits = new JLabel();
 		numDeposits.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -236,7 +237,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		statisticsPanel.add(numDepositsPanel);
 
 		JPanel numWithDrawalsPanel = new JPanel();
-		numWithDrawalsPanel.add(new JLabel(Utilities
+		numWithDrawalsPanel.add(new JLabel(Language
 				.getString("NUMBER_OF_WITHDRAWALS") + ": "));
 		numWithdrawals = new JLabel();
 		numWithdrawals.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -248,7 +249,8 @@ public class TransactionsTab extends JPanel implements Observer {
 
 		transactionsTable.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+				if (e.getClickCount() == 2
+						&& e.getButton() == MouseEvent.BUTTON1) {
 					int selection = transactionsTable.getSelectedRow();
 					if (selection >= 0) {
 						String account = (String) transactionsTable
@@ -275,9 +277,10 @@ public class TransactionsTab extends JPanel implements Observer {
 								.showAddDialog(new Object[] { account, amount,
 										comment });
 					}
-				}else if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON3) {
+				} else if (e.getClickCount() == 2
+						&& e.getButton() == MouseEvent.BUTTON3) {
 					int selection = transactionsTable.getSelectedRow();
-					if (selection >= 0) {			
+					if (selection >= 0) {
 						String comment = (String) transactionsTable
 								.getModel()
 								.getValueAt(
@@ -287,21 +290,23 @@ public class TransactionsTab extends JPanel implements Observer {
 						// transDialog.showAddStoredDialog(account, amount,
 						// comment);
 						try {
-							List<Object[]> transactions = db.getMultiTransactions(dateFormat.parse((String)transactionsTable
-									.getModel()
-									.getValueAt(
-											transactionsTable
-													.convertRowIndexToModel(selection),
-											3)), comment);
-						Object[] transaction = new Object[transactions.size()*2+1];
-						int i = 0;
-						for (Object[] t :transactions){
-							transaction[i++]=t[1];
-							transaction[i++]=t[2];
-						}
-						transaction[transactions.size()*2] =  comment;
-						new StoredTransactionDialog(db)
-								.showAddDialog(transaction);
+							List<Object[]> transactions = db.getMultiTransactions(
+									dateFormat.parse((String) transactionsTable
+											.getModel()
+											.getValueAt(
+													transactionsTable
+															.convertRowIndexToModel(selection),
+													3)), comment);
+							Object[] transaction = new Object[transactions
+									.size() * 2 + 1];
+							int i = 0;
+							for (Object[] t : transactions) {
+								transaction[i++] = t[1];
+								transaction[i++] = t[2];
+							}
+							transaction[transactions.size() * 2] = comment;
+							new StoredTransactionDialog(db)
+									.showAddDialog(transaction);
 						} catch (ParseException e1) {
 							e1.printStackTrace();
 						}
@@ -322,13 +327,13 @@ public class TransactionsTab extends JPanel implements Observer {
 		if (oldest != null) {
 			oldestDate.setText(dateFormat.format(oldest));
 		} else {
-			oldestDate.setText(Utilities.getString("UNKNOWN"));
+			oldestDate.setText(Language.getString("UNKNOWN"));
 		}
 		Date newest = db.getNewestTransactionDate();
 		if (newest != null) {
 			newestDate.setText(dateFormat.format(newest));
 		} else {
-			newestDate.setText(Utilities.getString("UNKNOWN"));
+			newestDate.setText(Language.getString("UNKNOWN"));
 		}
 		numTransactions.setText(Long.toString(db.getNumberOfTransactions()));
 		numDeposits.setText(Long.toString(db.getNumberOfDeposits()));
