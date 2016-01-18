@@ -10,7 +10,9 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
-*Removed autoincrement from database to use sqlite built-in rowid. --- v2.6
+*Improved sorting of select between dates. ---- v2.6
+
+*Removed autoincrement from database to use sqlite built-in rowid. ---- v2.6
 
 *Added functionality for automatically adjust transaction amount to set account balance. ---- v2.6
 
