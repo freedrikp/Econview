@@ -135,6 +135,9 @@ public class GUI extends JFrame implements Observer {
 
 	public static double parseAmount(String amount)
 			throws NumberFormatException {
+		if (amount == null || amount.isEmpty()) {
+			return 0;
+		}
 		double result;
 		try {
 			result = NumberFormat.getCurrencyInstance().parse(amount)

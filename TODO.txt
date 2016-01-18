@@ -10,6 +10,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Added functionality for automatically adjust transaction amount to set account balance. ---- v2.6
+
 *Split Utilities into Language and Configuration ---- v2.6
 
 *Double right click on transaction should prepare stored transaction with multitransactions. ---- v2.5

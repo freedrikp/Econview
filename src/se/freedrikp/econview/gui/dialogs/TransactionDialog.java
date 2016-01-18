@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -184,12 +187,32 @@ public abstract class TransactionDialog extends DatabaseDialog {
 		multiAccountPanel.add(accountPanel, index);
 		multiAccounts.add(accountField);
 
-		final JTextField amountField = new JTextField("", 7);
+		final JTextField amountField = new JTextField("", 10);
 		amountField.setText(selectedAmount);
 		final JPanel amountPanel = new JPanel();
 		amountPanel.add(new JLabel(Language.getString("ADD_TRANSACTION_AMOUNT")
 				+ ":"));
 		amountPanel.add(amountField);
+
+		final JCheckBox balanceBox = new JCheckBox(
+				Language.getString("ADD_TRANSACTION_SET_BALANCE"), false);
+		balanceBox.addItemListener(new ItemListener() {
+			private String oldBalance = amountField.getText();
+
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					oldBalance = NumberFormat.getCurrencyInstance().format(
+							GUI.parseAmount(amountField.getText()));
+					double balance = GUI.parseAmount(oldBalance)
+							- db.getAccountBalance((String) accountField
+									.getSelectedItem());
+					amountField.setText(NumberFormat.getCurrencyInstance()
+							.format(balance));
+				} else {
+					amountField.setText(oldBalance);
+				}
+			}
+		});
 
 		JButton removeButton = new JButton("-");
 		amountPanel.add(removeButton);
@@ -198,6 +221,7 @@ public abstract class TransactionDialog extends DatabaseDialog {
 			public void actionPerformed(ActionEvent e) {
 				multiAccountPanel.remove(accountPanel);
 				multiAccountPanel.remove(amountPanel);
+				multiAccountPanel.remove(balanceBox);
 				multiAccounts.remove(accountField);
 				multiAccounts.remove(amountField);
 				if (toRemove != null) {
@@ -208,6 +232,8 @@ public abstract class TransactionDialog extends DatabaseDialog {
 		});
 		multiAccountPanel.add(amountPanel, index + 1);
 		multiAccounts.add(amountField);
+
+		multiAccountPanel.add(balanceBox, index + 2);
 
 		multiAccountPanel.revalidate();
 

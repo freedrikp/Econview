@@ -60,6 +60,7 @@ public class Language {
 		lan.put("ADD_TRANSACTION_CHAIN",
 				"Do you wish to add a new transaction?");
 		lan.put("TRANSACTION_DETAILS", "Transaction Details");
+		lan.put("ADD_TRANSACTION_SET_BALANCE", "Set Account Balance");
 		lan.put("OLDEST_TRANSACTION_DATE", "Oldest Transaction Date");
 		lan.put("NEWEST_TRANSACTION_DATE", "Newest Transaction Date");
 		lan.put("NUMBER_OF_TRANSACTIONS", "Number Of Transactions");

@@ -1047,4 +1047,19 @@ public class Database extends Observable {
 		}
 		return res;
 	}
+
+	public double getAccountBalance(String accountName) {
+		try {
+			PreparedStatement ps = c
+					.prepareStatement("SELECT accountBalance FROM Accounts WHERE accountName = ?");
+			ps.setString(1, accountName);
+			ResultSet results = ps.executeQuery();
+			if (results.next()) {
+				return results.getDouble("accountBalance");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }
