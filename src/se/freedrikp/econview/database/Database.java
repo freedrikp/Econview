@@ -57,13 +57,13 @@ public class Database extends Observable {
 					+ "accountHidden INTEGER DEFAULT '1'" + ")";
 			c.prepareStatement(sql).executeUpdate();
 			sql = "CREATE TABLE Transactions("
-					+ "transactionID INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "transactionID INTEGER PRIMARY KEY,"
 					+ "accountName TEXT," + "transactionAmount REAL,"
 					+ "transactionYear TEXT," + "transactionMonth TEXT,"
 					+ "transactionDay TEXT," + "transactionComment TEXT" + ")";
 			c.prepareStatement(sql).executeUpdate();
 			sql = "CREATE TABLE StoredTransactions("
-					+ "transactionID INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "transactionID INTEGER PRIMARY KEY,"
 					+ "accountName TEXT," + "transactionAmount REAL,"
 					+ "transactionComment TEXT" + ")";
 			c.prepareStatement(sql).executeUpdate();
