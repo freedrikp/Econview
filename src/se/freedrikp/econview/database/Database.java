@@ -582,7 +582,7 @@ public class Database extends Observable {
 						+ sqlDays
 						+ " "
 						+ sqlWhere
-						+ "ORDER BY transactionYear,transactionMonth,transactionDay,transactionComment,transactionID ASC");
+						+ "ORDER BY transactionYear ASC,transactionMonth ASC,transactionDay ASC,transactionID ASC");
 		ps.setInt(1, showHidden);
 		ps.setString(2, toy);
 		ps.setString(3, foy);
