@@ -1,6 +1,9 @@
 === TODO ===
-*Separate GUI parts from Security.
+*Search for transactions, be able to edit and remove transactions in new frame/dialog.
+*Delete transactions based on search.
+*Add stored transactions in transaction dialog.
 ----------------------------------------------------------------------------------
+*Separate GUI parts from Security.
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
 === BETWEEN ===
