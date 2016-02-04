@@ -2,6 +2,8 @@
 *Search for transactions, be able to edit and remove transactions in new frame/dialog.
 *Delete transactions based on search.
 *Add stored transactions in transaction dialog.
+*Search accounts and stored transactions.
+*Refactor out AccountsTable and StoredTransactionsTable.
 ----------------------------------------------------------------------------------
 *Separate GUI parts from Security.
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
@@ -13,6 +15,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Refactored out TransactionsTable. --- v2.7
+
 *Reversed sorting of select between dates. ---- v2.7
 
 *Improved sorting of select between dates. ---- v2.6
