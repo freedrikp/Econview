@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import javax.swing.ProgressMonitor;
 
+import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
 
 public class Database extends Observable {
@@ -1061,5 +1062,78 @@ public class Database extends Observable {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	public List<Object[]> searchTransactions(long transactionId, boolean doID, String accountName, double transactionAmount, boolean doAmount, String transactionComment, Date fromDate, Date toDate){
+		List<Object[]> list = new LinkedList<Object[]>();
+		if (fromDate == null){
+			fromDate = getOldestTransactionDate();
+		}
+		if (toDate == null){
+			toDate = getNewestTransactionDate();
+		}
+		String sqlWhere = "WHERE ";
+		int index = 14;
+		int idIndex = 0;
+		int nameIndex = 0;
+		int amountIndex = 0;
+		int commentIndex = 0;
+		if ( doID ){
+			sqlWhere += "transactionID = ? AND ";
+			idIndex = index++;
+		}
+		if (accountName != null){
+			sqlWhere += "LOWER(accountName) LIKE ? AND ";
+			nameIndex = index++;
+			accountName = "%" + accountName + "%";
+		}
+		if ( doAmount ){
+			sqlWhere += "transactionAmount = ? AND ";
+			amountIndex = index++;
+		}
+		if (transactionComment != null){
+			sqlWhere += "LOWER(transactionComment) LIKE ?";
+			commentIndex = index++;
+			transactionComment = "%" + transactionComment + "%";
+		}
+		if (sqlWhere.endsWith("AND ")){
+			sqlWhere = sqlWhere.substring(0, sqlWhere.length()-4);
+		}
+		if (sqlWhere.equals("WHERE ")){
+			sqlWhere = "";
+		}
+		PreparedStatement ps;
+		try {
+			ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM", sqlWhere, fromDate, toDate);
+			if ( doID ){
+				ps.setLong(idIndex,transactionId);				
+			}
+			if (accountName != null){
+				ps.setString(nameIndex,accountName.toLowerCase());				
+			}
+			if ( doAmount ){
+				ps.setDouble(amountIndex,transactionAmount);				
+			}
+			if (transactionComment != null){
+				ps.setString(commentIndex,transactionComment.toLowerCase());				
+			}
+			ResultSet results = ps.executeQuery();
+			while (results.next()){
+				Object[] row = new Object[5];
+				row[0] = results.getLong("transactionID");
+				row[1] = results.getString("accountName");
+				row[2] = results.getDouble("transactionAmount");
+				Calendar cal = Calendar.getInstance();
+				cal.set(results.getInt("transactionYear"),
+						results.getInt("transactionMonth") - 1,
+						results.getInt("transactionDay"), 0, 0, 0);
+				row[3] = cal.getTime();
+				row[4] = results.getString("transactionComment");
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }
