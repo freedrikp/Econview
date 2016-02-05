@@ -29,6 +29,7 @@ public class TransactionsTable extends JTable {
 	private SimpleDateFormat dateFormat;
 	
 	public TransactionsTable(final Database db){
+		super();
 		this.db = db;
 		dateFormat = new SimpleDateFormat(
 				Configuration.getString("FULL_DATE_FORMAT"));

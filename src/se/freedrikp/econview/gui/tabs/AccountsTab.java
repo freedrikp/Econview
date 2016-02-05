@@ -6,7 +6,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
-import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,13 +16,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.GUI.Model;
+import se.freedrikp.econview.gui.AccountsTable;
 import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.AccountDialog;
 
@@ -31,14 +26,10 @@ public class AccountsTab extends JPanel implements Observer {
 
 	private Database db;
 	private JScrollPane accountsPane;
-	private JTable accountsTable;
+	private AccountsTable accountsTable;
 	private JLabel totalBalanceLabel;
 	private JLabel totalVisibleBalanceLabel;
 	private JLabel totalHiddenBalanceLabel;
-	private static final String[] accountHeader = {
-			Language.getString("ACCOUNT_HEADER_ACCOUNT"),
-			Language.getString("ACCOUNT_HEADER_BALANCE"),
-			Language.getString("ACCOUNT_HEADER_HIDDEN") };
 	private JLabel totalBalanceLabelText;
 	private JLabel totalHiddenBalanceLabelText;
 
@@ -53,8 +44,8 @@ public class AccountsTab extends JPanel implements Observer {
 		accountsPane = new JScrollPane();
 		add(accountsPane);
 
-		accountsTable = new JTable();
-		accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		accountsTable = new AccountsTable(db);
+//		accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		// accountsTable.setAutoCreateRowSorter(true);
 		accountsPane.setViewportView(accountsTable);
 
@@ -88,18 +79,9 @@ public class AccountsTab extends JPanel implements Observer {
 				// accountsTable.convertRowIndexToModel(accountsTable.getSelectedRow()),
 				// 2));
 				new AccountDialog(db).showEditDialog(new Object[] {
-						accountsTable.getModel().getValueAt(
-								accountsTable
-										.convertRowIndexToModel(accountsTable
-												.getSelectedRow()), 0),
-						accountsTable.getModel().getValueAt(
-								accountsTable
-										.convertRowIndexToModel(accountsTable
-												.getSelectedRow()), 1),
-						accountsTable.getModel().getValueAt(
-								accountsTable
-										.convertRowIndexToModel(accountsTable
-												.getSelectedRow()), 2) });
+						accountsTable.getSelectedColumn(0),
+						accountsTable.getSelectedColumn(1),
+						accountsTable.getSelectedColumn(2) });
 			}
 		});
 		accountsButtonPanel.add(btnEditAccount);
@@ -114,20 +96,11 @@ public class AccountsTab extends JPanel implements Observer {
 						Language.getString("REMOVE_ACCOUNT_PROMPT")
 								+ " -- "
 								+ (String) accountsTable
-										.getModel()
-										.getValueAt(
-												accountsTable
-														.convertRowIndexToModel(accountsTable
-																.getSelectedRow()),
-												0), Language
+										.getSelectedColumn(0), Language
 								.getString("REMOVE_ACCOUNT"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeAccount((String) accountsTable
-							.getModel()
-							.getValueAt(
-									accountsTable
-											.convertRowIndexToModel(accountsTable
-													.getSelectedRow()), 0));
+							.getSelectedColumn(0));
 				}
 			}
 		});
@@ -172,7 +145,7 @@ public class AccountsTab extends JPanel implements Observer {
 	}
 
 	public void update(Observable o, Object arg) {
-		updateAccountList();
+		accountsTable.updateAccountList();
 		totalVisibleBalanceLabel.setText(NumberFormat.getCurrencyInstance()
 				.format(db.getVisibleAccountBalanceSum()));
 		totalBalanceLabel.setText(NumberFormat.getCurrencyInstance().format(
@@ -185,23 +158,7 @@ public class AccountsTab extends JPanel implements Observer {
 		totalHiddenBalanceLabelText.setVisible(db.getShowHidden());
 		accountsPane.getVerticalScrollBar().setValue(
 				accountsPane.getVerticalScrollBar().getMaximum());
-		GUI.resizeTable(accountsTable);
+//		GUI.resizeTable(accountsTable);
 		repaint();
-	}
-
-	private void updateAccountList() {
-		Model m = new Model(accountHeader, 0);
-		for (Object[] row : db.getAccounts()) {
-			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
-			m.addRow(row);
-		}
-		accountsTable.setModel(m);
-		TableRowSorter<Model> sorter = new TableRowSorter<Model>(m);
-		accountsTable.setRowSorter(sorter);
-		sorter.setComparator(1, new Comparator<String>() {
-			public int compare(String o1, String o2) {
-				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
-			}
-		});
 	}
 }

@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.NumberFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -15,14 +13,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.gui.StoredTransactionsTable;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 
@@ -30,11 +24,6 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 	private Database db;
 	// private TransactionDialog td;
 	private JMenu editStoredTransaction;
-	private static final String[] transactionHeader = {
-			Language.getString("TRANSACTION_HEADER_ID"),
-			Language.getString("TRANSACTION_HEADER_ACCOUNT"),
-			Language.getString("TRANSACTION_HEADER_AMOUNT"),
-			Language.getString("TRANSACTION_HEADER_COMMENT") };
 	private JMenuItem addStoredTransaction;
 	private JMenuItem removeStoredTransaction;
 
@@ -63,30 +52,13 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 
 			public void actionPerformed(ActionEvent e) {
 				JScrollPane transactionsPane = new JScrollPane();
-				JTable transactionsTable = new JTable();
-				transactionsTable
-						.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				StoredTransactionsTable transactionsTable = new StoredTransactionsTable(db);
+				transactionsTable.updateStoredTransactionsList();
+//				transactionsTable
+//						.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				transactionsPane.setViewportView(transactionsTable);
 
-				Model m = new Model(transactionHeader, 0);
-				for (Object[] row : db.getStoredTransactions()) {
-					row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
-					m.addRow(row);
-				}
-				transactionsTable.setModel(m);
-				TableRowSorter<Model> sorter = new TableRowSorter<Model>(m);
-				transactionsTable.setRowSorter(sorter);
-				sorter.setComparator(0, new Comparator<Long>() {
-					public int compare(Long o1, Long o2) {
-						return o1.compareTo(o2);
-					}
-				});
-				sorter.setComparator(2, new Comparator<String>() {
-					public int compare(String o1, String o2) {
-						return Double.compare(GUI.parseAmount(o1),
-								GUI.parseAmount(o2));
-					}
-				});
+		
 
 				int result = JOptionPane.showConfirmDialog(
 						null,

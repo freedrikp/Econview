@@ -3,7 +3,7 @@
 *Delete transactions based on search.
 *Add stored transactions in transaction dialog.
 *Search accounts and stored transactions.
-*Refactor out AccountsTable and StoredTransactionsTable.
+*Extract class-framework for JTables that interact with the database.
 ----------------------------------------------------------------------------------
 *Separate GUI parts from Security.
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
@@ -15,7 +15,9 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
-*Refactored out TransactionsTable. --- v2.7
+*Refactor out AccountsTable and StoredTransactionsTable. ---- v2.7
+
+*Refactored out TransactionsTable. ---- v2.7
 
 *Reversed sorting of select between dates. ---- v2.7
 
