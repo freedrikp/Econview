@@ -30,7 +30,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 	private JTable userTable;
 
 	public ManageUsersFrame(final Security sec) {
-		Language.getString("MENUBAR_MANAGE_USERS");
+		super(Language.getString("MENUBAR_MANAGE_USERS"));
 		JPanel userPanel = new JPanel();
 		userPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		this.sec = sec;

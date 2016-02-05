@@ -35,6 +35,8 @@ public class Configuration {
 		config.put("USER_PANEL_WIDTH", "400");
 		config.put("USER_PANEL_HEIGHT", "200");
 		config.put("SECURITY_TRUE_FALSE", "TRUE");
+		config.put("SEARCH_PANEL_WIDTH", "500");
+		config.put("SEARCH_PANEL_HEIGHT", "500");
 	}
 
 	public static String getString(String key) {

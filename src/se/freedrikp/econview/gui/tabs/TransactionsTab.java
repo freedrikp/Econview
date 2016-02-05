@@ -217,7 +217,9 @@ public class TransactionsTab extends JPanel implements Observer {
 	}
 
 	public void update(Observable o, Object arg) {
-		transactionsTable.updateTransactionList(fromDateChooser.getDate(),toDateChooser.getDate(),accountSelectorPanel.getSelectedAccounts());
+		transactionsTable.updateTransactionList(db.getTransactions(fromDateChooser.getDate(),
+				toDateChooser.getDate(),
+				accountSelectorPanel.getSelectedAccounts()));
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
 //		GUI.resizeTable(transactionsTable);

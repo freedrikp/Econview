@@ -81,11 +81,9 @@ public class TransactionsTable extends JTable {
 				column);
 	}
 	
-	public void updateTransactionList(Date fromDate, Date toDate, Collection<String> selectedAccounts) {
+	public void updateTransactionList(List<Object[]> data) {
 		Model m = new Model(transactionHeader, 0);
-		for (Object[] row : db.getTransactions(fromDate,
-				toDate,
-				selectedAccounts)) {
+		for (Object[] row : data) {
 			row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
 			row[3] = dateFormat.format(row[3]);
 			m.addRow(row);

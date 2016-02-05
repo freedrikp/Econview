@@ -96,6 +96,8 @@ public class Language {
 		lan.put("MENUBAR_ADD_USER", "Add User");
 		lan.put("MENUBAR_CHANGE_PASSWORD", "Change Password");
 		lan.put("MENUBAR_MANAGE_USERS", "Manage Users");
+		lan.put("MENUBAR_SEARCH", "Search");
+		lan.put("MENUBAR_SEARCH_TRANSACTIONS", "Search Transactions");
 		lan.put("PASSWORDS_NOT_MATCH", "Passwords do not match.");
 		lan.put("PASSWORD_ERROR", "Password Error");
 		lan.put("USER_EXISTS", "User already exists, could not add user.");
