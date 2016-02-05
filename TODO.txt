@@ -1,4 +1,5 @@
 === TODO ===
+*Modify JDateChoosers to include spinners.
 *Search for transactions, be able to edit and remove transactions in new frame/dialog.
 *Delete transactions based on search.
 *Add stored transactions in transaction dialog.

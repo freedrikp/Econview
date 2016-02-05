@@ -128,6 +128,12 @@ public class Language {
 				"Delete All Stored Transactions");
 		lan.put("PROMPT_DELETE_STORED_TRANSACTIONS",
 				"Are you sure you want to delete all stored transactions?");
+		lan.put("SEARCH_TRANSACTION_ID", "ID");
+		lan.put("SEARCH_TRANSACTION_ACCOUNT", "Account");
+		lan.put("SEARCH_TRANSACTION_AMOUNT", "Amount");
+		lan.put("SEARCH_TRANSACTION_FROM_DATE", "Date From");
+		lan.put("SEARCH_TRANSACTION_TO_DATE", "Date To");
+		lan.put("SEARCH_TRANSACTION_COMMENT", "Comment");
 
 		lang.put(Configuration.getString("LANGUAGE"), lan);
 	}

@@ -133,10 +133,9 @@ public class GUI extends JFrame implements Observer {
 		update(db, null);
 	}
 
-	public static double parseAmount(String amount)
-			throws NumberFormatException {
+	public static double parseAmount(String amount){//throws NumberFormatException {
 		if (amount == null || amount.isEmpty()) {
-			return 0;
+			throw new NumberFormatException();
 		}
 		double result;
 		try {
