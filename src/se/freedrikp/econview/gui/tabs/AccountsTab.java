@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -19,6 +20,7 @@ import javax.swing.JSeparator;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountsTable;
+import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.AccountDialog;
 
@@ -146,12 +148,14 @@ public class AccountsTab extends JPanel implements Observer {
 
 	public void update(Observable o, Object arg) {
 		accountsTable.updateAccountList();
+		Calendar cal = GUI.getFlattenCalendar(null);
+		cal.add(Calendar.DAY_OF_MONTH,1);
 		totalVisibleBalanceLabel.setText(NumberFormat.getCurrencyInstance()
-				.format(db.getVisibleAccountBalanceSum()));
+				.format(db.getVisibleAccountBalanceSum(cal.getTime())));
 		totalBalanceLabel.setText(NumberFormat.getCurrencyInstance().format(
-				db.getTotalAccountBalanceSum()));
+				db.getTotalAccountBalanceSum(cal.getTime())));
 		totalHiddenBalanceLabel.setText(NumberFormat.getCurrencyInstance()
-				.format(db.getHiddenAccountBalanceSum()));
+				.format(db.getHiddenAccountBalanceSum(cal.getTime())));
 		totalBalanceLabel.setVisible(db.getShowHidden());
 		totalHiddenBalanceLabel.setVisible(db.getShowHidden());
 		totalBalanceLabelText.setVisible(db.getShowHidden());

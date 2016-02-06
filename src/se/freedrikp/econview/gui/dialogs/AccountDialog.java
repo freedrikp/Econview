@@ -1,6 +1,7 @@
 package se.freedrikp.econview.gui.dialogs;
 
 import java.text.NumberFormat;
+import java.util.Calendar;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -49,8 +50,10 @@ public class AccountDialog extends DatabaseDialog {
 	}
 
 	protected void doEditDatabaseAction() {
+		Calendar cal = GUI.getFlattenCalendar(null);
+		cal.add(Calendar.DAY_OF_MONTH,1);
 		db.editAccount(oldName, nameField.getText(),
-				GUI.parseAmount(balanceField.getText()), hiddenBox.isSelected());
+				GUI.parseAmount(balanceField.getText()), hiddenBox.isSelected(),cal.getTime());
 	}
 
 	protected void setEditSpecifics(JPanel dialogPanel, Object[] input) {

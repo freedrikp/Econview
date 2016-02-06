@@ -1,6 +1,7 @@
 package se.freedrikp.econview.gui;
 
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Comparator;
 
 import javax.swing.JTable;
@@ -29,7 +30,9 @@ public class AccountsTable extends JTable{
 	
 	public void updateAccountList() {
 		Model m = new Model(accountHeader, 0);
-		for (Object[] row : db.getAccounts()) {
+		Calendar cal = GUI.getFlattenCalendar(null);
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		for (Object[] row : db.getAccounts(cal.getTime())) {
 			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
 			m.addRow(row);
 		}
