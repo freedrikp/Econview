@@ -1,5 +1,6 @@
 === TODO ===
 *Implement functionality for future transactions.
+*Improve selectBetweenDates when either date is null to become faster.
 *Separate GUI parts from Security.
 *Search accounts and stored transactions.
 *Extract class-framework for JTables that interact with the database.

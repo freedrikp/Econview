@@ -260,7 +260,7 @@ public class Database extends Observable {
 			PreparedStatement ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
 					"Where accountName IN " + selectedAccounts,"", fromDate,
-					toDate);
+					toDate,true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[5];
@@ -297,11 +297,10 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<Object[]> getMonthlyRevenues() {
+	public List<Object[]> getMonthlyRevenues(Date until) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC");
+			PreparedStatement ps = selectBetweenDates("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "",") GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC",getOldestTransactionDate(),until,false);
 			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -319,11 +318,10 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<Object[]> getYearlyRevenues() {
+	public List<Object[]> getYearlyRevenues(Date until) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY transactionYear ORDER BY transactionYear DESC");
+			PreparedStatement ps = selectBetweenDates("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY transactionYear ORDER BY transactionYear DESC",getOldestTransactionDate(),until,false);
 			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -340,11 +338,10 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<Object[]> getMonthlyAccountRevenues() {
+	public List<Object[]> getMonthlyAccountRevenues(Date until) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC");
+			PreparedStatement ps = selectBetweenDates("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC",getOldestTransactionDate(),until,false);
 			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -363,11 +360,10 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public List<Object[]> getYearlyAccountRevenues() {
+	public List<Object[]> getYearlyAccountRevenues(Date until) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC");
+			PreparedStatement ps = selectBetweenDates("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC",getOldestTransactionDate(),until,false);
 			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -385,10 +381,9 @@ public class Database extends Observable {
 		return list;
 	}
 
-	public Double getTotalRevenue() {
+	public double getTotalRevenue(Date until) {
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ?");
+			PreparedStatement ps = selectBetweenDates("SELECT SUM(transactionAmount) as revenue FROM ",  "", "",getOldestTransactionDate(),until,false);
 			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -400,11 +395,10 @@ public class Database extends Observable {
 		return 0.;
 	}
 
-	public List<Object[]> getTotalAccountRevenues() {
+	public List<Object[]> getTotalAccountRevenues(Date until) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT accountName,SUM(transactionAmount) as revenue FROM Transactions NATURAL JOIN Accounts  WHERE accountHidden <= ? GROUP BY accountName");
+			PreparedStatement ps = selectBetweenDates("SELECT accountName,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY accountName ORDER accountName ASC",getOldestTransactionDate(),until,false);
 			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -439,7 +433,7 @@ public class Database extends Observable {
 			// } else {
 			ps = selectBetweenDates(
 					"Select SUM(transactionAmount) as revenue FROM",
-					"WHERE accountName IN " + selectedAccounts,"", from, to);
+					"WHERE accountName IN " + selectedAccounts,"", from, to,true);
 			// ps.setString(13, account);
 			// }
 			ResultSet results = ps.executeQuery();
@@ -481,7 +475,7 @@ public class Database extends Observable {
 			cal.setTime(to);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 			PreparedStatement ps = selectBetweenDates("SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM", "GROUP BY accName", ") as Future ON Accounts.accountName = Future.accName WHERE accountHidden <= ? AND accountName IN "
-							+ selectedAccounts, cal.getTime(), getNewestTransactionDate());
+							+ selectedAccounts, cal.getTime(), getNewestTransactionDate(),true);
 			ps.setInt(14, showHidden);
 			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
@@ -531,11 +525,11 @@ public class Database extends Observable {
 		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
-					"WHERE accountName IN " + consideredAccounts,"", from, to);
+					"WHERE accountName IN " + consideredAccounts,"", from, to,false);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
-					"WHERE accountName = ?","", from, to);
+					"WHERE accountName = ?","", from, to,false);
 			ps.setString(14, accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
@@ -546,11 +540,11 @@ public class Database extends Observable {
 		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
-					"WHERE accountName IN " + consideredAccounts,"", from, to);
+					"WHERE accountName IN " + consideredAccounts,"", from, to,true);
 		} else {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
-					"WHERE accountName = ?","", from, to);
+					"WHERE accountName = ?","", from, to,true);
 			ps.setString(14, accountName);
 		}
 		transactions = ps.executeQuery();
@@ -566,7 +560,7 @@ public class Database extends Observable {
 	}
 
 	private PreparedStatement selectBetweenDates(String sqlSelect,
-			String sqlWhere,String sqlEnd, Date from, Date to) throws SQLException {
+			String sqlWhere,String sqlEnd, Date from, Date to,boolean ascending) throws SQLException {
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
@@ -589,7 +583,7 @@ public class Database extends Observable {
 						+ sqlDays
 						+ " "
 						+ sqlWhere
-						+ " ORDER BY transactionYear ASC,transactionMonth ASC,transactionDay ASC,transactionID ASC " + sqlEnd);
+						+ " ORDER BY transactionYear " + (ascending ? "ASC" : "DESC") + ",transactionMonth " + (ascending ? "ASC" : "DESC") + ",transactionDay " + (ascending ? "ASC" : "DESC") + ",transactionID " + (ascending ? "ASC" : "DESC") + " "  + sqlEnd);
 		ps.setInt(1, showHidden);
 		ps.setString(2, toy);
 		ps.setString(3, foy);
@@ -1110,7 +1104,7 @@ public class Database extends Observable {
 		}
 		PreparedStatement ps;
 		try {
-			ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM", sqlWhere,"", fromDate, toDate);
+			ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM", sqlWhere,"", fromDate, toDate,true);
 			if ( doID ){
 				ps.setLong(idIndex,transactionId);				
 			}
