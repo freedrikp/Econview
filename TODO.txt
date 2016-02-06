@@ -1,10 +1,11 @@
 === TODO ===
 *Delete transactions based on search.
 *Add stored transactions in transaction dialog.
+*Implement functionality for future transactions.
+*Separate GUI parts from Security.
 *Search accounts and stored transactions.
 *Extract class-framework for JTables that interact with the database.
 ----------------------------------------------------------------------------------
-*Separate GUI parts from Security.
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
 === BETWEEN ===
