@@ -98,9 +98,9 @@ public class Language {
 		lan.put("MENUBAR_MANAGE_USERS", "Manage Users");
 		lan.put("MENUBAR_SEARCH", "Search");
 		lan.put("MENUBAR_SEARCH_TRANSACTIONS", "Search Transactions");
-		lan.put("PASSWORDS_NOT_MATCH", "Passwords do not match.");
+		lan.put("PASSWORDS_NOT_MATCH", "Passwords do not match");
 		lan.put("PASSWORD_ERROR", "Password Error");
-		lan.put("USER_EXISTS", "User already exists, could not add user.");
+		lan.put("USER_EXISTS", "User already exists, could not add user");
 		lan.put("USER_ERROR", "User Error");
 		lan.put("PROMPT_OLD_PASSWORD", "Old Password");
 		lan.put("PROMPT_NEW_PASSWORD", "New Password");
@@ -136,7 +136,7 @@ public class Language {
 		lan.put("SEARCH_TRANSACTION_COMMENT", "Comment");
 		lan.put("SEARCH_INCLUDE_IN_SEARCH", "Include Criteria In Search");
 		lan.put("MENUBAR_DELETE_TRANSACTIONS_SEARCH","Delete Transactions Based On Search");
-		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH","Input search criteria for transactions to be deleted");
+		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH","Specify search criteria for transactions to be deleted");
 		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW","Review transactions to be deleted");
 
 		lang.put(Configuration.getString("LANGUAGE"), lan);

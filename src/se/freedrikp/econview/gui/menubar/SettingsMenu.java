@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -46,10 +47,15 @@ public class SettingsMenu extends JMenu {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		JScrollPane scrollPane = new JScrollPane();
-		HashMap<String, JTextField> map = new HashMap<String, JTextField>();
+		Map<String, JTextField> map = new HashMap<String, JTextField>();
 		scrollPane.setViewportView(panel);
 		Map<String, String> list = configurationNotLanguage ? Configuration
 				.listAllConfigs() : Language.listAllStrings();
+		Map<String,String> temp = new TreeMap<String,String>();
+		for (Map.Entry<String, String> entry : list.entrySet()) {
+			temp.put(entry.getKey(), entry.getValue());
+		}
+		list = temp;
 		for (Map.Entry<String, String> entry : list.entrySet()) {
 			JPanel pan = new JPanel();
 			pan.add(new JLabel(entry.getKey() + ":"));

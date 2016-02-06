@@ -14,6 +14,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Sorted entries in settingspanels. ---- v2.7
+
 *Delete transactions based on search. ---- v2.7
 
 *Modify JDateChoosers to include spinners. ---- v2.7
