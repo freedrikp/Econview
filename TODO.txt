@@ -1,5 +1,4 @@
 === TODO ===
-*Add stored transactions in transaction dialog.
 *Implement functionality for future transactions.
 *Separate GUI parts from Security.
 *Search accounts and stored transactions.
@@ -14,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Add stored transactions in transaction dialog. ---- v2.7
+
 *Sorted entries in settingspanels. ---- v2.7
 
 *Delete transactions based on search. ---- v2.7

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -65,7 +66,36 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 		multiAccountControlPanel.add(addMultiAccountButton);
 		dialogPanel.add(multiAccountControlPanel);
+		
+		JPanel storedTransactionsPanel = new JPanel();
+		List<String> storedTransactionNames = db.getStoredTransactionNames();
+		String[] comboBoxNames = new String[storedTransactionNames.size()];
+		for (int i = 0; i < storedTransactionNames.size();i++){
+			comboBoxNames[i]=storedTransactionNames.get(i);
+		}
 
+		final JComboBox storedTransactionsBox = new JComboBox(comboBoxNames);
+		storedTransactionsPanel.add(storedTransactionsBox);
+		storedTransactionsBox.setSelectedIndex(-1);
+		
+		JButton addStoredTransaction = new JButton(Language.getString("ADD_TRANSACTION_ADD_STORED_TRANSACTION"));
+		storedTransactionsPanel.add(addStoredTransaction);
+		addStoredTransaction.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String transaction = (String)storedTransactionsBox.getSelectedItem();
+				if (transaction != null){
+					for (Object[] trans : db
+							.getStoredTransaction(transaction)) {
+						addMultiAccount((String) trans[1], NumberFormat.getCurrencyInstance().format((double) trans[2]));
+						storedTransactionsBox.setSelectedIndex(-1);
+					}					
+				}
+			}
+		});
+		
+		
+		dialogPanel.add(storedTransactionsPanel);
+		
 		addDatePanel(dialogPanel);
 
 		commentField = new JTextField("", 15);

@@ -91,6 +91,7 @@ MENUBAR_DELETE_ACCOUNTS=Radera Alla Konton
 MENUBAR_IMPORT_EXPORT_EXPORT=Exportera
 MENUBAR_ADD_USER=Lägg Till Användare
 REMOVE_TRANSACTION_PROMPT=Är du säker på att du vill radera denna transaktion?
+ADD_TRANSACTION_ADD_STORED_TRANSACTION=Lägg Till Lagrad Transaktion
 REMOVE_USER_PROMPT=Är du säker på att du vill radera den här användaren?
 PROMPT_DELETE_ACCOUNTS=Är du säker på att du vill ta bort alla konton?
 USER_HEADER_ADMIN=Admin
