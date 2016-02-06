@@ -13,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*If key is not in Language map it is added with "<unknown>" as value. ---- v2.7
+
 *Add stored transactions in transaction dialog. ---- v2.7
 
 *Sorted entries in settingspanels. ---- v2.7

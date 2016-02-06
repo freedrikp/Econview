@@ -152,6 +152,9 @@ public class Language {
 			writeDefaultLanguage();
 		}
 		String string = lang.get(Configuration.getString("LANGUAGE")).get(key);
+		if (string == null){
+			putString(key,"<unknown>");
+		}
 		return string != null ? string : "<unknown>";
 	}
 
