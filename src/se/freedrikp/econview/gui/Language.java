@@ -135,6 +135,9 @@ public class Language {
 		lan.put("SEARCH_TRANSACTION_TO_DATE", "Date To");
 		lan.put("SEARCH_TRANSACTION_COMMENT", "Comment");
 		lan.put("SEARCH_INCLUDE_IN_SEARCH", "Include Criteria In Search");
+		lan.put("MENUBAR_DELETE_TRANSACTIONS_SEARCH","Delete Transactions Based On Search");
+		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH","Input search criteria for transactions to be deleted");
+		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW","Review transactions to be deleted");
 
 		lang.put(Configuration.getString("LANGUAGE"), lan);
 	}
