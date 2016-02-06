@@ -3,6 +3,7 @@ package se.freedrikp.econview.gui.menubar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -10,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.Language;
@@ -77,7 +79,10 @@ public class DeleteMenu extends JMenu {
 						db, transactionsTable);
 				JPanel promptPanel = new JPanel();
 				promptPanel.setLayout(new BoxLayout(promptPanel, BoxLayout.Y_AXIS));
-				promptPanel.add(new JPanel().add(new JLabel(Language.getString("PROMPT_DELETE_TRANSACTIONS_SEARCH"))));
+				JLabel promptLabel = new JLabel(Language.getString("PROMPT_DELETE_TRANSACTIONS_SEARCH"));
+				promptLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);;
+				promptPanel.add(promptLabel);
+				promptPanel.add(Box.createVerticalStrut(10));
 				promptPanel.add(controlPanel);
 				
 				if (JOptionPane.showConfirmDialog(
@@ -87,7 +92,10 @@ public class DeleteMenu extends JMenu {
 						JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 					JPanel reviewPanel = new JPanel();
 					reviewPanel.setLayout(new BoxLayout(reviewPanel, BoxLayout.Y_AXIS));
-					reviewPanel.add(new JPanel().add(new JLabel(Language.getString("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW"))));
+					JLabel reviewLabel = new JLabel(Language.getString("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW"));
+					reviewLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+					reviewPanel.add(reviewLabel);
+					reviewPanel.add(Box.createVerticalStrut(10));
 					JScrollPane scrollPane  = new JScrollPane();
 					scrollPane.setViewportView(transactionsTable);
 					reviewPanel.add(scrollPane);
