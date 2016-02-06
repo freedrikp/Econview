@@ -16,6 +16,7 @@ import se.freedrikp.econview.gui.Configuration;
 import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JSpinnerDateEditor;
 
 public class NormalTransactionDialog extends TransactionDialog {
 
@@ -29,31 +30,31 @@ public class NormalTransactionDialog extends TransactionDialog {
 		JPanel datePanel = new JPanel();
 		datePanel.add(new JLabel(Language.getString("ADD_TRANSACTION_DATE")
 				+ ":"));
-		dateSelector = new JDateChooser();
+		dateSelector = new JDateChooser(new JSpinnerDateEditor());
 		dateSelector.setDateFormatString(Configuration
 				.getString("FULL_DATE_FORMAT"));
 		datePanel.add(dateSelector);
 
-		JButton increaseDate = new JButton("+");
-		increaseDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateSelector.getDate());
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-				dateSelector.setDate(cal.getTime());
-			}
-		});
-		JButton decreaseDate = new JButton("-");
-		decreaseDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateSelector.getDate());
-				cal.add(Calendar.DAY_OF_MONTH, -1);
-				dateSelector.setDate(cal.getTime());
-			}
-		});
-		datePanel.add(increaseDate);
-		datePanel.add(decreaseDate);
+//		JButton increaseDate = new JButton("+");
+//		increaseDate.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				Calendar cal = Calendar.getInstance();
+//				cal.setTime(dateSelector.getDate());
+//				cal.add(Calendar.DAY_OF_MONTH, 1);
+//				dateSelector.setDate(cal.getTime());
+//			}
+//		});
+//		JButton decreaseDate = new JButton("-");
+//		decreaseDate.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				Calendar cal = Calendar.getInstance();
+//				cal.setTime(dateSelector.getDate());
+//				cal.add(Calendar.DAY_OF_MONTH, -1);
+//				dateSelector.setDate(cal.getTime());
+//			}
+//		});
+//		datePanel.add(increaseDate);
+//		datePanel.add(decreaseDate);
 		dialogPanel.add(datePanel);
 	}
 

@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountSelectorPanel;
@@ -29,6 +28,7 @@ import se.freedrikp.econview.gui.TransactionsTable;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JSpinnerDateEditor;
 
 public class TransactionsTab extends JPanel implements Observer {
 
@@ -59,7 +59,7 @@ public class TransactionsTab extends JPanel implements Observer {
 		add(transactionsPane);
 
 		transactionsTable = new TransactionsTable(db);
-//		transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		// transactionsTable.setAutoCreateRowSorter(true);
 		// transactionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		transactionsPane.setViewportView(transactionsTable);
@@ -69,16 +69,20 @@ public class TransactionsTab extends JPanel implements Observer {
 				BoxLayout.Y_AXIS));
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_MONTH, 1);
-		fromDateChooser = new JDateChooser(cal.getTime(),
-				Configuration.getString("FULL_DATE_FORMAT"));
+		fromDateChooser = new JDateChooser(new JSpinnerDateEditor());
+		fromDateChooser.setDateFormatString(Configuration
+				.getString("FULL_DATE_FORMAT"));
+		fromDateChooser.setDate(cal.getTime());
 		fromDateChooser.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
 				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
 		transactionsViewPanel.add(fromDateChooser);
 		JLabel dateSepLabel = new JLabel("<->");
 		transactionsViewPanel.add(dateSepLabel);
-		toDateChooser = new JDateChooser(Calendar.getInstance().getTime(),
-				Configuration.getString("FULL_DATE_FORMAT"));
+		toDateChooser = new JDateChooser(new JSpinnerDateEditor());
+		toDateChooser.setDateFormatString(Configuration
+				.getString("FULL_DATE_FORMAT"));
+		toDateChooser.setDate(Calendar.getInstance().getTime());
 		toDateChooser.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
 				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
@@ -130,11 +134,11 @@ public class TransactionsTab extends JPanel implements Observer {
 					// transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()),
 					// 4));
 
-					new NormalTransactionDialog(db).showEditDialog(new Object[] {
-							transactionsTable
-									.getSelectedColumn(4),
-							dateFormat.parse((String) transactionsTable
-									.getSelectedColumn(3)) });
+					new NormalTransactionDialog(db)
+							.showEditDialog(new Object[] {
+									transactionsTable.getSelectedColumn(4),
+									dateFormat.parse((String) transactionsTable
+											.getSelectedColumn(3)) });
 				} catch (NumberFormatException | ParseException e1) {
 					e1.printStackTrace();
 				}
@@ -152,9 +156,8 @@ public class TransactionsTab extends JPanel implements Observer {
 						null,
 						Language.getString("REMOVE_TRANSACTION_PROMPT")
 								+ " -- "
-								+ transactionsTable
-										.getSelectedColumn(0), Language
-								.getString("REMOVE_TRANSACTION"),
+								+ transactionsTable.getSelectedColumn(0),
+						Language.getString("REMOVE_TRANSACTION"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeTransaction((long) transactionsTable
 							.getSelectedColumn(0));
@@ -217,12 +220,12 @@ public class TransactionsTab extends JPanel implements Observer {
 	}
 
 	public void update(Observable o, Object arg) {
-		transactionsTable.updateTransactionList(db.getTransactions(fromDateChooser.getDate(),
-				toDateChooser.getDate(),
+		transactionsTable.updateTransactionList(db.getTransactions(
+				fromDateChooser.getDate(), toDateChooser.getDate(),
 				accountSelectorPanel.getSelectedAccounts()));
 		transactionsPane.getVerticalScrollBar().setValue(
 				transactionsPane.getVerticalScrollBar().getMaximum());
-//		GUI.resizeTable(transactionsTable);
+		// GUI.resizeTable(transactionsTable);
 		Date oldest = db.getOldestTransactionDate();
 		if (oldest != null) {
 			oldestDate.setText(dateFormat.format(oldest));

@@ -30,6 +30,7 @@ import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JSpinnerDateEditor;
 
 public class RevenueTab extends JPanel implements Observer {
 	private Database db;
@@ -165,7 +166,9 @@ public class RevenueTab extends JPanel implements Observer {
 		sideRevenuePanel.add(customRevSep);
 
 		// revDateFromField = new JTextField(df.format(new Date()));
-		revDateFromField = new JDateChooser(new Date(), dateFormat.toPattern());
+		revDateFromField = new JDateChooser(new JSpinnerDateEditor());
+		revDateFromField.setDateFormatString(dateFormat.toPattern()); 
+		revDateFromField.setDate(new Date());
 		revDateFromField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
 				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
@@ -177,7 +180,9 @@ public class RevenueTab extends JPanel implements Observer {
 		sideRevenuePanel.add(revDateSepLabel);
 
 		// revDateToField = new JTextField(df.format(new Date()));
-		revDateToField = new JDateChooser(new Date(), dateFormat.toPattern());
+		revDateToField = new JDateChooser(new JSpinnerDateEditor());
+		revDateToField.setDateFormatString(dateFormat.toPattern()); 
+		revDateToField.setDate(new Date());
 		revDateToField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
 				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));

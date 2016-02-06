@@ -39,6 +39,7 @@ import se.freedrikp.econview.gui.Configuration;
 import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JSpinnerDateEditor;
 
 public class DiagramsTab extends JPanel implements Observer {
 	private Database db;
@@ -115,7 +116,9 @@ public class DiagramsTab extends JPanel implements Observer {
 				BoxLayout.Y_AXIS));
 
 		// diagFromDateField = new JTextField(df.format(new Date()));
-		diagFromDateField = new JDateChooser(new Date(), dateFormat.toPattern());
+		diagFromDateField = new JDateChooser(new JSpinnerDateEditor());
+		diagFromDateField.setDateFormatString(dateFormat.toPattern()); 
+		diagFromDateField.setDate(new Date());
 		diagFromDateField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
 				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
@@ -127,7 +130,9 @@ public class DiagramsTab extends JPanel implements Observer {
 		diagramControlPanel.add(diagDateSepLabel);
 
 		// diagToDateField = new JTextField(df.format(new Date()));
-		diagToDateField = new JDateChooser(new Date(), dateFormat.toPattern());
+		diagToDateField = new JDateChooser(new JSpinnerDateEditor());
+		diagToDateField.setDateFormatString(dateFormat.toPattern()); 
+		diagToDateField.setDate(new Date());
 		diagToDateField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
 				.parseInt(Configuration.getString("DATE_FIELD_HEIGHT"))));
