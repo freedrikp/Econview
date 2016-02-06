@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -233,9 +234,11 @@ public abstract class TransactionDialog extends DatabaseDialog {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					oldBalance = NumberFormat.getCurrencyInstance().format(
 							GUI.parseAmount(amountField.getText()));
+					Calendar cal = getCorrectCal();
+					cal.add(Calendar.DAY_OF_MONTH, 1);
 					double balance = GUI.parseAmount(oldBalance)
 							- db.getAccountBalance((String) accountField
-									.getSelectedItem());
+									.getSelectedItem(),cal.getTime());
 					amountField.setText(NumberFormat.getCurrencyInstance()
 							.format(balance));
 				} else {
@@ -269,6 +272,8 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 		return accountField;
 	}
+	
+	protected abstract Calendar getCorrectCal();
 
 	// private JDateChooser dateSelector;
 	// private JTextField commentField;

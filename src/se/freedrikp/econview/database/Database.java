@@ -301,7 +301,6 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = selectBetweenDates("SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "",") GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC",getOldestTransactionDate(),until,false);
-			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -322,7 +321,6 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = selectBetweenDates("SELECT transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY transactionYear ORDER BY transactionYear DESC",getOldestTransactionDate(),until,false);
-			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -342,7 +340,6 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = selectBetweenDates("SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC",getOldestTransactionDate(),until,false);
-			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -364,7 +361,6 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = selectBetweenDates("SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC",getOldestTransactionDate(),until,false);
-			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -384,7 +380,6 @@ public class Database extends Observable {
 	public double getTotalRevenue(Date until) {
 		try {
 			PreparedStatement ps = selectBetweenDates("SELECT SUM(transactionAmount) as revenue FROM ",  "", "",getOldestTransactionDate(),until,false);
-			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				return results.getDouble("revenue");
@@ -399,7 +394,6 @@ public class Database extends Observable {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			PreparedStatement ps = selectBetweenDates("SELECT accountName,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",  "", ") GROUP BY accountName ORDER accountName ASC",getOldestTransactionDate(),until,false);
-			ps.setInt(1, showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -1049,11 +1043,11 @@ public class Database extends Observable {
 		return res;
 	}
 
-	public double getAccountBalance(String accountName) {
+	public double getAccountBalance(String accountName,Date until) {
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("SELECT accountBalance FROM Accounts WHERE accountName = ?");
-			ps.setString(1, accountName);
+			PreparedStatement ps = selectBetweenDates("SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM", "WHERE accountName = ?","),0) as accountBalance FROM Accounts WHERE accountName = ?",until,getNewestTransactionDate(),false);
+			ps.setString(14, accountName);
+			ps.setString(15, accountName);
 			ResultSet results = ps.executeQuery();
 			if (results.next()) {
 				return results.getDouble("accountBalance");

@@ -1,10 +1,12 @@
 package se.freedrikp.econview.gui.dialogs;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.JPanel;
 
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.GUI;
 
 public class StoredTransactionDialog extends TransactionDialog {
 
@@ -36,6 +38,10 @@ public class StoredTransactionDialog extends TransactionDialog {
 
 	protected void removeDatabaseHelper(long id) {
 		db.removeStoredTransaction(id);
+	}
+
+	protected Calendar getCorrectCal() {
+		return GUI.getFlattenCalendar(null);
 	}
 
 }

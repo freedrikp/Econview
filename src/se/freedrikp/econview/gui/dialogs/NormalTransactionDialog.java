@@ -1,18 +1,16 @@
 package se.freedrikp.econview.gui.dialogs;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.Configuration;
+import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
@@ -90,6 +88,10 @@ public class NormalTransactionDialog extends TransactionDialog {
 
 	protected void removeDatabaseHelper(long id) {
 		db.removeTransaction(id);
+	}
+	
+	protected Calendar getCorrectCal() {
+		return GUI.getFlattenCalendar(dateSelector.getDate());
 	}
 
 }
