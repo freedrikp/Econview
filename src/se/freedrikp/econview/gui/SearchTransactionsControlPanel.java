@@ -38,36 +38,41 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 	private Database db;
 	private TransactionsTable transactionsTable;
 
-	public SearchTransactionsControlPanel(Database db, TransactionsTable transactionsTable) {
+	public SearchTransactionsControlPanel(Database db,
+			TransactionsTable transactionsTable) {
 		this.db = db;
 		db.addObserver(this);
 		this.transactionsTable = transactionsTable;
+
 		Listener listener = new Listener();
+
 		setLayout(new GridLayout(6, 3));
+
 		add(new JLabel(Language.getString("SEARCH_TRANSACTION_ID") + ":"));
-		add(new JLabel(Language.getString("SEARCH_TRANSACTION_ACCOUNT") + ":"));
-		add(new JLabel(Language.getString("SEARCH_TRANSACTION_AMOUNT") + ":"));
 		idField = new JTextField();
 		add(idField);
 		idField.getDocument().addDocumentListener(listener);
+		idBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		add(idBox);
+		idBox.addItemListener(listener);
+
+		add(new JLabel(Language.getString("SEARCH_TRANSACTION_ACCOUNT") + ":"));
 		accountField = new JTextField();
 		add(accountField);
 		accountField.getDocument().addDocumentListener(listener);
+		accountBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		add(accountBox);
+		accountBox.addItemListener(listener);
+
+		add(new JLabel(Language.getString("SEARCH_TRANSACTION_AMOUNT") + ":"));
 		amountField = new JTextField();
 		add(amountField);
 		amountField.getDocument().addDocumentListener(listener);
-		idBox = new JCheckBox();
-		add(idBox);
-		idBox.addItemListener(listener);
-		accountBox = new JCheckBox();
-		add(accountBox);
-		accountBox.addItemListener(listener);
-		amountBox = new JCheckBox();
+		amountBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(amountBox);
 		amountBox.addItemListener(listener);
+
 		add(new JLabel(Language.getString("SEARCH_TRANSACTION_FROM_DATE") + ":"));
-		add(new JLabel(Language.getString("SEARCH_TRANSACTION_TO_DATE") + ":"));
-		add(new JLabel(Language.getString("SEARCH_TRANSACTION_COMMENT") + ":"));
 		fromDateChooser = new JDateChooser(new JSpinnerDateEditor());
 		fromDateChooser.setDate(new Date());
 		fromDateChooser.setDateFormatString(Configuration
@@ -75,6 +80,11 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		add(fromDateChooser);
 		((JSpinner) (fromDateChooser.getDateEditor().getUiComponent()))
 				.addChangeListener(listener);
+		fromDateBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		add(fromDateBox);
+		fromDateBox.addItemListener(listener);
+
+		add(new JLabel(Language.getString("SEARCH_TRANSACTION_TO_DATE") + ":"));
 		toDateChooser = new JDateChooser(new JSpinnerDateEditor());
 		toDateChooser.setDate(new Date());
 		toDateChooser.setDateFormatString(Configuration
@@ -82,22 +92,21 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		add(toDateChooser);
 		((JSpinner) (toDateChooser.getDateEditor().getUiComponent()))
 				.addChangeListener(listener);
+		toDateBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		add(toDateBox);
+		toDateBox.addItemListener(listener);
+
+		add(new JLabel(Language.getString("SEARCH_TRANSACTION_COMMENT") + ":"));
 		commentField = new JTextField();
 		add(commentField);
 		commentField.getDocument().addDocumentListener(listener);
-
-		fromDateBox = new JCheckBox();
-		add(fromDateBox);
-		fromDateBox.addItemListener(listener);
-		toDateBox = new JCheckBox();
-		add(toDateBox);
-		toDateBox.addItemListener(listener);
-		commentBox = new JCheckBox();
+		commentBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(commentBox);
 		commentBox.addItemListener(listener);
-		update(db,null);
+
+		update(db, null);
 	}
-	
+
 	public void update(Observable o, Object arg) {
 		long id = 0;
 		boolean doID = false;
@@ -141,24 +150,51 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 
 	private class Listener implements ItemListener, DocumentListener,
 			ChangeListener {
+		private void checkDocumentSource(JTextField field, DocumentEvent e,
+				JCheckBox box) {
+			if (e.getDocument() == field.getDocument()) {
+				if (e.getDocument().getLength() > 0){
+					box.setSelected(true);					
+				}else{
+					box.setSelected(false);					
+				}
+			}
+		}
+
+		private void documentUpdate(DocumentEvent e) {
+			checkDocumentSource(idField, e, idBox);
+			checkDocumentSource(accountField, e, accountBox);
+			checkDocumentSource(amountField, e, amountBox);
+			checkDocumentSource(commentField, e, commentBox);
+
+			update(db, null);
+
+		}
 
 		public void itemStateChanged(ItemEvent e) {
 			update(db, null);
 		}
 
 		public void changedUpdate(DocumentEvent e) {
-			update(db, null);
+			documentUpdate(e);
 		}
 
 		public void insertUpdate(DocumentEvent e) {
-			update(db, null);
+			documentUpdate(e);
 		}
 
 		public void removeUpdate(DocumentEvent e) {
-			update(db, null);
+			documentUpdate(e);
 		}
 
-		public void stateChanged(ChangeEvent arg0) {
+		public void stateChanged(ChangeEvent e) {
+			if (e.getSource() == fromDateChooser.getDateEditor()
+					.getUiComponent()) {
+				fromDateBox.setSelected(true);
+			} else if (e.getSource() == toDateChooser.getDateEditor()
+					.getUiComponent()) {
+				toDateBox.setSelected(true);
+			}
 			update(db, null);
 		}
 

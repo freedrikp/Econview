@@ -1,6 +1,5 @@
 === TODO ===
 *Modify JDateChoosers to include spinners.
-*Search for transactions, be able to edit and remove transactions in new frame/dialog.
 *Delete transactions based on search.
 *Add stored transactions in transaction dialog.
 *Search accounts and stored transactions.
@@ -16,6 +15,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Search for transactions, be able to edit and remove transactions in new frame/dialog. ---- v2.7
+
 *Refactor out AccountsTable and StoredTransactionsTable. ---- v2.7
 
 *Refactored out TransactionsTable. ---- v2.7

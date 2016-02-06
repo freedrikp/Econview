@@ -134,6 +134,7 @@ public class Language {
 		lan.put("SEARCH_TRANSACTION_FROM_DATE", "Date From");
 		lan.put("SEARCH_TRANSACTION_TO_DATE", "Date To");
 		lan.put("SEARCH_TRANSACTION_COMMENT", "Comment");
+		lan.put("SEARCH_INCLUDE_IN_SEARCH", "Include Criteria In Search");
 
 		lang.put(Configuration.getString("LANGUAGE"), lan);
 	}
