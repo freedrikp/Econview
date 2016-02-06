@@ -259,7 +259,7 @@ public class Database extends Observable {
 			// ps.setInt(1, showHidden);
 			PreparedStatement ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
-					"Where accountName IN " + selectedAccounts, fromDate,
+					"Where accountName IN " + selectedAccounts,"", fromDate,
 					toDate);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -439,7 +439,7 @@ public class Database extends Observable {
 			// } else {
 			ps = selectBetweenDates(
 					"Select SUM(transactionAmount) as revenue FROM",
-					"WHERE accountName IN " + selectedAccounts, from, to);
+					"WHERE accountName IN " + selectedAccounts,"", from, to);
 			// ps.setString(13, account);
 			// }
 			ResultSet results = ps.executeQuery();
@@ -474,10 +474,15 @@ public class Database extends Observable {
 		// tom + "-" + tod);
 		Map<String, Map<Date, Double>> dataset = new TreeMap<String, Map<Date, Double>>();
 		try {
-			PreparedStatement ps = c
-					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountHidden <= ? AND accountName IN "
-							+ selectedAccounts);
-			ps.setInt(1, showHidden);
+//			PreparedStatement ps = c
+//					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountHidden <= ? AND accountName IN "
+//							+ selectedAccounts);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(to);
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			PreparedStatement ps = selectBetweenDates("SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM", "GROUP BY accName", ") as Future ON Accounts.accountName = Future.accName WHERE accountHidden <= ? AND accountName IN "
+							+ selectedAccounts, cal.getTime(), getNewestTransactionDate());
+			ps.setInt(14, showHidden);
 			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
 			while (accs.next()) {
@@ -486,6 +491,7 @@ public class Database extends Observable {
 				String accountName = accs.getString("accountName");
 				buildDiagramDataset(from, to, dataset, startBalance,
 						accountName, null);
+//				System.out.println("AccountName: " + accountName + " AccountBalance: " + startBalance);
 			}
 			if (includeTotal) {
 				buildDiagramDataset(from, to, dataset, totalStartBalance,
@@ -520,16 +526,16 @@ public class Database extends Observable {
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(to, startBalance);
 		PreparedStatement ps;
-		Date latest = getNewestTransactionDate();
-		latest = latest != null ? latest : new Date();
+//		Date latest = getNewestTransactionDate();
+//		latest = latest != null ? latest : new Date();
 		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
-					"WHERE accountName IN " + consideredAccounts, from, latest);
+					"WHERE accountName IN " + consideredAccounts,"", from, to);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
-					"WHERE accountName = ?", from, latest);
+					"WHERE accountName = ?","", from, to);
 			ps.setString(14, accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
@@ -540,19 +546,19 @@ public class Database extends Observable {
 		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
-					"WHERE accountName IN " + consideredAccounts, from, to);
+					"WHERE accountName IN " + consideredAccounts,"", from, to);
 		} else {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
-					"WHERE accountName = ?", from, to);
+					"WHERE accountName = ?","", from, to);
 			ps.setString(14, accountName);
 		}
 		transactions = ps.executeQuery();
 		while (transactions.next()) {
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = GUI.getFlattenCalendar(null);
 			cal.set(transactions.getInt("transactionYear"),
 					transactions.getInt("transactionMonth") - 1,
-					transactions.getInt("transactionDay"), 0, 0, 0);
+					transactions.getInt("transactionDay"));
 			startBalance += transactions.getDouble("transactionAmount");
 			datapoints.put(cal.getTime(), startBalance);
 		}
@@ -560,7 +566,7 @@ public class Database extends Observable {
 	}
 
 	private PreparedStatement selectBetweenDates(String sqlSelect,
-			String sqlWhere, Date from, Date to) throws SQLException {
+			String sqlWhere,String sqlEnd, Date from, Date to) throws SQLException {
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
@@ -583,7 +589,7 @@ public class Database extends Observable {
 						+ sqlDays
 						+ " "
 						+ sqlWhere
-						+ "ORDER BY transactionYear ASC,transactionMonth ASC,transactionDay ASC,transactionID ASC");
+						+ " ORDER BY transactionYear ASC,transactionMonth ASC,transactionDay ASC,transactionID ASC " + sqlEnd);
 		ps.setInt(1, showHidden);
 		ps.setString(2, toy);
 		ps.setString(3, foy);
@@ -1104,7 +1110,7 @@ public class Database extends Observable {
 		}
 		PreparedStatement ps;
 		try {
-			ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM", sqlWhere, fromDate, toDate);
+			ps = selectBetweenDates("SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM", sqlWhere,"", fromDate, toDate);
 			if ( doID ){
 				ps.setLong(idIndex,transactionId);				
 			}

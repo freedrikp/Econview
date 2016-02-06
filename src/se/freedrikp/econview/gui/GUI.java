@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -146,6 +148,18 @@ public class GUI extends JFrame implements Observer {
 			result = Double.parseDouble(amount);
 		}
 		return result;
+	}
+	
+	public static Calendar getFlattenCalendar(Date date){
+		Calendar cal = Calendar.getInstance();
+		if (date != null){
+			cal.setTime(date);
+		}
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
+		return cal;
 	}
 
 	public static class Model extends DefaultTableModel {
