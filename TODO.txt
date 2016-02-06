@@ -1,5 +1,4 @@
 === TODO ===
-*Implement functionality for future transactions.
 *Improve selectBetweenDates when either date is null to become faster.
 *Separate GUI parts from Security.
 *Search accounts and stored transactions.
@@ -14,6 +13,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Improved parameter indices for selectBetweenDates. ---- v2.7
+
+*Implement functionality for future transactions. ---- v2.7
+
 *If key is not in Language map it is added with "<unknown>" as value. ---- v2.7
 
 *Add stored transactions in transaction dialog. ---- v2.7
