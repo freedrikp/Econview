@@ -234,11 +234,9 @@ public abstract class TransactionDialog extends DatabaseDialog {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					oldBalance = NumberFormat.getCurrencyInstance().format(
 							GUI.parseAmount(amountField.getText()));
-					Calendar cal = getCorrectCal();
-					cal.add(Calendar.DAY_OF_MONTH, 1);
 					double balance = GUI.parseAmount(oldBalance)
 							- db.getAccountBalance((String) accountField
-									.getSelectedItem(),cal.getTime());
+									.getSelectedItem(),getCorrectCal().getTime());
 					amountField.setText(NumberFormat.getCurrencyInstance()
 							.format(balance));
 				} else {

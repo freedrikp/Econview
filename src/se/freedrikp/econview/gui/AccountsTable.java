@@ -31,9 +31,7 @@ public class AccountsTable extends JTable{
 	
 	public void updateAccountList() {
 		Model m = new Model(accountHeader, 0);
-		Calendar cal = Common.getFlattenCalendar(null);
-		cal.add(Calendar.DAY_OF_MONTH, 1);
-		for (Object[] row : db.getAccounts(cal.getTime())) {
+		for (Object[] row : db.getAccounts(Common.getFlattenCalendar(null).getTime())) {
 			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
 			m.addRow(row);
 		}

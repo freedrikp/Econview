@@ -149,7 +149,6 @@ public class AccountsTab extends JPanel implements Observer {
 	public void update(Observable o, Object arg) {
 		accountsTable.updateAccountList();
 		Calendar cal = Common.getFlattenCalendar(null);
-		cal.add(Calendar.DAY_OF_MONTH,1);
 		totalVisibleBalanceLabel.setText(NumberFormat.getCurrencyInstance()
 				.format(db.getVisibleAccountBalanceSum(cal.getTime())));
 		totalBalanceLabel.setText(NumberFormat.getCurrencyInstance().format(
