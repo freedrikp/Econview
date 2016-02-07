@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.frames;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
@@ -19,8 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Security;
-import se.freedrikp.econview.gui.GUI.Model;
+import se.freedrikp.econview.gui.frames.MainFrame.Model;
 
 public class ManageUsersFrame extends JFrame implements Observer {
 	private static final String[] userHeader = {
@@ -135,7 +137,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 			m.addRow(row);
 		}
 		userTable.setModel(m);
-		GUI.resizeTable(userTable);
+		MainFrame.resizeTable(userTable);
 	}
 
 }

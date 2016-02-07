@@ -4,14 +4,14 @@ import javax.swing.JMenuBar;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
-import se.freedrikp.econview.gui.GUI;
+import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class MenuBar extends JMenuBar {
 
 	private Database db;
 	private Security sec;
 
-	public MenuBar(final Database db, final Security sec, GUI gui) {
+	public MenuBar(final Database db, final Security sec, MainFrame gui) {
 		super();
 		this.db = db;
 		this.sec = sec;

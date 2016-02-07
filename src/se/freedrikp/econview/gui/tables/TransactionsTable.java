@@ -1,40 +1,41 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.tables;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableRowSorter;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.GUI.Model;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
+import se.freedrikp.econview.gui.frames.MainFrame;
+import se.freedrikp.econview.gui.frames.MainFrame.Model;
 
 public class TransactionsTable extends JTable {
 	private static final String[] transactionHeader = {
-		Language.getString("TRANSACTION_HEADER_ID"),
-		Language.getString("TRANSACTION_HEADER_ACCOUNT"),
-		Language.getString("TRANSACTION_HEADER_AMOUNT"),
-		Language.getString("TRANSACTION_HEADER_DATE"),
-		Language.getString("TRANSACTION_HEADER_COMMENT") };
+			Language.getString("TRANSACTION_HEADER_ID"),
+			Language.getString("TRANSACTION_HEADER_ACCOUNT"),
+			Language.getString("TRANSACTION_HEADER_AMOUNT"),
+			Language.getString("TRANSACTION_HEADER_DATE"),
+			Language.getString("TRANSACTION_HEADER_COMMENT") };
 	private Database db;
 	private SimpleDateFormat dateFormat;
-	
-	public TransactionsTable(final Database db){
+
+	public TransactionsTable(final Database db) {
 		super();
 		this.db = db;
 		dateFormat = new SimpleDateFormat(
 				Configuration.getString("FULL_DATE_FORMAT"));
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (e.getClickCount() == 2
@@ -42,7 +43,8 @@ public class TransactionsTable extends JTable {
 					int selection = getSelectedRow();
 					if (selection >= 0) {
 						String account = (String) getSelectedColumn(1);
-						double amount = GUI.parseAmount((String) getSelectedColumn(2));
+						double amount = MainFrame
+								.parseAmount((String) getSelectedColumn(2));
 						String comment = (String) getSelectedColumn(4);
 						new StoredTransactionDialog(db)
 								.showAddDialog(new Object[] { account, amount,
@@ -54,8 +56,11 @@ public class TransactionsTable extends JTable {
 					if (selection >= 0) {
 						String comment = (String) getSelectedColumn(4);
 						try {
-							List<Object[]> transactions = db.getMultiTransactions(
-									dateFormat.parse((String) getSelectedColumn(3)), comment);
+							List<Object[]> transactions = db
+									.getMultiTransactions(
+											dateFormat
+													.parse((String) getSelectedColumn(3)),
+											comment);
 							Object[] transaction = new Object[transactions
 									.size() * 2 + 1];
 							int i = 0;
@@ -74,13 +79,12 @@ public class TransactionsTable extends JTable {
 			}
 		});
 	}
-	
-	public Object getSelectedColumn(int column){
-		return getModel()
-		.getValueAt(convertRowIndexToModel(getSelectedRow()),
+
+	public Object getSelectedColumn(int column) {
+		return getModel().getValueAt(convertRowIndexToModel(getSelectedRow()),
 				column);
 	}
-	
+
 	public void updateTransactionList(List<Object[]> data) {
 		Model m = new Model(transactionHeader, 0);
 		for (Object[] row : data) {
@@ -98,10 +102,11 @@ public class TransactionsTable extends JTable {
 		});
 		sorter.setComparator(2, new Comparator<String>() {
 			public int compare(String o1, String o2) {
-				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+				return Double.compare(MainFrame.parseAmount(o1),
+						MainFrame.parseAmount(o2));
 			}
 		});
-		GUI.resizeTable(this);
+		MainFrame.resizeTable(this);
 	}
 
 }

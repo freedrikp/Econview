@@ -9,9 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import se.freedrikp.econview.common.Common;
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
@@ -33,26 +33,26 @@ public class NormalTransactionDialog extends TransactionDialog {
 				.getString("FULL_DATE_FORMAT"));
 		datePanel.add(dateSelector);
 
-//		JButton increaseDate = new JButton("+");
-//		increaseDate.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				Calendar cal = Calendar.getInstance();
-//				cal.setTime(dateSelector.getDate());
-//				cal.add(Calendar.DAY_OF_MONTH, 1);
-//				dateSelector.setDate(cal.getTime());
-//			}
-//		});
-//		JButton decreaseDate = new JButton("-");
-//		decreaseDate.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				Calendar cal = Calendar.getInstance();
-//				cal.setTime(dateSelector.getDate());
-//				cal.add(Calendar.DAY_OF_MONTH, -1);
-//				dateSelector.setDate(cal.getTime());
-//			}
-//		});
-//		datePanel.add(increaseDate);
-//		datePanel.add(decreaseDate);
+		// JButton increaseDate = new JButton("+");
+		// increaseDate.addActionListener(new ActionListener() {
+		// public void actionPerformed(ActionEvent e) {
+		// Calendar cal = Calendar.getInstance();
+		// cal.setTime(dateSelector.getDate());
+		// cal.add(Calendar.DAY_OF_MONTH, 1);
+		// dateSelector.setDate(cal.getTime());
+		// }
+		// });
+		// JButton decreaseDate = new JButton("-");
+		// decreaseDate.addActionListener(new ActionListener() {
+		// public void actionPerformed(ActionEvent e) {
+		// Calendar cal = Calendar.getInstance();
+		// cal.setTime(dateSelector.getDate());
+		// cal.add(Calendar.DAY_OF_MONTH, -1);
+		// dateSelector.setDate(cal.getTime());
+		// }
+		// });
+		// datePanel.add(increaseDate);
+		// datePanel.add(decreaseDate);
 		dialogPanel.add(datePanel);
 	}
 
@@ -89,7 +89,7 @@ public class NormalTransactionDialog extends TransactionDialog {
 	protected void removeDatabaseHelper(long id) {
 		db.removeTransaction(id);
 	}
-	
+
 	protected Calendar getCorrectCal() {
 		return Common.getFlattenCalendar(dateSelector.getDate());
 	}

@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.panels;
 
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
@@ -17,7 +17,11 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.gui.frames.MainFrame;
+import se.freedrikp.econview.gui.tables.TransactionsTable;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
@@ -60,7 +64,8 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		accountField = new JTextField();
 		add(accountField);
 		accountField.getDocument().addDocumentListener(listener);
-		accountBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		accountBox = new JCheckBox(
+				Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(accountBox);
 		accountBox.addItemListener(listener);
 
@@ -68,7 +73,8 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		amountField = new JTextField();
 		add(amountField);
 		amountField.getDocument().addDocumentListener(listener);
-		amountBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		amountBox = new JCheckBox(
+				Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(amountBox);
 		amountBox.addItemListener(listener);
 
@@ -80,7 +86,8 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		add(fromDateChooser);
 		((JSpinner) (fromDateChooser.getDateEditor().getUiComponent()))
 				.addChangeListener(listener);
-		fromDateBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		fromDateBox = new JCheckBox(
+				Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(fromDateBox);
 		fromDateBox.addItemListener(listener);
 
@@ -92,7 +99,8 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		add(toDateChooser);
 		((JSpinner) (toDateChooser.getDateEditor().getUiComponent()))
 				.addChangeListener(listener);
-		toDateBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		toDateBox = new JCheckBox(
+				Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(toDateBox);
 		toDateBox.addItemListener(listener);
 
@@ -100,7 +108,8 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		commentField = new JTextField();
 		add(commentField);
 		commentField.getDocument().addDocumentListener(listener);
-		commentBox = new JCheckBox(Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
+		commentBox = new JCheckBox(
+				Language.getString("SEARCH_INCLUDE_IN_SEARCH"));
 		add(commentBox);
 		commentBox.addItemListener(listener);
 
@@ -130,7 +139,7 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		if (amountBox.isSelected()) {
 			doAmount = true;
 			try {
-				amount = GUI.parseAmount(amountField.getText());
+				amount = MainFrame.parseAmount(amountField.getText());
 			} catch (NumberFormatException e) {
 				doAmount = false;
 			}
@@ -153,10 +162,10 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 		private void checkDocumentSource(JTextField field, DocumentEvent e,
 				JCheckBox box) {
 			if (e.getDocument() == field.getDocument()) {
-				if (e.getDocument().getLength() > 0){
-					box.setSelected(true);					
-				}else{
-					box.setSelected(false);					
+				if (e.getDocument().getLength() > 0) {
+					box.setSelected(true);
+				} else {
+					box.setSelected(false);
 				}
 			}
 		}

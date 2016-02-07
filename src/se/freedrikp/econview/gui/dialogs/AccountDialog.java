@@ -1,7 +1,6 @@
 package se.freedrikp.econview.gui.dialogs;
 
 import java.text.NumberFormat;
-import java.util.Calendar;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -10,9 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import se.freedrikp.econview.common.Common;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class AccountDialog extends DatabaseDialog {
 	private JTextField nameField;
@@ -47,12 +46,14 @@ public class AccountDialog extends DatabaseDialog {
 
 	protected void doAddDatabaseAction() {
 		db.addAccount(nameField.getText(),
-				GUI.parseAmount(balanceField.getText()), hiddenBox.isSelected());
+				MainFrame.parseAmount(balanceField.getText()),
+				hiddenBox.isSelected());
 	}
 
 	protected void doEditDatabaseAction() {
-		db.editAccount(oldName, nameField.getText(),
-				GUI.parseAmount(balanceField.getText()), hiddenBox.isSelected(),Common.getFlattenCalendar(null).getTime());
+		db.editAccount(oldName, nameField.getText(), MainFrame
+				.parseAmount(balanceField.getText()), hiddenBox.isSelected(),
+				Common.getFlattenCalendar(null).getTime());
 	}
 
 	protected void setEditSpecifics(JPanel dialogPanel, Object[] input) {

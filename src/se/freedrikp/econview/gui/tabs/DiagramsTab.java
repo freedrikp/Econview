@@ -34,11 +34,10 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import se.freedrikp.econview.common.Common;
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.AccountSelectorPanel;
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
@@ -119,7 +118,7 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		// diagFromDateField = new JTextField(df.format(new Date()));
 		diagFromDateField = new JDateChooser(new JSpinnerDateEditor());
-		diagFromDateField.setDateFormatString(dateFormat.toPattern()); 
+		diagFromDateField.setDateFormatString(dateFormat.toPattern());
 		diagFromDateField.setDate(new Date());
 		diagFromDateField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
@@ -133,7 +132,7 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		// diagToDateField = new JTextField(df.format(new Date()));
 		diagToDateField = new JDateChooser(new JSpinnerDateEditor());
-		diagToDateField.setDateFormatString(dateFormat.toPattern()); 
+		diagToDateField.setDateFormatString(dateFormat.toPattern());
 		diagToDateField.setDate(new Date());
 		diagToDateField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
@@ -178,7 +177,7 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		Calendar start = Common.getFlattenCalendar(null);
 		Calendar end = Common.getFlattenCalendar(null);
-	
+
 		start.set(Calendar.MONTH, start.getActualMinimum(Calendar.MONTH));
 		start.set(Calendar.DATE, start.getActualMinimum(Calendar.DATE));
 		end.set(Calendar.MONTH, start.getActualMaximum(Calendar.MONTH));
@@ -214,9 +213,10 @@ public class DiagramsTab extends JPanel implements Observer {
 		// generateDiagram(
 		// df.parse(diagFromDateField.getText()),
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
-		
-	
-		generateDiagram(Common.getFlattenCalendar(diagFromDateField.getDate()).getTime(), Common.getFlattenCalendar(diagToDateField.getDate()).getTime(),
+
+		generateDiagram(Common.getFlattenCalendar(diagFromDateField.getDate())
+				.getTime(), Common
+				.getFlattenCalendar(diagToDateField.getDate()).getTime(),
 				Language.getString("CUSTOM_DIAGRAM"), customDiagPanel,
 				CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT,
 				diagAccountsPanel.getSelectedAccounts(),
@@ -266,8 +266,8 @@ public class DiagramsTab extends JPanel implements Observer {
 				Language.getString("DIAGRAM_BALANCE"), collection);
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 		DateAxis daxis = (DateAxis) xyPlot.getDomainAxis();
-		if (from.before(to)){
-			daxis.setRange(from, to);			
+		if (from.before(to)) {
+			daxis.setRange(from, to);
 		}
 		// daxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY,7));
 		NumberAxis naxis = (NumberAxis) xyPlot.getRangeAxis();

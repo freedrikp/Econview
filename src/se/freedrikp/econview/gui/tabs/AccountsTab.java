@@ -19,10 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import se.freedrikp.econview.common.Common;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.AccountsTable;
-import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.AccountDialog;
+import se.freedrikp.econview.gui.tables.AccountsTable;
 
 public class AccountsTab extends JPanel implements Observer {
 
@@ -47,7 +47,7 @@ public class AccountsTab extends JPanel implements Observer {
 		add(accountsPane);
 
 		accountsTable = new AccountsTable(db);
-//		accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// accountsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		// accountsTable.setAutoCreateRowSorter(true);
 		accountsPane.setViewportView(accountsTable);
 
@@ -93,13 +93,10 @@ public class AccountsTab extends JPanel implements Observer {
 		btnRemoveAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRemoveAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (JOptionPane.showConfirmDialog(
-						null,
-						Language.getString("REMOVE_ACCOUNT_PROMPT")
-								+ " -- "
-								+ (String) accountsTable
-										.getSelectedColumn(0), Language
-								.getString("REMOVE_ACCOUNT"),
+				if (JOptionPane.showConfirmDialog(null,
+						Language.getString("REMOVE_ACCOUNT_PROMPT") + " -- "
+								+ (String) accountsTable.getSelectedColumn(0),
+						Language.getString("REMOVE_ACCOUNT"),
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					db.removeAccount((String) accountsTable
 							.getSelectedColumn(0));
@@ -161,7 +158,7 @@ public class AccountsTab extends JPanel implements Observer {
 		totalHiddenBalanceLabelText.setVisible(db.getShowHidden());
 		accountsPane.getVerticalScrollBar().setValue(
 				accountsPane.getVerticalScrollBar().getMaximum());
-//		GUI.resizeTable(accountsTable);
+		// GUI.resizeTable(accountsTable);
 		repaint();
 	}
 }

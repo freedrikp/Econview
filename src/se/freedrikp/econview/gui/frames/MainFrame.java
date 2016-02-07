@@ -1,8 +1,7 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.frames;
 
 import java.awt.Component;
 import java.awt.DisplayMode;
-import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -12,8 +11,6 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,12 +19,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.menubar.MenuBar;
@@ -36,7 +34,7 @@ import se.freedrikp.econview.gui.tabs.DiagramsTab;
 import se.freedrikp.econview.gui.tabs.RevenueTab;
 import se.freedrikp.econview.gui.tabs.TransactionsTab;
 
-public class GUI extends JFrame implements Observer {
+public class MainFrame extends JFrame implements Observer {
 
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
@@ -46,43 +44,9 @@ public class GUI extends JFrame implements Observer {
 	private final int HEIGHT = Configuration.getInt("WINDOW_HEIGHT");
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					boolean secure = Configuration
-							.getBoolean("SECURITY_TRUE_FALSE");
-					GUI frame;
-					if (secure) {
-						Security security = new Security(Configuration
-								.getString("USERS_DATABASE_FILE"));
-						Database db = security.openDatabase(Configuration
-								.getString("DATABASE_FILE"));
-						frame = new GUI(db, security);
-					} else {
-						Database db = new Database(Configuration
-								.getString("DATABASE_FILE"));
-						frame = new GUI(db, null);
-					}
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
-	public GUI(Database db, Security sec) {
+	public MainFrame(Database db, Security sec) {
 		super("EconView");
 		// setResizable(false);
 		// this.dbfile = dbfile;
@@ -135,7 +99,9 @@ public class GUI extends JFrame implements Observer {
 		update(db, null);
 	}
 
-	public static double parseAmount(String amount){//throws NumberFormatException {
+	public static double parseAmount(String amount) {// throws
+														// NumberFormatException
+														// {
 		if (amount == null || amount.isEmpty()) {
 			throw new NumberFormatException();
 		}
@@ -149,7 +115,6 @@ public class GUI extends JFrame implements Observer {
 		}
 		return result;
 	}
-	
 
 	public static class Model extends DefaultTableModel {
 
@@ -208,11 +173,11 @@ public class GUI extends JFrame implements Observer {
 	}
 
 	private static class Window extends WindowAdapter {
-		private GUI gui;
+		private MainFrame gui;
 		private Security sec;
 		private Database db;
 
-		public Window(GUI gui, Database db, Security sec) {
+		public Window(MainFrame gui, Database db, Security sec) {
 			this.gui = gui;
 			this.sec = sec;
 			this.db = db;

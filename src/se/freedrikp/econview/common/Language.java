@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.common;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +61,8 @@ public class Language {
 				"Do you wish to add a new transaction?");
 		lan.put("TRANSACTION_DETAILS", "Transaction Details");
 		lan.put("ADD_TRANSACTION_SET_BALANCE", "Set Account Balance");
-		lan.put("ADD_TRANSACTION_ADD_STORED_TRANSACTION", "Add Stored Transaction");
+		lan.put("ADD_TRANSACTION_ADD_STORED_TRANSACTION",
+				"Add Stored Transaction");
 		lan.put("OLDEST_TRANSACTION_DATE", "Oldest Transaction Date");
 		lan.put("NEWEST_TRANSACTION_DATE", "Newest Transaction Date");
 		lan.put("NUMBER_OF_TRANSACTIONS", "Number Of Transactions");
@@ -136,9 +137,12 @@ public class Language {
 		lan.put("SEARCH_TRANSACTION_TO_DATE", "Date To");
 		lan.put("SEARCH_TRANSACTION_COMMENT", "Comment");
 		lan.put("SEARCH_INCLUDE_IN_SEARCH", "Include Criteria In Search");
-		lan.put("MENUBAR_DELETE_TRANSACTIONS_SEARCH","Delete Transactions Based On Search");
-		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH","Specify search criteria for transactions to be deleted");
-		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW","Review transactions to be deleted");
+		lan.put("MENUBAR_DELETE_TRANSACTIONS_SEARCH",
+				"Delete Transactions Based On Search");
+		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH",
+				"Specify search criteria for transactions to be deleted");
+		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW",
+				"Review transactions to be deleted");
 
 		lang.put(Configuration.getString("LANGUAGE"), lan);
 	}
@@ -152,8 +156,8 @@ public class Language {
 			writeDefaultLanguage();
 		}
 		String string = lang.get(Configuration.getString("LANGUAGE")).get(key);
-		if (string == null){
-			putString(key,"<unknown>");
+		if (string == null) {
+			putString(key, "<unknown>");
 		}
 		return string != null ? string : "<unknown>";
 	}

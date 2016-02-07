@@ -15,11 +15,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.MenuSelectionManager;
 
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.Language;
-import se.freedrikp.econview.gui.StoredTransactionsTable;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
+import se.freedrikp.econview.gui.tables.StoredTransactionsTable;
 
 public class StoredTransactionsMenu extends JMenu implements Observer {
 	private Database db;
@@ -53,13 +53,12 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 
 			public void actionPerformed(ActionEvent e) {
 				JScrollPane transactionsPane = new JScrollPane();
-				StoredTransactionsTable transactionsTable = new StoredTransactionsTable(db);
+				StoredTransactionsTable transactionsTable = new StoredTransactionsTable(
+						db);
 				transactionsTable.updateStoredTransactionsList();
-//				transactionsTable
-//						.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				// transactionsTable
+				// .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				transactionsPane.setViewportView(transactionsTable);
-
-		
 
 				int result = JOptionPane.showConfirmDialog(
 						null,

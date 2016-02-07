@@ -16,8 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 
 public class SettingsMenu extends JMenu {
 
@@ -51,7 +51,7 @@ public class SettingsMenu extends JMenu {
 		scrollPane.setViewportView(panel);
 		Map<String, String> list = configurationNotLanguage ? Configuration
 				.listAllConfigs() : Language.listAllStrings();
-		Map<String,String> temp = new TreeMap<String,String>();
+		Map<String, String> temp = new TreeMap<String, String>();
 		for (Map.Entry<String, String> entry : list.entrySet()) {
 			temp.put(entry.getKey(), entry.getValue());
 		}

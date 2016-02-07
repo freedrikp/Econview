@@ -1,41 +1,28 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
+import se.freedrikp.econview.gui.panels.SearchTransactionsControlPanel;
+import se.freedrikp.econview.gui.tables.TransactionsTable;
 
-import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JSpinnerDateEditor;
-
-public class SearchTransactionsFrame extends JFrame{
+public class SearchTransactionsFrame extends JFrame {
 	private TransactionsTable transactionsTable;
 
 	public SearchTransactionsFrame(final Database db) {
@@ -47,7 +34,8 @@ public class SearchTransactionsFrame extends JFrame{
 
 		transactionsTable = new TransactionsTable(db);
 
-		SearchTransactionsControlPanel controlPanel = new SearchTransactionsControlPanel(db,transactionsTable);
+		SearchTransactionsControlPanel controlPanel = new SearchTransactionsControlPanel(
+				db, transactionsTable);
 		contentPane.add(controlPanel, BorderLayout.NORTH);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -104,7 +92,5 @@ public class SearchTransactionsFrame extends JFrame{
 				width, height);
 		setVisible(true);
 	}
-
-	
 
 }

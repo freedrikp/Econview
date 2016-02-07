@@ -20,12 +20,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.AccountSelectorPanel;
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.Language;
-import se.freedrikp.econview.gui.TransactionsTable;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
+import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
+import se.freedrikp.econview.gui.tables.TransactionsTable;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;

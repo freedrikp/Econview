@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.gui.panels;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -14,6 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
 
 public class AccountSelectorPanel extends JPanel implements Observer,

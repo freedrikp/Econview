@@ -20,9 +20,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Security;
-import se.freedrikp.econview.gui.Language;
-import se.freedrikp.econview.gui.ManageUsersFrame;
+import se.freedrikp.econview.gui.frames.ManageUsersFrame;
 
 public class UsersMenu extends JMenu {
 

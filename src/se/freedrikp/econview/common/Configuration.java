@@ -1,4 +1,4 @@
-package se.freedrikp.econview.gui;
+package se.freedrikp.econview.common;
 
 import java.io.File;
 import java.io.FileNotFoundException;

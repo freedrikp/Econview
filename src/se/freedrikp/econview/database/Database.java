@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -24,8 +23,7 @@ import java.util.TreeMap;
 import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.common.Language;
 
 public class Database extends Observable {
 	private Connection c;
@@ -104,7 +102,7 @@ public class Database extends Observable {
 					"UPDATE Accounts SET accountName=?, accountBalance=? + COALESCE((SELECT SUM(transactionAmount) FROM",
 					"WHERE accountName = ?",
 					"),0) , accountHidden = ? WHERE accountName=?", until,
-					null, false, showHidden,false);
+					null, false, showHidden, false);
 			ps.setString(accountName);
 			ps.setDouble(accountBalance);
 			ps.setString(accountName);
@@ -248,7 +246,7 @@ public class Database extends Observable {
 					"SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance,accountHidden FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM",
 					"GROUP BY accName",
 					") ON accountName = accName WHERE accountHidden <= ? ORDER BY accountName ASC",
-					until, null, false, showHidden,false);
+					until, null, false, showHidden, false);
 			ps.setInt(showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -284,7 +282,7 @@ public class Database extends Observable {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
 					"Where accountName IN " + selectedAccounts, "", fromDate,
-					toDate, true, showHidden,true);
+					toDate, true, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[5];
@@ -328,7 +326,8 @@ public class Database extends Observable {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
-					") GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC",null, until, false, showHidden,true);
+					") GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC",
+					null, until, false, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -352,7 +351,7 @@ public class Database extends Observable {
 					"SELECT transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") GROUP BY transactionYear ORDER BY transactionYear DESC",
-					null, until, false, showHidden,true);
+					null, until, false, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -375,7 +374,7 @@ public class Database extends Observable {
 					"SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC",
-					null, until, false, showHidden,true);
+					null, until, false, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -400,7 +399,7 @@ public class Database extends Observable {
 					"SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC",
-					null, until, false, showHidden,true);
+					null, until, false, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -421,7 +420,7 @@ public class Database extends Observable {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as revenue FROM ", "", "",
-					null, until, false, showHidden,true);
+					null, until, false, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				return results.getDouble("revenue");
@@ -437,8 +436,8 @@ public class Database extends Observable {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT accountName,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
-					"", ") GROUP BY accountName ORDER accountName ASC",
-					null, until, false, showHidden,true);
+					"", ") GROUP BY accountName ORDER accountName ASC", null,
+					until, false, showHidden, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -473,7 +472,7 @@ public class Database extends Observable {
 			ps = selectBetweenDates(
 					"Select SUM(transactionAmount) as revenue FROM",
 					"WHERE accountName IN " + selectedAccounts, "", from, to,
-					true, showHidden,true);
+					true, showHidden, true);
 			// ps.setString(13, account);
 			// }
 			ResultSet results = ps.executeQuery();
@@ -515,8 +514,8 @@ public class Database extends Observable {
 					"SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM",
 					"GROUP BY accName",
 					") as Future ON Accounts.accountName = Future.accName WHERE accountHidden <= ? AND accountName IN "
-							+ selectedAccounts, to,
-					null, true, showHidden,false);
+							+ selectedAccounts, to, null, true, showHidden,
+					false);
 			ps.setInt(showHidden);
 			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
@@ -568,11 +567,12 @@ public class Database extends Observable {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
 					"WHERE accountName IN " + consideredAccounts, "", from, to,
-					false, showHidden,true);
+					false, showHidden, true);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
-					"WHERE accountName = ?", "", from, to, false, showHidden,true);
+					"WHERE accountName = ?", "", from, to, false, showHidden,
+					true);
 			ps.setString(accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
@@ -584,11 +584,12 @@ public class Database extends Observable {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"WHERE accountName IN " + consideredAccounts, "", from, to,
-					true, showHidden,true);
+					true, showHidden, true);
 		} else {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
-					"WHERE accountName = ?", "", from, to, true, showHidden,true);
+					"WHERE accountName = ?", "", from, to, true, showHidden,
+					true);
 			ps.setString(accountName);
 		}
 		transactions = ps.executeQuery();
@@ -617,11 +618,11 @@ public class Database extends Observable {
 		String foy = "";
 		String fom = "";
 		String fod = "";
-		
+
 		String order = ascending ? "ASC" : "DESC";
 		String less = inclusive ? "<" : "<=";
 		String great = inclusive ? ">" : ">=";
-		
+
 		String yearClause = "";
 		String monthClause = "";
 		String dayClause = "";
@@ -808,8 +809,8 @@ public class Database extends Observable {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT SUM(accountBalance) - COALESCE((SELECT SUM(transactionAmount) FROM",
-					"", "),0) as balanceSum FROM Accounts", until,
-					null, false, 1,false);
+					"", "),0) as balanceSum FROM Accounts", until, null, false,
+					1, false);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -826,7 +827,7 @@ public class Database extends Observable {
 					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
 					"WHERE accountHidden = 0",
 					")),0) as balanceSum FROM Accounts WHERE accountHidden = 0",
-					until, null, false, 1,false);
+					until, null, false, 1, false);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -843,7 +844,7 @@ public class Database extends Observable {
 					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
 					"WHERE accountHidden = 1",
 					")),0) as balanceSum FROM Accounts WHERE accountHidden = 1",
-					until, null, false, 1,false);
+					until, null, false, 1, false);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -1281,7 +1282,7 @@ public class Database extends Observable {
 					"SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM",
 					"WHERE accountName = ?",
 					"),0) as accountBalance FROM Accounts WHERE accountName = ?",
-					until, null, false, showHidden,false);
+					until, null, false, showHidden, false);
 			ps.setString(accountName);
 			ps.setString(accountName);
 			ResultSet results = ps.executeQuery();
@@ -1323,7 +1324,7 @@ public class Database extends Observable {
 		try {
 			ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
-					sqlWhere, "", fromDate, toDate, true, showHidden,true);
+					sqlWhere, "", fromDate, toDate, true, showHidden, true);
 			if (doID) {
 				ps.setLong(transactionId);
 			}

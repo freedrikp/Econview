@@ -23,12 +23,12 @@ import javax.swing.JTable;
 import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.common.Common;
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.AccountSelectorPanel;
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.GUI.Model;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.gui.frames.MainFrame;
+import se.freedrikp.econview.gui.frames.MainFrame.Model;
+import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
@@ -168,7 +168,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateFromField = new JTextField(df.format(new Date()));
 		revDateFromField = new JDateChooser(new JSpinnerDateEditor());
-		revDateFromField.setDateFormatString(dateFormat.toPattern()); 
+		revDateFromField.setDateFormatString(dateFormat.toPattern());
 		revDateFromField.setDate(new Date());
 		revDateFromField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
@@ -182,7 +182,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 		// revDateToField = new JTextField(df.format(new Date()));
 		revDateToField = new JDateChooser(new JSpinnerDateEditor());
-		revDateToField.setDateFormatString(dateFormat.toPattern()); 
+		revDateToField.setDateFormatString(dateFormat.toPattern());
 		revDateToField.setDate(new Date());
 		revDateToField.setMaximumSize(new Dimension(Integer
 				.parseInt(Configuration.getString("DATE_FIELD_WIDTH")), Integer
@@ -215,13 +215,13 @@ public class RevenueTab extends JPanel implements Observer {
 
 	public void update(Observable o, Object arg) {
 		updateYearlyRevList();
-		GUI.resizeTable(yearlyRevTable);
+		MainFrame.resizeTable(yearlyRevTable);
 		updateMonthlyRevList();
-		GUI.resizeTable(monthlyRevTable);
+		MainFrame.resizeTable(monthlyRevTable);
 		updateYearlyAccountRevList();
-		GUI.resizeTable(yearlyAccountRevTable);
+		MainFrame.resizeTable(yearlyAccountRevTable);
 		updateMonthlyAccountRevList();
-		GUI.resizeTable(monthlyAccountRevTable);
+		MainFrame.resizeTable(monthlyAccountRevTable);
 		// updateTotalAccountRevList();
 		// GUI.resizeTable(totalAccountRevTable);
 		updateTotalRevLabel();
@@ -232,7 +232,8 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateYearlyRevList() {
 		Model m = new Model(yearlyRevHeader, 0);
-		for (Object[] row : db.getYearlyRevenues(Common.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getYearlyRevenues(Common
+				.getFlattenCalendar(null).getTime())) {
 			row[0] = yearFormat.format(row[0]);
 			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
 			m.addRow(row);
@@ -242,14 +243,16 @@ public class RevenueTab extends JPanel implements Observer {
 		yearlyRevTable.setRowSorter(sorter);
 		sorter.setComparator(1, new Comparator<String>() {
 			public int compare(String o1, String o2) {
-				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+				return Double.compare(MainFrame.parseAmount(o1),
+						MainFrame.parseAmount(o2));
 			}
 		});
 	}
 
 	private void updateYearlyAccountRevList() {
 		Model m = new Model(yearlyAccountRevHeader, 0);
-		for (Object[] row : db.getYearlyAccountRevenues(Common.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getYearlyAccountRevenues(Common
+				.getFlattenCalendar(null).getTime())) {
 			row[0] = yearFormat.format(row[0]);
 			row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
 			m.addRow(row);
@@ -259,7 +262,8 @@ public class RevenueTab extends JPanel implements Observer {
 		yearlyAccountRevTable.setRowSorter(sorter);
 		sorter.setComparator(2, new Comparator<String>() {
 			public int compare(String o1, String o2) {
-				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+				return Double.compare(MainFrame.parseAmount(o1),
+						MainFrame.parseAmount(o2));
 			}
 		});
 	}
@@ -307,7 +311,8 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateMonthlyRevList() {
 		Model m = new Model(monthlyRevHeader, 0);
-		for (Object[] row : db.getMonthlyRevenues(Common.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getMonthlyRevenues(Common.getFlattenCalendar(
+				null).getTime())) {
 			Object[] data = new Object[row.length + 1];
 			data[0] = yearFormat.format(row[0]);
 			data[1] = monthFormat.format(row[0]);
@@ -319,14 +324,16 @@ public class RevenueTab extends JPanel implements Observer {
 		monthlyRevTable.setRowSorter(sorter);
 		sorter.setComparator(2, new Comparator<String>() {
 			public int compare(String o1, String o2) {
-				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+				return Double.compare(MainFrame.parseAmount(o1),
+						MainFrame.parseAmount(o2));
 			}
 		});
 	}
 
 	private void updateMonthlyAccountRevList() {
 		Model m = new Model(monthlyAccountRevHeader, 0);
-		for (Object[] row : db.getMonthlyAccountRevenues(Common.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getMonthlyAccountRevenues(Common
+				.getFlattenCalendar(null).getTime())) {
 			Object[] data = new Object[row.length + 1];
 			data[0] = yearFormat.format(row[0]);
 			data[1] = monthFormat.format(row[0]);
@@ -339,7 +346,8 @@ public class RevenueTab extends JPanel implements Observer {
 		monthlyAccountRevTable.setRowSorter(sorter);
 		sorter.setComparator(3, new Comparator<String>() {
 			public int compare(String o1, String o2) {
-				return Double.compare(GUI.parseAmount(o1), GUI.parseAmount(o2));
+				return Double.compare(MainFrame.parseAmount(o1),
+						MainFrame.parseAmount(o2));
 			}
 		});
 	}

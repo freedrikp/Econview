@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 
 public class Security extends Observable implements Observer {
 	private Connection c;

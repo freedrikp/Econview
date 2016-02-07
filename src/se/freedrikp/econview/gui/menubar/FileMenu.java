@@ -13,16 +13,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.ProgressMonitor;
 
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class FileMenu extends JMenu {
 	private Database db;
 	private Security sec;
 
-	public FileMenu(Database db, Security sec, GUI gui) {
+	public FileMenu(Database db, Security sec, MainFrame gui) {
 		super(Language.getString("MENUBAR_FILE"));
 		this.db = db;
 		this.sec = sec;
@@ -38,9 +38,9 @@ public class FileMenu extends JMenu {
 	}
 
 	private class OpenDatabaseListener implements ActionListener {
-		private GUI gui;
+		private MainFrame gui;
 
-		public OpenDatabaseListener(GUI gui) {
+		public OpenDatabaseListener(MainFrame gui) {
 			this.gui = gui;
 		}
 
@@ -62,9 +62,9 @@ public class FileMenu extends JMenu {
 	}
 
 	private class SaveDatabaseListener implements ActionListener {
-		private GUI gui;
+		private MainFrame gui;
 
-		public SaveDatabaseListener(GUI gui) {
+		public SaveDatabaseListener(MainFrame gui) {
 			this.gui = gui;
 		}
 

@@ -8,7 +8,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,10 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.GUI;
-import se.freedrikp.econview.gui.Language;
+import se.freedrikp.econview.gui.frames.MainFrame;
 
 public abstract class TransactionDialog extends DatabaseDialog {
 
@@ -67,36 +66,38 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 		multiAccountControlPanel.add(addMultiAccountButton);
 		dialogPanel.add(multiAccountControlPanel);
-		
+
 		JPanel storedTransactionsPanel = new JPanel();
 		List<String> storedTransactionNames = db.getStoredTransactionNames();
 		String[] comboBoxNames = new String[storedTransactionNames.size()];
-		for (int i = 0; i < storedTransactionNames.size();i++){
-			comboBoxNames[i]=storedTransactionNames.get(i);
+		for (int i = 0; i < storedTransactionNames.size(); i++) {
+			comboBoxNames[i] = storedTransactionNames.get(i);
 		}
 
 		final JComboBox storedTransactionsBox = new JComboBox(comboBoxNames);
 		storedTransactionsPanel.add(storedTransactionsBox);
 		storedTransactionsBox.setSelectedIndex(-1);
-		
-		JButton addStoredTransaction = new JButton(Language.getString("ADD_TRANSACTION_ADD_STORED_TRANSACTION"));
+
+		JButton addStoredTransaction = new JButton(
+				Language.getString("ADD_TRANSACTION_ADD_STORED_TRANSACTION"));
 		storedTransactionsPanel.add(addStoredTransaction);
 		addStoredTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String transaction = (String)storedTransactionsBox.getSelectedItem();
-				if (transaction != null){
-					for (Object[] trans : db
-							.getStoredTransaction(transaction)) {
-						addMultiAccount((String) trans[1], NumberFormat.getCurrencyInstance().format((double) trans[2]));
+				String transaction = (String) storedTransactionsBox
+						.getSelectedItem();
+				if (transaction != null) {
+					for (Object[] trans : db.getStoredTransaction(transaction)) {
+						addMultiAccount((String) trans[1], NumberFormat
+								.getCurrencyInstance()
+								.format((double) trans[2]));
 						storedTransactionsBox.setSelectedIndex(-1);
-					}					
+					}
 				}
 			}
 		});
-		
-		
+
 		dialogPanel.add(storedTransactionsPanel);
-		
+
 		addDatePanel(dialogPanel);
 
 		commentField = new JTextField("", 15);
@@ -121,8 +122,8 @@ public abstract class TransactionDialog extends DatabaseDialog {
 			addDatabaseHelper(
 					(String) ((JComboBox) multiAccounts.get(i))
 							.getSelectedItem(),
-					GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
-							.getText()), commentField.getText());
+					MainFrame.parseAmount(((JTextField) multiAccounts
+							.get(i + 1)).getText()), commentField.getText());
 		}
 	}
 
@@ -132,12 +133,12 @@ public abstract class TransactionDialog extends DatabaseDialog {
 			if (IDs.containsKey(accountField)) {
 				editDatabaseHelper(IDs.get(accountField),
 						(String) accountField.getSelectedItem(),
-						GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
-								.getText()), commentField.getText());
+						MainFrame.parseAmount(((JTextField) multiAccounts
+								.get(i + 1)).getText()), commentField.getText());
 			} else {
 				addDatabaseHelper((String) accountField.getSelectedItem(),
-						GUI.parseAmount(((JTextField) multiAccounts.get(i + 1))
-								.getText()), commentField.getText());
+						MainFrame.parseAmount(((JTextField) multiAccounts
+								.get(i + 1)).getText()), commentField.getText());
 			}
 		}
 		for (JComponent c : toRemove) {
@@ -233,10 +234,11 @@ public abstract class TransactionDialog extends DatabaseDialog {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					oldBalance = NumberFormat.getCurrencyInstance().format(
-							GUI.parseAmount(amountField.getText()));
-					double balance = GUI.parseAmount(oldBalance)
-							- db.getAccountBalance((String) accountField
-									.getSelectedItem(),getCorrectCal().getTime());
+							MainFrame.parseAmount(amountField.getText()));
+					double balance = MainFrame.parseAmount(oldBalance)
+							- db.getAccountBalance(
+									(String) accountField.getSelectedItem(),
+									getCorrectCal().getTime());
 					amountField.setText(NumberFormat.getCurrencyInstance()
 							.format(balance));
 				} else {
@@ -270,7 +272,7 @@ public abstract class TransactionDialog extends DatabaseDialog {
 
 		return accountField;
 	}
-	
+
 	protected abstract Calendar getCorrectCal();
 
 	// private JDateChooser dateSelector;

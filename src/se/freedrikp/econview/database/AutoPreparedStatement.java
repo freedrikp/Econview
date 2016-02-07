@@ -9,21 +9,22 @@ import java.util.LinkedList;
 public class AutoPreparedStatement {
 	private PreparedStatement ps;
 	private LinkedList<Integer> indices;
-	
-	private AutoPreparedStatement(PreparedStatement ps) throws SQLException{
+
+	private AutoPreparedStatement(PreparedStatement ps) throws SQLException {
 		this.ps = ps;
 		indices = new LinkedList<Integer>();
-		for (int i = 1; i <= ps.getParameterMetaData().getParameterCount(); i++){
+		for (int i = 1; i <= ps.getParameterMetaData().getParameterCount(); i++) {
 			indices.addLast(i);
 		}
 	}
 
-	public static AutoPreparedStatement create(Connection c, String sql) throws SQLException {
+	public static AutoPreparedStatement create(Connection c, String sql)
+			throws SQLException {
 		return new AutoPreparedStatement(c.prepareStatement(sql));
 	}
 
 	public void executeUpdate() throws SQLException {
-		ps.executeUpdate();		
+		ps.executeUpdate();
 	}
 
 	public void setString(String s) throws SQLException {
@@ -37,14 +38,14 @@ public class AutoPreparedStatement {
 	public void setInt(int i) throws SQLException {
 		ps.setInt(indices.removeFirst(), i);
 	}
-	
-	public void setPlacedInt(int index,int i) throws SQLException{
+
+	public void setPlacedInt(int index, int i) throws SQLException {
 		indices.remove(indices.indexOf(index));
-		ps.setInt(index,i);
+		ps.setInt(index, i);
 	}
 
 	public void setLong(long l) throws SQLException {
-		ps.setLong(indices.removeFirst(), l);		
+		ps.setLong(indices.removeFirst(), l);
 	}
 
 	public ResultSet executeQuery() throws SQLException {
