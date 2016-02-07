@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.MenuSelectionManager;
 
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.Language;
@@ -115,7 +116,7 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 						input[multiTransactions.size() * 2 + 1] = new Date();
 						new NormalTransactionDialog(db).showAddDialog(input);
 					}
-
+					MenuSelectionManager.defaultManager().clearSelectedPath();
 				}
 			});
 

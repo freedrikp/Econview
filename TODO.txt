@@ -13,6 +13,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Created wrapper class for PreparedStatement, handles index of paramters. ---- v2.8
+
+*Fixed so StoredTransactionsMenu is closed after click. ---- v2.8
+
 *Implement functionality for future transactions. ---- v2.7
 
 *If key is not in Language map it is added with "<unknown>" as value. ---- v2.7
