@@ -121,7 +121,7 @@ public class Security extends Observable implements Observer {
 
 	public Database openDatabase(String database) throws Exception {
 		if (authenticate()) {
-			String userDB = user + "_" + database;
+			String userDB = Configuration.getString("DATABASE_DIRECTORY")+"/"+user + "_" + database;
 			encDB = new File(userDB);
 			boolean found = false;
 			if (encDB.exists() && encDB.length() > 0) {

@@ -12,6 +12,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Database files are now located in a separate directory. ---- v2.9
+
 *Improve selectBetweenDates when either date is null to become faster. ---- v2.8
 
 *Extracted Common package and class for stuff shared between GUI and Database. Moved getFlattenCalendar to it. ---- v2.8

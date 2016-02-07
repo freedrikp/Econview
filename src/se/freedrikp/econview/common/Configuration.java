@@ -37,6 +37,7 @@ public class Configuration {
 		config.put("SECURITY_TRUE_FALSE", "TRUE");
 		config.put("SEARCH_PANEL_WIDTH", "500");
 		config.put("SEARCH_PANEL_HEIGHT", "500");
+		config.put("DATABASE_DIRECTORY", "data");
 	}
 
 	public static String getString(String key) {

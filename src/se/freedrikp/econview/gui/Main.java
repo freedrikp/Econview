@@ -1,6 +1,7 @@
 package se.freedrikp.econview.gui;
 
 import java.awt.EventQueue;
+import java.io.File;
 
 import javax.swing.UIManager;
 
@@ -25,14 +26,18 @@ public class Main {
 					boolean secure = Configuration
 							.getBoolean("SECURITY_TRUE_FALSE");
 					MainFrame frame;
+					File data = new File(Configuration.getString("DATABASE_DIRECTORY"));
+					if (!data.exists()){
+						data.mkdirs();
+					}
 					if (secure) {
-						Security security = new Security(Configuration
+						Security security = new Security(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 								.getString("USERS_DATABASE_FILE"));
 						Database db = security.openDatabase(Configuration
 								.getString("DATABASE_FILE"));
 						frame = new MainFrame(db, security);
 					} else {
-						Database db = new Database(Configuration
+						Database db = new Database(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 								.getString("DATABASE_FILE"));
 						frame = new MainFrame(db, null);
 					}
