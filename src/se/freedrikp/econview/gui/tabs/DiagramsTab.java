@@ -33,6 +33,7 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountSelectorPanel;
 import se.freedrikp.econview.gui.Configuration;
@@ -175,8 +176,8 @@ public class DiagramsTab extends JPanel implements Observer {
 
 		List<String> accounts = db.getAccountNames();
 
-		Calendar start = GUI.getFlattenCalendar(null);
-		Calendar end = GUI.getFlattenCalendar(null);
+		Calendar start = Common.getFlattenCalendar(null);
+		Calendar end = Common.getFlattenCalendar(null);
 	
 		start.set(Calendar.MONTH, start.getActualMinimum(Calendar.MONTH));
 		start.set(Calendar.DATE, start.getActualMinimum(Calendar.DATE));
@@ -186,8 +187,8 @@ public class DiagramsTab extends JPanel implements Observer {
 				Integer.toString(Calendar.getInstance().get(Calendar.YEAR)),
 				diagramsThisYearPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT, accounts,
 				true);
-		start = GUI.getFlattenCalendar(null);
-		end = GUI.getFlattenCalendar(null);
+		start = Common.getFlattenCalendar(null);
+		end = Common.getFlattenCalendar(null);
 		start.set(Calendar.DATE, start.getActualMinimum(Calendar.DATE));
 		end.set(Calendar.DATE, start.getActualMaximum(Calendar.DATE));
 		generateDiagram(
@@ -197,14 +198,14 @@ public class DiagramsTab extends JPanel implements Observer {
 						Calendar.LONG, Locale.getDefault()),
 				diagramsThisMonthPanel, DIAGRAM_WIDTH, DIAGRAM_HEIGHT,
 				accounts, true);
-		start = GUI.getFlattenCalendar(null);
-		end = GUI.getFlattenCalendar(null);
+		start = Common.getFlattenCalendar(null);
+		end = Common.getFlattenCalendar(null);
 		start.add(Calendar.YEAR, -1);
 		generateDiagram(start.getTime(), end.getTime(),
 				Language.getString("LAST_YEAR"), diagramsLastYearPanel,
 				DIAGRAM_WIDTH, DIAGRAM_HEIGHT, accounts, true);
-		start = GUI.getFlattenCalendar(null);
-		end = GUI.getFlattenCalendar(null);
+		start = Common.getFlattenCalendar(null);
+		end = Common.getFlattenCalendar(null);
 		start.add(Calendar.MONTH, -1);
 		generateDiagram(start.getTime(), end.getTime(),
 				Language.getString("LAST_MONTH"), diagramsLastMonthPanel,
@@ -215,7 +216,7 @@ public class DiagramsTab extends JPanel implements Observer {
 		// df.parse(diagToDateField.getText()),"Custom Diagram",customDiagPanel,400,300);
 		
 	
-		generateDiagram(GUI.getFlattenCalendar(diagFromDateField.getDate()).getTime(), GUI.getFlattenCalendar(diagToDateField.getDate()).getTime(),
+		generateDiagram(Common.getFlattenCalendar(diagFromDateField.getDate()).getTime(), Common.getFlattenCalendar(diagToDateField.getDate()).getTime(),
 				Language.getString("CUSTOM_DIAGRAM"), customDiagPanel,
 				CUSTOM_DIAGRAM_WIDTH, CUSTOM_DIAGRAM_HEIGHT,
 				diagAccountsPanel.getSelectedAccounts(),

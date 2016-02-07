@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
@@ -50,7 +51,7 @@ public class AccountDialog extends DatabaseDialog {
 	}
 
 	protected void doEditDatabaseAction() {
-		Calendar cal = GUI.getFlattenCalendar(null);
+		Calendar cal = Common.getFlattenCalendar(null);
 		cal.add(Calendar.DAY_OF_MONTH,1);
 		db.editAccount(oldName, nameField.getText(),
 				GUI.parseAmount(balanceField.getText()), hiddenBox.isSelected(),cal.getTime());

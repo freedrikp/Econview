@@ -8,9 +8,9 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.Configuration;
-import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
 
 import com.toedter.calendar.JDateChooser;
@@ -91,7 +91,7 @@ public class NormalTransactionDialog extends TransactionDialog {
 	}
 	
 	protected Calendar getCorrectCal() {
-		return GUI.getFlattenCalendar(dateSelector.getDate());
+		return Common.getFlattenCalendar(dateSelector.getDate());
 	}
 
 }

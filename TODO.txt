@@ -13,6 +13,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Extracted Common package and class for stuff shared between GUI and Database. Moved getFlattenCalendar to it. ---- v2.8
+
 *Created wrapper class for PreparedStatement, handles index of paramters. ---- v2.8
 
 *Fixed so StoredTransactionsMenu is closed after click. ---- v2.8

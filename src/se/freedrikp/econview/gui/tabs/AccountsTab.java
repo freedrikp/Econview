@@ -18,9 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountsTable;
-import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
 import se.freedrikp.econview.gui.dialogs.AccountDialog;
 
@@ -148,7 +148,7 @@ public class AccountsTab extends JPanel implements Observer {
 
 	public void update(Observable o, Object arg) {
 		accountsTable.updateAccountList();
-		Calendar cal = GUI.getFlattenCalendar(null);
+		Calendar cal = Common.getFlattenCalendar(null);
 		cal.add(Calendar.DAY_OF_MONTH,1);
 		totalVisibleBalanceLabel.setText(NumberFormat.getCurrencyInstance()
 				.format(db.getVisibleAccountBalanceSum(cal.getTime())));

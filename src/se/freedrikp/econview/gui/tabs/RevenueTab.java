@@ -22,6 +22,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.table.TableRowSorter;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.AccountSelectorPanel;
 import se.freedrikp.econview.gui.Configuration;
@@ -231,7 +232,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateYearlyRevList() {
 		Model m = new Model(yearlyRevHeader, 0);
-		for (Object[] row : db.getYearlyRevenues(GUI.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getYearlyRevenues(Common.getFlattenCalendar(null).getTime())) {
 			row[0] = yearFormat.format(row[0]);
 			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
 			m.addRow(row);
@@ -248,7 +249,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateYearlyAccountRevList() {
 		Model m = new Model(yearlyAccountRevHeader, 0);
-		for (Object[] row : db.getYearlyAccountRevenues(GUI.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getYearlyAccountRevenues(Common.getFlattenCalendar(null).getTime())) {
 			row[0] = yearFormat.format(row[0]);
 			row[2] = NumberFormat.getCurrencyInstance().format(row[2]);
 			m.addRow(row);
@@ -265,7 +266,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateTotalRevLabel() {
 		totalRevLabel.setText(NumberFormat.getCurrencyInstance().format(
-				db.getTotalRevenue(GUI.getFlattenCalendar(null).getTime())));
+				db.getTotalRevenue(Common.getFlattenCalendar(null).getTime())));
 	}
 
 	private void updateCustomRevLabel() {
@@ -306,7 +307,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateMonthlyRevList() {
 		Model m = new Model(monthlyRevHeader, 0);
-		for (Object[] row : db.getMonthlyRevenues(GUI.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getMonthlyRevenues(Common.getFlattenCalendar(null).getTime())) {
 			Object[] data = new Object[row.length + 1];
 			data[0] = yearFormat.format(row[0]);
 			data[1] = monthFormat.format(row[0]);
@@ -325,7 +326,7 @@ public class RevenueTab extends JPanel implements Observer {
 
 	private void updateMonthlyAccountRevList() {
 		Model m = new Model(monthlyAccountRevHeader, 0);
-		for (Object[] row : db.getMonthlyAccountRevenues(GUI.getFlattenCalendar(null).getTime())) {
+		for (Object[] row : db.getMonthlyAccountRevenues(Common.getFlattenCalendar(null).getTime())) {
 			Object[] data = new Object[row.length + 1];
 			data[0] = yearFormat.format(row[0]);
 			data[1] = monthFormat.format(row[0]);

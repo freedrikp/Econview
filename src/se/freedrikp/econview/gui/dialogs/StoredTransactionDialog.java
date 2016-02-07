@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.gui.GUI;
 
 public class StoredTransactionDialog extends TransactionDialog {
 
@@ -41,7 +41,7 @@ public class StoredTransactionDialog extends TransactionDialog {
 	}
 
 	protected Calendar getCorrectCal() {
-		return GUI.getFlattenCalendar(null);
+		return Common.getFlattenCalendar(null);
 	}
 
 }

@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import javax.swing.ProgressMonitor;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.gui.GUI;
 import se.freedrikp.econview.gui.Language;
 
@@ -263,10 +264,10 @@ public class Database extends Observable {
 				row[0] = results.getLong("transactionID");
 				row[1] = results.getString("accountName");
 				row[2] = results.getDouble("transactionAmount");
-				Calendar cal = Calendar.getInstance();
+				Calendar cal = Common.getFlattenCalendar(null);
 				cal.set(results.getInt("transactionYear"),
 						results.getInt("transactionMonth") - 1,
-						results.getInt("transactionDay"), 0, 0, 0);
+						results.getInt("transactionDay"));
 				row[3] = cal.getTime();
 				row[4] = results.getString("transactionComment");
 				list.add(row);
@@ -299,9 +300,9 @@ public class Database extends Observable {
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
-				Calendar cal = Calendar.getInstance();
+				Calendar cal = Common.getFlattenCalendar(null);
 				cal.set(results.getInt("transactionYear"),
-						results.getInt("transactionMonth") - 1, 1, 0, 0, 0);
+						results.getInt("transactionMonth") - 1, 1);
 				row[0] = cal.getTime();
 				row[1] = results.getDouble("revenue");
 				list.add(row);
@@ -319,8 +320,8 @@ public class Database extends Observable {
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
-				Calendar cal = Calendar.getInstance();
-				cal.set(results.getInt("transactionYear"), 0, 1, 0, 0, 0);
+				Calendar cal = Common.getFlattenCalendar(null);
+				cal.set(results.getInt("transactionYear"), 0, 1);
 				row[0] = cal.getTime();
 				row[1] = results.getDouble("revenue");
 				list.add(row);
@@ -338,9 +339,9 @@ public class Database extends Observable {
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
-				Calendar cal = Calendar.getInstance();
+				Calendar cal = Common.getFlattenCalendar(null);
 				cal.set(results.getInt("transactionYear"),
-						results.getInt("transactionMonth") - 1, 1, 0, 0, 0);
+						results.getInt("transactionMonth") - 1, 1);
 				row[0] = cal.getTime();
 				row[1] = results.getString("accountName");
 				row[2] = results.getDouble("revenue");
@@ -359,8 +360,8 @@ public class Database extends Observable {
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
-				Calendar cal = Calendar.getInstance();
-				cal.set(results.getInt("transactionYear"), 0, 1, 0, 0, 0);
+				Calendar cal = Common.getFlattenCalendar(null);
+				cal.set(results.getInt("transactionYear"), 0, 1);
 				row[0] = cal.getTime();
 				row[1] = results.getString("accountName");
 				row[2] = results.getDouble("revenue");
@@ -460,8 +461,7 @@ public class Database extends Observable {
 //			PreparedStatement ps = c
 //					.prepareStatement("Select accountName,accountBalance FROM Accounts WHERE accountHidden <= ? AND accountName IN "
 //							+ selectedAccounts);
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(to);
+			Calendar cal = Common.getFlattenCalendar(to);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 			AutoPreparedStatement ps = selectBetweenDates("SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM", "GROUP BY accName", ") as Future ON Accounts.accountName = Future.accName WHERE accountHidden <= ? AND accountName IN "
 							+ selectedAccounts, cal.getTime(), getNewestTransactionDate(),true,showHidden);
@@ -539,7 +539,7 @@ public class Database extends Observable {
 		transactions = ps.executeQuery();
 		while (transactions.next()) {
 			//Fix this GUI dependency
-			Calendar cal = GUI.getFlattenCalendar(null);
+			Calendar cal = Common.getFlattenCalendar(null);
 			cal.set(transactions.getInt("transactionYear"),
 					transactions.getInt("transactionMonth") - 1,
 					transactions.getInt("transactionDay"));
@@ -862,9 +862,9 @@ public class Database extends Observable {
 			ResultSet result = ps.executeQuery();
 			Date date = null;
 			while (result.next()) {
-				Calendar cal = Calendar.getInstance();
+				Calendar cal = Common.getFlattenCalendar(null);
 				cal.set(result.getInt("year"), result.getInt("month") - 1,
-						result.getInt("day"), 0, 0, 0);
+						result.getInt("day"));
 				date = cal.getTime();
 			}
 			return date;
@@ -1092,10 +1092,10 @@ public class Database extends Observable {
 				row[0] = results.getLong("transactionID");
 				row[1] = results.getString("accountName");
 				row[2] = results.getDouble("transactionAmount");
-				Calendar cal = Calendar.getInstance();
+				Calendar cal = Common.getFlattenCalendar(null);
 				cal.set(results.getInt("transactionYear"),
 						results.getInt("transactionMonth") - 1,
-						results.getInt("transactionDay"), 0, 0, 0);
+						results.getInt("transactionDay"));
 				row[3] = cal.getTime();
 				row[4] = results.getString("transactionComment");
 				list.add(row);

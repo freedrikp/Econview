@@ -8,6 +8,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableRowSorter;
 
+import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.GUI.Model;
 
@@ -30,7 +31,7 @@ public class AccountsTable extends JTable{
 	
 	public void updateAccountList() {
 		Model m = new Model(accountHeader, 0);
-		Calendar cal = GUI.getFlattenCalendar(null);
+		Calendar cal = Common.getFlattenCalendar(null);
 		cal.add(Calendar.DAY_OF_MONTH, 1);
 		for (Object[] row : db.getAccounts(cal.getTime())) {
 			row[1] = NumberFormat.getCurrencyInstance().format(row[1]);
