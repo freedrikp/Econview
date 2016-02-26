@@ -33,7 +33,7 @@ public class Main {
 					if (secure) {
 						Security security = new Security(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 								.getString("USERS_DATABASE_FILE"));
-						Database db = security.openDatabase(Configuration
+						Database db = security.openDatabase(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 								.getString("DATABASE_FILE"));
 						frame = new MainFrame(db, security);
 					} else {

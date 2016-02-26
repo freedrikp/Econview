@@ -188,7 +188,7 @@ public class MainFrame extends JFrame implements Observer {
 				db.close();
 				if (sec != null) {
 					sec.close();
-					Files.delete(new File(Configuration
+					Files.delete(new File(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 							.getString("DATABASE_FILE")).toPath());
 				}
 			} catch (SQLException | IOException e1) {

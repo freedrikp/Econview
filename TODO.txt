@@ -1,7 +1,15 @@
 === TODO ===
++--------------------------------------------------------------------+
+|!!!!!!!!!!!!!REMOVE SPAGHETTI DEPENDENCIES IN SECURITY!!!!!!!       |
+|!!!!!!!!!ADD "data/" PATH TO MAINFRAME WHEN CLOSING WINDOW!!!!!!!!!!|
++--------------------------------------------------------------------+
+*Try to limit dependencies to Language and Configuration from Database and Security
 *Separate GUI parts from Security.
 *Search accounts and stored transactions.
 *Extract class-framework for JTables that interact with the database.
+*Support standing transactions (not clear on how to implement this).
+*Support transfer transactions.
+*Make transactiondialog work better when selecting account, dynamic update on typing.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
