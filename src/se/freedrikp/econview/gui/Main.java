@@ -8,6 +8,7 @@ import javax.swing.UIManager;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.gui.dialogs.AddUserDialog;
 import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class Main {
@@ -33,6 +34,9 @@ public class Main {
 					if (secure) {
 						Security security = new Security(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 								.getString("USERS_DATABASE_FILE"));
+						if (!security.usersExist()){
+							new AddUserDialog(security,true).showDialog();
+						}
 						Database db = security.openDatabase(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
 								.getString("DATABASE_FILE"));
 						frame = new MainFrame(db, security);

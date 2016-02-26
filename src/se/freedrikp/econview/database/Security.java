@@ -71,47 +71,6 @@ public class Security extends Observable implements Observer {
 					+ "password TEXT," + "salt TEXT,"
 					+ "admin INTEGER DEFAULT 0)";
 			c.prepareStatement(sql).executeUpdate();
-
-			JPanel promptPanel = new JPanel();
-			promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
-			promptPanel.add(new JLabel(Language.getString("PROMPT_USERNAME")
-					+ ":"));
-			JTextField userField = new JTextField(15);
-			promptPanel.add(userField);
-			promptPanel.add(new JLabel(Language.getString("PROMPT_PASSWORD")
-					+ ":"));
-			JPasswordField passField = new JPasswordField(15);
-			promptPanel.add(passField);
-			promptPanel.add(new JLabel(Language.getString("PROMPT_PASSWORD")
-					+ ":"));
-			JPasswordField passField2 = new JPasswordField(15);
-			promptPanel.add(passField2);
-			boolean matched = false;
-			while (!matched) {
-				int result = JOptionPane.showConfirmDialog(null, promptPanel,
-						Language.getString("USER_DETAILS_PROMPT"),
-						JOptionPane.OK_CANCEL_OPTION);
-				if (result == JOptionPane.OK_OPTION) {
-					if (!Arrays.equals(passField.getPassword(),
-							passField2.getPassword())) {
-						JOptionPane.showMessageDialog(null,
-								Language.getString("PASSWORDS_NOT_MATCH"),
-								Language.getString("PASSWORD_ERROR"),
-								JOptionPane.ERROR_MESSAGE);
-
-					} else {
-						addUser(userField.getText(),
-								new String(passField.getPassword()), true);
-						matched = true;
-					}
-				} else {
-					String user = "admin";
-					String password = "1234";
-					addUser(user, password, true);
-					matched = true;
-				}
-			}
-
 			c.commit();
 			c.setAutoCommit(true);
 		} catch (SQLException e) {
@@ -433,5 +392,19 @@ public class Security extends Observable implements Observer {
 			e.printStackTrace();
 		}
 		c.close();
+	}
+	
+	public boolean usersExist() {
+		try {
+			String sql = "SELECT COUNT(username) as num FROM Users";
+			ResultSet nbrUsers = c.prepareStatement(sql).executeQuery();
+			if (nbrUsers.next()){
+				int num = nbrUsers.getInt("num");
+				return num > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

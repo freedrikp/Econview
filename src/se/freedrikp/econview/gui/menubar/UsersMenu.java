@@ -17,11 +17,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.gui.dialogs.AddUserDialog;
 import se.freedrikp.econview.gui.frames.ManageUsersFrame;
 
 public class UsersMenu extends JMenu {
@@ -34,47 +34,7 @@ public class UsersMenu extends JMenu {
 		add(addUser);
 		addUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JPanel promptPanel = new JPanel();
-				promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
-				promptPanel.add(new JLabel(Language
-						.getString("PROMPT_USERNAME") + ":"));
-				JTextField userField = new JTextField(15);
-				promptPanel.add(userField);
-				promptPanel.add(new JLabel(Language
-						.getString("PROMPT_PASSWORD") + ":"));
-				JPasswordField passField = new JPasswordField(15);
-				promptPanel.add(passField);
-				promptPanel.add(new JLabel(Language
-						.getString("PROMPT_PASSWORD") + ":"));
-				JPasswordField passField2 = new JPasswordField(15);
-				promptPanel.add(passField2);
-				boolean matched = false;
-				while (!matched) {
-					int result = JOptionPane.showConfirmDialog(null,
-							promptPanel,
-							Language.getString("USER_DETAILS_PROMPT"),
-							JOptionPane.OK_CANCEL_OPTION);
-					if (result == JOptionPane.OK_OPTION) {
-						if (!Arrays.equals(passField.getPassword(),
-								passField2.getPassword())) {
-							JOptionPane.showMessageDialog(null,
-									Language.getString("PASSWORDS_NOT_MATCH"),
-									Language.getString("PASSWORD_ERROR"),
-									JOptionPane.ERROR_MESSAGE);
-						} else {
-							if (!sec.addUser(userField.getText(), new String(
-									passField.getPassword()), false)) {
-								JOptionPane.showMessageDialog(null,
-										Language.getString("USER_EXISTS"),
-										Language.getString("USER_ERROR"),
-										JOptionPane.ERROR_MESSAGE);
-							}
-							matched = true;
-						}
-					} else {
-						matched = true;
-					}
-				}
+				new AddUserDialog(sec,false).showDialog();
 			}
 		});
 		JMenuItem changePassword = new JMenuItem(

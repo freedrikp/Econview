@@ -1,7 +1,6 @@
 === TODO ===
 +--------------------------------------------------------------------+
 |!!!!!!!!!!!!!REMOVE SPAGHETTI DEPENDENCIES IN SECURITY!!!!!!!       |
-|!!!!!!!!!ADD "data/" PATH TO MAINFRAME WHEN CLOSING WINDOW!!!!!!!!!!|
 +--------------------------------------------------------------------+
 *Try to limit dependencies to Language and Configuration from Database and Security
 *Separate GUI parts from Security.
@@ -20,13 +19,15 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Created a class AddUserDialog and remove that functionlatiy from Security. ---- 2.9
+
 *Database files are now located in a separate directory. ---- v2.9
 
 *Improve selectBetweenDates when either date is null to become faster. ---- v2.8
 
 *Extracted Common package and class for stuff shared between GUI and Database. Moved getFlattenCalendar to it. ---- v2.8
 
-*Created wrapper class for PreparedStatement, handles index of paramters. ---- v2.8
+*Created wrapper class for PreparedStatement, handles index of parameters. ---- v2.8
 
 *Fixed so StoredTransactionsMenu is closed after click. ---- v2.8
 
