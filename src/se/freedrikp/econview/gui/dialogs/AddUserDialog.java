@@ -15,31 +15,30 @@ import se.freedrikp.econview.database.Security;
 public class AddUserDialog {
 	private Security sec;
 	private boolean firstUser;
-	
-	public AddUserDialog(Security sec,boolean firstUser){
-		this.sec = sec;		
+
+	public AddUserDialog(Security sec, boolean firstUser) {
+		this.sec = sec;
 		this.firstUser = firstUser;
 	}
-	
-	public void showDialog(){
+
+	public void showDialog() {
 		JPanel promptPanel = new JPanel();
 		promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
-		promptPanel.add(new JLabel(Language
-				.getString("PROMPT_USERNAME") + ":"));
+		promptPanel
+				.add(new JLabel(Language.getString("PROMPT_USERNAME") + ":"));
 		JTextField userField = new JTextField(15);
 		promptPanel.add(userField);
-		promptPanel.add(new JLabel(Language
-				.getString("PROMPT_PASSWORD") + ":"));
+		promptPanel
+				.add(new JLabel(Language.getString("PROMPT_PASSWORD") + ":"));
 		JPasswordField passField = new JPasswordField(15);
 		promptPanel.add(passField);
-		promptPanel.add(new JLabel(Language
-				.getString("PROMPT_PASSWORD") + ":"));
+		promptPanel
+				.add(new JLabel(Language.getString("PROMPT_PASSWORD") + ":"));
 		JPasswordField passField2 = new JPasswordField(15);
 		promptPanel.add(passField2);
 		boolean matched = false;
 		while (!matched) {
-			int result = JOptionPane.showConfirmDialog(null,
-					promptPanel,
+			int result = JOptionPane.showConfirmDialog(null, promptPanel,
 					Language.getString("USER_DETAILS_PROMPT"),
 					JOptionPane.OK_CANCEL_OPTION);
 			if (result == JOptionPane.OK_OPTION) {
@@ -50,8 +49,8 @@ public class AddUserDialog {
 							Language.getString("PASSWORD_ERROR"),
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					if (!sec.addUser(userField.getText(), new String(
-							passField.getPassword()), firstUser)) {
+					if (!sec.addUser(userField.getText(),
+							new String(passField.getPassword()), firstUser)) {
 						JOptionPane.showMessageDialog(null,
 								Language.getString("USER_EXISTS"),
 								Language.getString("USER_ERROR"),
@@ -60,7 +59,7 @@ public class AddUserDialog {
 					matched = true;
 				}
 			} else {
-				if (firstUser){
+				if (firstUser) {
 					String user = "admin";
 					String password = "1234";
 					sec.addUser(user, password, firstUser);

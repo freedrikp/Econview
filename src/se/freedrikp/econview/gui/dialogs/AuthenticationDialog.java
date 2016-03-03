@@ -13,21 +13,20 @@ import se.freedrikp.econview.common.Language;
 public class AuthenticationDialog {
 	private String username;
 	private String password;
-	
-	public AuthenticationDialog(){
-		
+
+	public AuthenticationDialog() {
+
 	}
-	
-	public String getUsername(){
+
+	public String getUsername() {
 		return username;
 	}
-	
-	public String getPassword(){
+
+	public String getPassword() {
 		return password;
 	}
 
-	
-	public boolean showDialog(){
+	public boolean showDialog() {
 		JPanel promptPanel = new JPanel();
 		promptPanel.setLayout(new GridLayout(2, 2, 0, 0));
 		promptPanel
@@ -48,13 +47,13 @@ public class AuthenticationDialog {
 		}
 		return false;
 	}
-	
-	public void showFailedDialog(boolean exit){
+
+	public void showFailedDialog(boolean exit) {
 		JOptionPane.showMessageDialog(null,
-		Language.getString("PROMPT_ACCESS_DENIED"),
-		Language.getString("USER_DETAILS_PROMPT"),
-		JOptionPane.WARNING_MESSAGE);
-		if (exit){
+				Language.getString("PROMPT_ACCESS_DENIED"),
+				Language.getString("USER_DETAILS_PROMPT"),
+				JOptionPane.WARNING_MESSAGE);
+		if (exit) {
 			System.exit(0);
 		}
 	}

@@ -1,6 +1,5 @@
 package se.freedrikp.econview.database;
 
-import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,14 +25,6 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
-import se.freedrikp.econview.common.Configuration;
-import se.freedrikp.econview.common.Language;
 
 public class Security extends Observable implements Observer {
 	private Connection c;
@@ -79,15 +70,17 @@ public class Security extends Observable implements Observer {
 		}
 	}
 
-	public Database openDatabase(String database, String username, String password) throws Exception {
-		if (checkUser(username,password)) {
+	public Database openDatabase(String database, String username,
+			String password) throws Exception {
+		if (checkUser(username, password)) {
 			tempDBFile = database;
 			String userDB;
 			int indexOfPoint = database.lastIndexOf('.');
-			if (indexOfPoint >= 0){
-				userDB = database.substring(0, indexOfPoint) + "_" + user + database.substring(indexOfPoint, database.length());
-			}else{
-				userDB = database  + "_" + user;				
+			if (indexOfPoint >= 0) {
+				userDB = database.substring(0, indexOfPoint) + "_" + user
+						+ database.substring(indexOfPoint, database.length());
+			} else {
+				userDB = database + "_" + user;
 			}
 			encDB = new File(userDB);
 			boolean found = false;
@@ -169,9 +162,10 @@ public class Security extends Observable implements Observer {
 		}
 	}
 
-	public boolean openFile(File selectedFile, Database db, String username, String password) {
+	public boolean openFile(File selectedFile, Database db, String username,
+			String password) {
 		try {
-			if (checkUser(username,password)) {
+			if (checkUser(username, password)) {
 				db.close();
 				if (new File(tempDBFile).delete()) {
 					encDB = selectedFile;
@@ -197,7 +191,7 @@ public class Security extends Observable implements Observer {
 
 	public boolean saveFile(File toFile, String username, String password) {
 		try {
-			if (checkUser(username,password)) {
+			if (checkUser(username, password)) {
 				encrypt(toFile, tempDBFile);
 				return true;
 			}
@@ -369,12 +363,12 @@ public class Security extends Observable implements Observer {
 		}
 		c.close();
 	}
-	
+
 	public boolean usersExist() {
 		try {
 			String sql = "SELECT COUNT(username) as num FROM Users";
 			ResultSet nbrUsers = c.prepareStatement(sql).executeQuery();
-			if (nbrUsers.next()){
+			if (nbrUsers.next()) {
 				int num = nbrUsers.getInt("num");
 				return num > 0;
 			}

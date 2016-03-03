@@ -34,7 +34,7 @@ public class UsersMenu extends JMenu {
 		add(addUser);
 		addUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AddUserDialog(sec,false).showDialog();
+				new AddUserDialog(sec, false).showDialog();
 			}
 		});
 		JMenuItem changePassword = new JMenuItem(

@@ -28,29 +28,39 @@ public class Main {
 					boolean secure = Configuration
 							.getBoolean("SECURITY_TRUE_FALSE");
 					MainFrame frame;
-					File data = new File(Configuration.getString("DATABASE_DIRECTORY"));
-					if (!data.exists()){
+					File data = new File(Configuration
+							.getString("DATABASE_DIRECTORY"));
+					if (!data.exists()) {
 						data.mkdirs();
 					}
 					if (secure) {
-						Security security = new Security(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
-								.getString("USERS_DATABASE_FILE"));
-						if (!security.usersExist()){
-							new AddUserDialog(security,true).showDialog();
+						Security security = new Security(Configuration
+								.getString("DATABASE_DIRECTORY")
+								+ "/"
+								+ Configuration
+										.getString("USERS_DATABASE_FILE"));
+						if (!security.usersExist()) {
+							new AddUserDialog(security, true).showDialog();
 						}
 						AuthenticationDialog ad = new AuthenticationDialog();
-						if (!ad.showDialog()){
+						if (!ad.showDialog()) {
 							System.exit(0);
 						}
-						Database db = security.openDatabase(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
-								.getString("DATABASE_FILE"),ad.getUsername(),ad.getPassword());
-						if (db == null){
+						Database db = security.openDatabase(
+								Configuration.getString("DATABASE_DIRECTORY")
+										+ "/"
+										+ Configuration
+												.getString("DATABASE_FILE"),
+								ad.getUsername(), ad.getPassword());
+						if (db == null) {
 							ad.showFailedDialog(true);
 						}
 						frame = new MainFrame(db, security);
 					} else {
-						Database db = new Database(Configuration.getString("DATABASE_DIRECTORY") + "/" + Configuration
-								.getString("DATABASE_FILE"));
+						Database db = new Database(Configuration
+								.getString("DATABASE_DIRECTORY")
+								+ "/"
+								+ Configuration.getString("DATABASE_FILE"));
 						frame = new MainFrame(db, null);
 					}
 					frame.setVisible(true);
