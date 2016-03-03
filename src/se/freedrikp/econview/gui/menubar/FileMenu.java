@@ -16,6 +16,7 @@ import javax.swing.ProgressMonitor;
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.gui.dialogs.AuthenticationDialog;
 import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class FileMenu extends JMenu {
@@ -53,7 +54,12 @@ public class FileMenu extends JMenu {
 			int result = fc.showDialog(gui, text);
 			if (result == JFileChooser.APPROVE_OPTION) {
 				if (sec != null) {
-					sec.openFile(fc.getSelectedFile(), db);
+					AuthenticationDialog ad = new AuthenticationDialog();
+					if (ad.showDialog()){
+						if (!sec.openFile(fc.getSelectedFile(), db,ad.getUsername(),ad.getPassword())){
+							ad.showFailedDialog(false);
+						}
+					}
 				} else {
 					db.openFile(fc.getSelectedFile());
 				}
@@ -78,7 +84,12 @@ public class FileMenu extends JMenu {
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File toFile = fc.getSelectedFile();
 				if (sec != null) {
-					sec.saveFile(toFile);
+					AuthenticationDialog ad = new AuthenticationDialog();
+					if (ad.showDialog()){
+						if (!sec.saveFile(toFile,ad.getUsername(),ad.getPassword())){
+							ad.showFailedDialog(false);
+						}
+					}
 				} else {
 					File fromFile = db.getFile();
 					try {

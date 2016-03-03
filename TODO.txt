@@ -1,9 +1,5 @@
 === TODO ===
-+--------------------------------------------------------------------+
-|!!!!!!!!!!!!!REMOVE SPAGHETTI DEPENDENCIES IN SECURITY!!!!!!!       |
-+--------------------------------------------------------------------+
 *Try to limit dependencies to Language and Configuration from Database and Security
-*Separate GUI parts from Security.
 *Search accounts and stored transactions.
 *Extract class-framework for JTables that interact with the database.
 *Support standing transactions (not clear on how to implement this).
@@ -19,6 +15,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Removed references to Language and Configuration in Security. ---- v2.9
+
+*Separate GUI parts from Security. ---- v2.9
+
 *Created a class AddUserDialog and remove that functionlatiy from Security. ---- 2.9
 
 *Database files are now located in a separate directory. ---- v2.9

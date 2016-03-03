@@ -79,8 +79,8 @@ public class Security extends Observable implements Observer {
 		}
 	}
 
-	public Database openDatabase(String database) throws Exception {
-		if (authenticate()) {
+	public Database openDatabase(String database, String username, String password) throws Exception {
+		if (checkUser(username,password)) {
 			tempDBFile = database;
 			String userDB;
 			int indexOfPoint = database.lastIndexOf('.');
@@ -104,36 +104,7 @@ public class Security extends Observable implements Observer {
 			notifyObservers();
 			return db;
 		}
-		System.exit(0);
 		return null;
-	}
-
-	private boolean authenticate() throws Exception {
-		JPanel promptPanel = new JPanel();
-		promptPanel.setLayout(new GridLayout(2, 2, 0, 0));
-		promptPanel
-				.add(new JLabel(Language.getString("PROMPT_USERNAME") + ":"));
-		JTextField userField = new JTextField(15);
-		promptPanel.add(userField);
-		promptPanel
-				.add(new JLabel(Language.getString("PROMPT_PASSWORD") + ":"));
-		JPasswordField passField = new JPasswordField(15);
-		promptPanel.add(passField);
-		int result = JOptionPane.showConfirmDialog(null, promptPanel,
-				Language.getString("USER_DETAILS_PROMPT"),
-				JOptionPane.OK_CANCEL_OPTION);
-		if (result == JOptionPane.OK_OPTION) {
-			if (checkUser(userField.getText(),
-					new String(passField.getPassword()))) {
-				return true;
-			} else {
-				JOptionPane.showMessageDialog(null,
-						Language.getString("PROMPT_ACCESS_DENIED"),
-						Language.getString("USER_DETAILS_PROMPT"),
-						JOptionPane.WARNING_MESSAGE);
-			}
-		}
-		return false;
 	}
 
 	private boolean checkUser(String username, String password)
@@ -198,9 +169,9 @@ public class Security extends Observable implements Observer {
 		}
 	}
 
-	public void openFile(File selectedFile, Database db) {
+	public boolean openFile(File selectedFile, Database db, String username, String password) {
 		try {
-			if (authenticate()) {
+			if (checkUser(username,password)) {
 				db.close();
 				if (new File(tempDBFile).delete()) {
 					encDB = selectedFile;
@@ -216,20 +187,24 @@ public class Security extends Observable implements Observer {
 					setChanged();
 					notifyObservers();
 				}
+				return true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
-	public void saveFile(File toFile) {
+	public boolean saveFile(File toFile, String username, String password) {
 		try {
-			if (authenticate()) {
+			if (checkUser(username,password)) {
 				encrypt(toFile, tempDBFile);
+				return true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
 	public File getFile() {
