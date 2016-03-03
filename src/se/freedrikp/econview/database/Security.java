@@ -44,11 +44,12 @@ public class Security extends Observable implements Observer {
 	private IvParameterSpec iv;
 	private String user;
 	private File encDB;
-	private String dbfile;
+	private String usersDBFile;
+	private String tempDBFile;
 
 	public Security(String dbfile) {
 		try {
-			this.dbfile = dbfile;
+			this.usersDBFile = dbfile;
 			File db = new File(dbfile);
 			rand = new SecureRandom();
 			digest = MessageDigest.getInstance("SHA-256");
@@ -80,6 +81,7 @@ public class Security extends Observable implements Observer {
 
 	public Database openDatabase(String database) throws Exception {
 		if (authenticate()) {
+			tempDBFile = database;
 			String userDB;
 			int indexOfPoint = database.lastIndexOf('.');
 			if (indexOfPoint >= 0){
@@ -190,7 +192,7 @@ public class Security extends Observable implements Observer {
 
 	public void update(Observable o, Object arg) {
 		try {
-			encrypt(encDB, Configuration.getString("DATABASE_FILE"));
+			encrypt(encDB, tempDBFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -200,17 +202,16 @@ public class Security extends Observable implements Observer {
 		try {
 			if (authenticate()) {
 				db.close();
-				if (new File(Configuration.getString("DATABASE_FILE")).delete()) {
+				if (new File(tempDBFile).delete()) {
 					encDB = selectedFile;
 					boolean found = false;
 					if (encDB.exists() && encDB.length() > 0) {
-						decrypt(encDB, Configuration.getString("DATABASE_FILE"));
+						decrypt(encDB, tempDBFile);
 						found = true;
 					}
-					db.openFile(new File(Configuration
-							.getString("DATABASE_FILE")));
+					db.openFile(new File(tempDBFile));
 					if (!found) {
-						encrypt(encDB, Configuration.getString("DATABASE_FILE"));
+						encrypt(encDB, tempDBFile);
 					}
 					setChanged();
 					notifyObservers();
@@ -224,7 +225,7 @@ public class Security extends Observable implements Observer {
 	public void saveFile(File toFile) {
 		try {
 			if (authenticate()) {
-				encrypt(toFile, Configuration.getString("DATABASE_FILE"));
+				encrypt(toFile, tempDBFile);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -386,7 +387,7 @@ public class Security extends Observable implements Observer {
 	public void close() throws SQLException {
 		try {
 			c.close();
-			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+			c = DriverManager.getConnection("jdbc:sqlite:" + usersDBFile);
 			c.prepareStatement("VACUUM").executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
