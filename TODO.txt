@@ -5,6 +5,7 @@
 *Support standing transactions (not clear on how to implement this).
 *Support transfer transactions.
 *Make transactiondialog work better when selecting account, dynamic update on typing.
+*Instead of showing all details in transactionDialog, only show name of stored transactions with button to edit.
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -15,11 +16,15 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Removed all Language and Configuration dependences from Security. ---- 2.9
+
+*Created a class AuthenticationDialog and removed that functionality from Security. ---- 2.9
+
 *Removed references to Language and Configuration in Security. ---- v2.9
 
 *Separate GUI parts from Security. ---- v2.9
 
-*Created a class AddUserDialog and remove that functionlatiy from Security. ---- 2.9
+*Created a class AddUserDialog and removed that functionality from Security. ---- 2.9
 
 *Database files are now located in a separate directory. ---- v2.9
 
