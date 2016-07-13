@@ -7,6 +7,7 @@
 *Make transactiondialog work better when selecting account, dynamic update on typing.
 *Instead of showing all details in transactionDialog, only show name of stored transactions with button to edit.
 *Instead of Hidden, use categories.
+*Create client/server database. (Server authenticates when opeing a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl)
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
