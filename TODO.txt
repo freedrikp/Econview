@@ -7,7 +7,7 @@
 *Make transactiondialog work better when selecting account, dynamic update on typing.
 *Instead of showing all details in transactionDialog, only show name of stored transactions with button to edit.
 *Instead of Hidden, use categories.
-*Create client/server database. (Server authenticates when opeing a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl)
+*Create client/server database. (Server authenticates when opeing a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl|Extract series of interfaces so that the client database implements both Security and Database.)
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
@@ -210,7 +210,7 @@ Fixed so DateChoosers do not consume space. ---- v1.8
 
 *Add popups to the remove buttons ---- v1.0
 
-*Alter database so one can select if an account is to be considered in transactions/revenues/diagrams 
+*Alter database so one can select if an account is to be considered in transactions/revenues/diagrams
 	---- needs cleanup (maintain consistent "bool" interface with the database) ---- v1.0
 
 *Add Import/Export for database (should be in CSV format) ---- v0.9
