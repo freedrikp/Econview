@@ -25,6 +25,7 @@ import javax.swing.table.TableRowSorter;
 import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.frames.MainFrame;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
@@ -34,7 +35,7 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
 
 public class RevenueTab extends JPanel implements Observer {
-	private SQLiteDatabase db;
+	private Database db;
 
 	private JTable yearlyRevTable;
 

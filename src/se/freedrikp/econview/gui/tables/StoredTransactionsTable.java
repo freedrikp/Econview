@@ -8,7 +8,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteDatabase;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.frames.MainFrame;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
 
@@ -18,9 +18,9 @@ public class StoredTransactionsTable extends JTable {
 			Language.getString("TRANSACTION_HEADER_ACCOUNT"),
 			Language.getString("TRANSACTION_HEADER_AMOUNT"),
 			Language.getString("TRANSACTION_HEADER_COMMENT") };
-	private SQLiteDatabase db;
+	private Database db;
 
-	public StoredTransactionsTable(SQLiteDatabase db) {
+	public StoredTransactionsTable(Database db) {
 		this.db = db;
 		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}

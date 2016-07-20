@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 
 import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteDatabase;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class AccountDialog extends DatabaseDialog {
@@ -19,7 +19,7 @@ public class AccountDialog extends DatabaseDialog {
 	private JCheckBox hiddenBox;
 	private String oldName;
 
-	public AccountDialog(SQLiteDatabase db) {
+	public AccountDialog(Database db) {
 		super(db, Language.getString("ACCOUNT_DETAILS"), Language
 				.getString("ADD_ACCOUNT_CHAIN"));
 	}

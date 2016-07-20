@@ -11,11 +11,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteDatabase;
+import se.freedrikp.econview.database.Database;
 
 public class ImportExportMenu extends JMenu {
 
-	public ImportExportMenu(final SQLiteDatabase db) {
+	public ImportExportMenu(final Database db) {
 		super(Language.getString("MENUBAR_IMPORT_EXPORT"));
 
 		JMenuItem mntmImport = new JMenuItem(

@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
@@ -32,7 +33,7 @@ import com.toedter.calendar.JSpinnerDateEditor;
 
 public class TransactionsTab extends JPanel implements Observer {
 
-	private SQLiteDatabase db;
+	private Database db;
 	private JScrollPane transactionsPane;
 	private TransactionsTable transactionsTable;
 	private JLabel oldestDate;

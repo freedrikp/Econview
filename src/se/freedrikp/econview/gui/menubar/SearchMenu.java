@@ -7,11 +7,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import se.freedrikp.econview.common.Language;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.frames.SearchTransactionsFrame;
 
 public class SearchMenu extends JMenu {
-	private SQLiteDatabase db;
+	private Database db;
 
 	public SearchMenu(final SQLiteDatabase db) {
 		super(Language.getString("MENUBAR_SEARCH"));

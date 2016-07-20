@@ -14,16 +14,16 @@ import javax.swing.JMenuItem;
 import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteDatabase;
-import se.freedrikp.econview.database.SQLiteSecurity;
+import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.dialogs.AuthenticationDialog;
 import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class FileMenu extends JMenu {
-	private SQLiteDatabase db;
-	private SQLiteSecurity sec;
+	private Database db;
+	private Security sec;
 
-	public FileMenu(SQLiteDatabase db, SQLiteSecurity sec, MainFrame gui) {
+	public FileMenu(Database db, Security sec, MainFrame gui) {
 		super(Language.getString("MENUBAR_FILE"));
 		this.db = db;
 		this.sec = sec;

@@ -10,13 +10,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteSecurity;
+import se.freedrikp.econview.database.Security;
 
 public class AddUserDialog {
-	private SQLiteSecurity sec;
+	private Security sec;
 	private boolean firstUser;
 
-	public AddUserDialog(SQLiteSecurity sec, boolean firstUser) {
+	public AddUserDialog(Security sec, boolean firstUser) {
 		this.sec = sec;
 		this.firstUser = firstUser;
 	}

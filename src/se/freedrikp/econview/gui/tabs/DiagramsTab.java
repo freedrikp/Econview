@@ -36,6 +36,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
 
@@ -43,7 +44,7 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
 
 public class DiagramsTab extends JPanel implements Observer {
-	private SQLiteDatabase db;
+	private Database db;
 	private JPanel diagramsLastYearPanel;
 	private JPanel diagramsLastMonthPanel;
 	private JPanel diagramsThisYearPanel;

@@ -24,7 +24,7 @@ import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
 
-public class SQLiteDatabase extends Observable {
+public class SQLiteDatabase extends Observable implements Database {
 	private Connection c;
 	private File dbfile;
 	private int showHidden;

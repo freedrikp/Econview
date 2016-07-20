@@ -19,6 +19,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Extracted interfaces for Database and Security. ---- v2.9
+
 *Renamed Database and Security to prepend with SQLite. ---- v2.9
 
 *Removed all Language and Configuration dependences from Database. ---- v2.9

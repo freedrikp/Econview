@@ -15,11 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import se.freedrikp.econview.common.Language;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 
 public class AccountSelectorPanel extends JPanel implements Observer,
 		ItemListener {
-	private SQLiteDatabase db;
+	private Database db;
 	private boolean startState;
 	private boolean includeTotal;
 	private JCheckBox allAccounts;

@@ -27,7 +27,7 @@ import javax.swing.JTextField;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteDatabase;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.gui.frames.MainFrame;
 
 public abstract class TransactionDialog extends DatabaseDialog {
@@ -39,7 +39,7 @@ public abstract class TransactionDialog extends DatabaseDialog {
 	private Map<JComponent, Long> IDs;
 	private Set<JComponent> toRemove;
 
-	public TransactionDialog(SQLiteDatabase db) {
+	public TransactionDialog(Database db) {
 		super(db, Language.getString("TRANSACTION_DETAILS"), Language
 				.getString("ADD_TRANSACTION_CHAIN"));
 	}

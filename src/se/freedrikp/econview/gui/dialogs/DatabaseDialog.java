@@ -6,17 +6,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import se.freedrikp.econview.database.SQLiteDatabase;
+import se.freedrikp.econview.database.Database;
 
 public abstract class DatabaseDialog {
 
-	protected SQLiteDatabase db;
+	protected Database db;
 	private String title;
 	private String chainQuestion;
 	private JPanel dialogPanel;
 	private boolean addNotEdit;
 
-	public DatabaseDialog(SQLiteDatabase db, String title, String chainQuestion) {
+	public DatabaseDialog(Database db, String title, String chainQuestion) {
 		this.db = db;
 		this.title = title;
 		this.chainQuestion = chainQuestion;

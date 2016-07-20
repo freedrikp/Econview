@@ -26,7 +26,7 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class SQLiteSecurity extends Observable implements Observer {
+public class SQLiteSecurity extends Observable implements Observer, Security {
 	private Connection c;
 	private SecureRandom rand;
 	private MessageDigest digest;
@@ -162,7 +162,7 @@ public class SQLiteSecurity extends Observable implements Observer {
 		}
 	}
 
-	public boolean openFile(File selectedFile, SQLiteDatabase db, String username,
+	public boolean openFile(File selectedFile, Database db, String username,
 			String password) {
 		try {
 			if (checkUser(username, password)) {

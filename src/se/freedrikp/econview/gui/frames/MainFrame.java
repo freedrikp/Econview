@@ -26,8 +26,10 @@ import javax.swing.table.TableColumn;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.database.SQLiteSecurity;
+import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.menubar.MenuBar;
 import se.freedrikp.econview.gui.tabs.AccountsTab;
 import se.freedrikp.econview.gui.tabs.DiagramsTab;
@@ -38,8 +40,8 @@ public class MainFrame extends JFrame implements Observer {
 
 	private JPanel contentPane;
 	// private JLabel revDateLabel;
-	private SQLiteSecurity sec;
-	private SQLiteDatabase db;
+	private Security sec;
+	private Database db;
 	private final int WIDTH = Configuration.getInt("WINDOW_WIDTH");
 	private final int HEIGHT = Configuration.getInt("WINDOW_HEIGHT");
 
@@ -174,10 +176,10 @@ public class MainFrame extends JFrame implements Observer {
 
 	private static class Window extends WindowAdapter {
 		private MainFrame gui;
-		private SQLiteSecurity sec;
-		private SQLiteDatabase db;
+		private Security sec;
+		private Database db;
 
-		public Window(MainFrame gui, SQLiteDatabase db, SQLiteSecurity sec) {
+		public Window(MainFrame gui, Database db, Security sec) {
 			this.gui = gui;
 			this.sec = sec;
 			this.db = db;
