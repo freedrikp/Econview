@@ -26,7 +26,7 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Security extends Observable implements Observer {
+public class SQLiteSecurity extends Observable implements Observer {
 	private Connection c;
 	private SecureRandom rand;
 	private MessageDigest digest;
@@ -38,7 +38,7 @@ public class Security extends Observable implements Observer {
 	private String usersDBFile;
 	private String tempDBFile;
 
-	public Security(String dbfile) {
+	public SQLiteSecurity(String dbfile) {
 		try {
 			this.usersDBFile = dbfile;
 			File db = new File(dbfile);
@@ -70,7 +70,7 @@ public class Security extends Observable implements Observer {
 		}
 	}
 
-	public Database openDatabase(String database, String username,
+	public SQLiteDatabase openDatabase(String database, String username,
 			String password) throws Exception {
 		if (checkUser(username, password)) {
 			tempDBFile = database;
@@ -88,7 +88,7 @@ public class Security extends Observable implements Observer {
 				decrypt(encDB, database);
 				found = true;
 			}
-			Database db = new Database(database);
+			SQLiteDatabase db = new SQLiteDatabase(database);
 			db.addObserver(this);
 			if (!found) {
 				encrypt(encDB, database);
@@ -162,7 +162,7 @@ public class Security extends Observable implements Observer {
 		}
 	}
 
-	public boolean openFile(File selectedFile, Database db, String username,
+	public boolean openFile(File selectedFile, SQLiteDatabase db, String username,
 			String password) {
 		try {
 			if (checkUser(username, password)) {

@@ -9,7 +9,7 @@ import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.frames.MainFrame;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
 
@@ -18,9 +18,9 @@ public class AccountsTable extends JTable {
 			Language.getString("ACCOUNT_HEADER_ACCOUNT"),
 			Language.getString("ACCOUNT_HEADER_BALANCE"),
 			Language.getString("ACCOUNT_HEADER_HIDDEN") };
-	private Database db;
+	private SQLiteDatabase db;
 
-	public AccountsTable(Database db) {
+	public AccountsTable(SQLiteDatabase db) {
 		this.db = db;
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}

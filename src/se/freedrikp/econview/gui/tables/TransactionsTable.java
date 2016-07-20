@@ -14,7 +14,7 @@ import javax.swing.table.TableRowSorter;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 import se.freedrikp.econview.gui.frames.MainFrame;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
@@ -26,10 +26,10 @@ public class TransactionsTable extends JTable {
 			Language.getString("TRANSACTION_HEADER_AMOUNT"),
 			Language.getString("TRANSACTION_HEADER_DATE"),
 			Language.getString("TRANSACTION_HEADER_COMMENT") };
-	private Database db;
+	private SQLiteDatabase db;
 	private SimpleDateFormat dateFormat;
 
-	public TransactionsTable(final Database db) {
+	public TransactionsTable(final SQLiteDatabase db) {
 		super();
 		this.db = db;
 		dateFormat = new SimpleDateFormat(

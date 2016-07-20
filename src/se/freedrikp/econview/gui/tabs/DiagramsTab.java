@@ -36,14 +36,14 @@ import org.jfree.data.time.TimeSeriesCollection;
 import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
 
 public class DiagramsTab extends JPanel implements Observer {
-	private Database db;
+	private SQLiteDatabase db;
 	private JPanel diagramsLastYearPanel;
 	private JPanel diagramsLastMonthPanel;
 	private JPanel diagramsThisYearPanel;
@@ -64,7 +64,7 @@ public class DiagramsTab extends JPanel implements Observer {
 			.getInt("CUSTOM_DIAGRAM_HEIGHT");
 	private final SimpleDateFormat dateFormat;
 
-	public DiagramsTab(final Database db) {
+	public DiagramsTab(final SQLiteDatabase db) {
 		super();
 		this.db = db;
 		db.addObserver(this);

@@ -24,7 +24,7 @@ import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
 
-public class Database extends Observable {
+public class SQLiteDatabase extends Observable {
 	private Connection c;
 	private File dbfile;
 	private int showHidden;
@@ -32,7 +32,7 @@ public class Database extends Observable {
 	// private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 	// "yyyy-MM-dd");
 
-	public Database(String dbfile) {
+	public SQLiteDatabase(String dbfile) {
 		this.dbfile = new File(dbfile);
 		showHidden = 0;
 		try {

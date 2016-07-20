@@ -19,7 +19,7 @@ import javax.swing.event.DocumentListener;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.frames.MainFrame;
 import se.freedrikp.econview.gui.tables.TransactionsTable;
 
@@ -39,10 +39,10 @@ public class SearchTransactionsControlPanel extends JPanel implements Observer {
 	private JCheckBox fromDateBox;
 	private JCheckBox toDateBox;
 	private JCheckBox commentBox;
-	private Database db;
+	private SQLiteDatabase db;
 	private TransactionsTable transactionsTable;
 
-	public SearchTransactionsControlPanel(Database db,
+	public SearchTransactionsControlPanel(SQLiteDatabase db,
 			TransactionsTable transactionsTable) {
 		this.db = db;
 		db.addObserver(this);

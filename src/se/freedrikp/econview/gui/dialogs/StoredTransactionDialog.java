@@ -6,11 +6,11 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import se.freedrikp.econview.common.Common;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 
 public class StoredTransactionDialog extends TransactionDialog {
 
-	public StoredTransactionDialog(Database db) {
+	public StoredTransactionDialog(SQLiteDatabase db) {
 		super(db);
 	}
 

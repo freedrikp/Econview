@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
@@ -20,7 +20,7 @@ public class NormalTransactionDialog extends TransactionDialog {
 
 	private JDateChooser dateSelector;
 
-	public NormalTransactionDialog(Database db) {
+	public NormalTransactionDialog(SQLiteDatabase db) {
 		super(db);
 	}
 

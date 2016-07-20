@@ -13,13 +13,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Database;
+import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.panels.SearchTransactionsControlPanel;
 import se.freedrikp.econview.gui.tables.TransactionsTable;
 
 public class DeleteMenu extends JMenu {
 
-	public DeleteMenu(final Database db) {
+	public DeleteMenu(final SQLiteDatabase db) {
 		super(Language.getString("MENUBAR_DELETE"));
 
 		JMenuItem deleteAccounts = new JMenuItem(

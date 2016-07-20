@@ -21,17 +21,17 @@ import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.database.SQLiteSecurity;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
 
 public class ManageUsersFrame extends JFrame implements Observer {
 	private static final String[] userHeader = {
 			Language.getString("USER_HEADER_USERNAME"),
 			Language.getString("USER_HEADER_ADMIN") };
-	private Security sec;
+	private SQLiteSecurity sec;
 	private JTable userTable;
 
-	public ManageUsersFrame(final Security sec) {
+	public ManageUsersFrame(final SQLiteSecurity sec) {
 		super(Language.getString("MENUBAR_MANAGE_USERS"));
 		JPanel userPanel = new JPanel();
 		userPanel.setLayout(new GridLayout(1, 2, 0, 0));

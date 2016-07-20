@@ -20,13 +20,13 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.Security;
+import se.freedrikp.econview.database.SQLiteSecurity;
 import se.freedrikp.econview.gui.dialogs.AddUserDialog;
 import se.freedrikp.econview.gui.frames.ManageUsersFrame;
 
 public class UsersMenu extends JMenu {
 
-	public UsersMenu(final Security sec) {
+	public UsersMenu(final SQLiteSecurity sec) {
 		super(Language.getString("MENUBAR_USERS"));
 
 		JMenuItem addUser = new JMenuItem(
