@@ -9,6 +9,7 @@
 *Create client/server database. (Server authenticates when opeing a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl|Extract series of interfaces so that the client database implements both Security and Database.)
 *Create MySQL variants of the Database and Security classes
 *Remove all GUI parts from database (Progressmonitor)
+*Improve Configuration parsing with allowed values, example, DIAGRAMS_STYLE[SPLIT,TAB].
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
 
