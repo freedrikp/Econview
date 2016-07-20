@@ -23,7 +23,6 @@ import java.util.TreeMap;
 import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
-import se.freedrikp.econview.common.Language;
 
 public class Database extends Observable {
 	private Connection c;
@@ -486,7 +485,7 @@ public class Database extends Observable {
 	}
 
 	public Map<String, Map<Date, Double>> getCustomDiagramData(Date from,
-			Date to, Collection<String> accounts, boolean includeTotal) {
+			Date to, Collection<String> accounts, boolean includeTotal, String totalAccountName) {
 		String selectedAccounts = "(";
 		int i = 1;
 		for (String a : accounts) {
@@ -524,14 +523,14 @@ public class Database extends Observable {
 				totalStartBalance += startBalance;
 				String accountName = accs.getString("accountName");
 				buildDiagramDataset(from, to, dataset, startBalance,
-						accountName, null);
+						accountName, null,totalAccountName);
 				// System.out.println("AccountName: " + accountName +
 				// " AccountBalance: " + startBalance);
 			}
 			if (includeTotal) {
 				buildDiagramDataset(from, to, dataset, totalStartBalance,
-						Language.getString("TOTAL_ACCOUNT_NAME"),
-						selectedAccounts);
+						totalAccountName,
+						selectedAccounts,totalAccountName);
 				// HashMap<String,Double> total = new HashMap<String,Double>();
 				// for (Map<String,Double> map : dataset.values()){
 				// for (Map.Entry<String, Double> entry : map.entrySet()){
@@ -556,14 +555,14 @@ public class Database extends Observable {
 
 	private void buildDiagramDataset(Date from, Date to,
 			Map<String, Map<Date, Double>> dataset, double startBalance,
-			String accountName, String consideredAccounts) throws SQLException {
+			String accountName, String consideredAccounts,String totalAccountName) throws SQLException {
 		Map<Date, Double> datapoints = new TreeMap<Date, Double>();
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(to, startBalance);
 		AutoPreparedStatement ps;
 		// Date latest = getNewestTransactionDate();
 		// latest = latest != null ? latest : new Date();
-		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
+		if (accountName.equals(totalAccountName)) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
 					"WHERE accountName IN " + consideredAccounts, "", from, to,
@@ -580,7 +579,7 @@ public class Database extends Observable {
 			startBalance -= transactions.getDouble("Amount");
 		}
 		datapoints.put(from, startBalance);
-		if (accountName.equals(Language.getString("TOTAL_ACCOUNT_NAME"))) {
+		if (accountName.equals(totalAccountName)) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"WHERE accountName IN " + consideredAccounts, "", from, to,
@@ -855,7 +854,7 @@ public class Database extends Observable {
 		return 0.;
 	}
 
-	public void exportDatabase(OutputStream out) {
+	public void exportDatabase(OutputStream out,String exportMessage) {
 		PrintWriter pw = new PrintWriter(out);
 		try {
 			AutoPreparedStatement ps = AutoPreparedStatement
@@ -877,7 +876,7 @@ public class Database extends Observable {
 			}
 			pw.println(totalCount);
 			ProgressMonitor pm = new ProgressMonitor(null,
-					Language.getString("EXPORTING_DATABASE"), "", 0, 100);
+					exportMessage, "", 0, 100);
 			final float percent = 100.0f / totalCount;
 			float progress = 0;
 			pm.setMillisToPopup(0);
@@ -917,7 +916,7 @@ public class Database extends Observable {
 		}
 	}
 
-	public void importDatabase(InputStream in) {
+	public void importDatabase(InputStream in,String importMessage) {
 		try {
 			c.setAutoCommit(false);
 			Scanner scan = new Scanner(in);
@@ -925,8 +924,7 @@ public class Database extends Observable {
 			if (scan.hasNextLine()) {
 				totalCount = Long.parseLong(scan.nextLine());
 			}
-			ProgressMonitor pm = new ProgressMonitor(null,
-					Language.getString("IMPORTING_DATABASE"), "", 0, 100);
+			ProgressMonitor pm = new ProgressMonitor(null,importMessage, "", 0, 100);
 			pm.setMillisToPopup(0);
 			pm.setMillisToDecideToPopup(0);
 			final float percent = 100.0f / totalCount;
