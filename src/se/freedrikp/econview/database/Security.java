@@ -39,7 +39,5 @@ public abstract class Security extends Observable {
 	public abstract void close() throws SQLException;
 
 	public abstract boolean usersExist();
-	
-	public abstract void update(Observable o, Object arg);
 
 }

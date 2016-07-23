@@ -76,8 +76,6 @@ public abstract class SQLSecurity extends Security {
 	
 	public abstract Database openNewDatabaseHelper(String database) throws Exception;
 
-	public abstract void update(Observable o, Object arg);
-
 	public boolean openDatabase(String selectedDatabase, Database db, String username,
 			String password) {
 		try {
