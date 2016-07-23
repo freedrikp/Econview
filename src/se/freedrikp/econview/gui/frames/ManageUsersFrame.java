@@ -32,12 +32,12 @@ public class ManageUsersFrame extends JFrame implements Observer {
 	private Security sec;
 	private JTable userTable;
 
-	public ManageUsersFrame(final SQLiteSecurity sec) {
+	public ManageUsersFrame(final Security security) {
 		super(Language.getString("MENUBAR_MANAGE_USERS"));
 		JPanel userPanel = new JPanel();
 		userPanel.setLayout(new GridLayout(1, 2, 0, 0));
-		this.sec = sec;
-		sec.addObserver(this);
+		this.sec = security;
+		security.addObserver(this);
 		userTable = new JTable();
 		userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		userTable.setAutoCreateRowSorter(true);
@@ -57,7 +57,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 						userTable.convertRowIndexToModel(userTable
 								.getSelectedRow()), 0);
 				if (user != null) {
-					sec.setAdmin(user);
+					security.setAdmin(user);
 				}
 			}
 		});
@@ -94,7 +94,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 									JOptionPane.ERROR_MESSAGE);
 							return;
 						}
-						sec.changePasswordAdmin(user,
+						security.changePasswordAdmin(user,
 								new String(passField.getPassword()));
 
 					}
@@ -115,7 +115,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 							Language.getString("REMOVE_USER_PROMPT") + " -- "
 									+ user, Language.getString("REMOVE_USER"),
 							JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-						sec.removeUser(user);
+						security.removeUser(user);
 					}
 				}
 			}
@@ -129,7 +129,7 @@ public class ManageUsersFrame extends JFrame implements Observer {
 				width, height);
 		setContentPane(userPanel);
 		setVisible(true);
-		update(sec, null);
+		update(security, null);
 	}
 
 	public void update(Observable o, Object arg) {

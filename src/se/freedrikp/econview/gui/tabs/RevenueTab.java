@@ -79,7 +79,7 @@ public class RevenueTab extends JPanel implements Observer {
 	private final SimpleDateFormat monthFormat;
 	private final SimpleDateFormat yearFormat;
 
-	public RevenueTab(final SQLiteDatabase db) {
+	public RevenueTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);

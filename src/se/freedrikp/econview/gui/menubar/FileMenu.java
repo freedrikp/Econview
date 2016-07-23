@@ -56,7 +56,7 @@ public class FileMenu extends JMenu {
 				if (sec != null) {
 					AuthenticationDialog ad = new AuthenticationDialog();
 					if (ad.showDialog()) {
-						if (!sec.openFile(fc.getSelectedFile(), db,
+						if (!sec.openDatabase(fc.getSelectedFile().getAbsolutePath(), db,
 								ad.getUsername(), ad.getPassword())) {
 							ad.showFailedDialog(false);
 						}
@@ -87,7 +87,7 @@ public class FileMenu extends JMenu {
 				if (sec != null) {
 					AuthenticationDialog ad = new AuthenticationDialog();
 					if (ad.showDialog()) {
-						if (!sec.saveFile(toFile, ad.getUsername(),
+						if (!sec.saveDatabase(toFile.getAbsolutePath(), ad.getUsername(),
 								ad.getPassword())) {
 							ad.showFailedDialog(false);
 						}

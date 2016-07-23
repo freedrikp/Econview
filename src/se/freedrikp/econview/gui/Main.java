@@ -6,8 +6,10 @@ import java.io.File;
 import javax.swing.UIManager;
 
 import se.freedrikp.econview.common.Configuration;
+import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.database.SQLiteSecurity;
+import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.dialogs.AddUserDialog;
 import se.freedrikp.econview.gui.dialogs.AuthenticationDialog;
 import se.freedrikp.econview.gui.frames.MainFrame;
@@ -34,7 +36,7 @@ public class Main {
 						data.mkdirs();
 					}
 					if (secure) {
-						SQLiteSecurity security = new SQLiteSecurity(Configuration
+						Security security = new SQLiteSecurity(Configuration
 								.getString("DATABASE_DIRECTORY")
 								+ "/"
 								+ Configuration
@@ -46,7 +48,7 @@ public class Main {
 						if (!ad.showDialog()) {
 							System.exit(0);
 						}
-						SQLiteDatabase db = security.openDatabase(
+						Database db = security.openNewDatabase(
 								Configuration.getString("DATABASE_DIRECTORY")
 										+ "/"
 										+ Configuration

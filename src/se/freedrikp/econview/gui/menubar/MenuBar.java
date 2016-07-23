@@ -13,17 +13,17 @@ public class MenuBar extends JMenuBar {
 	private Database db;
 	private Security sec;
 
-	public MenuBar(final SQLiteDatabase db, final SQLiteSecurity sec, MainFrame gui) {
+	public MenuBar(final Database db, final Security security, MainFrame gui) {
 		super();
 		this.db = db;
-		this.sec = sec;
+		this.sec = security;
 
-		add(new FileMenu(db, sec, gui));
+		add(new FileMenu(db, security, gui));
 		add(new ImportExportMenu(db));
 		add(new HiddenMenu(db));
 		add(new SettingsMenu());
-		if (sec != null) {
-			add(new UsersMenu(sec));
+		if (security != null) {
+			add(new UsersMenu(security));
 		}
 		add(new SearchMenu(db));
 		add(new DeleteMenu(db));

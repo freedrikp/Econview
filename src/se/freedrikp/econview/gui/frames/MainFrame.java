@@ -48,19 +48,19 @@ public class MainFrame extends JFrame implements Observer {
 	/**
 	 * Create the frame.
 	 */
-	public MainFrame(SQLiteDatabase db, SQLiteSecurity sec) {
+	public MainFrame(Database db, Security security) {
 		super("EconView");
 		// setResizable(false);
 		// this.dbfile = dbfile;
-		this.sec = sec;
+		this.sec = security;
 		this.db = db;
-		if (sec != null) {
-			sec.addObserver(this);
+		if (security != null) {
+			security.addObserver(this);
 		} else {
 			db.addObserver(this);
 		}
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(new Window(this, db, sec));
+		addWindowListener(new Window(this, db, security));
 		// setBounds(100, 100, 1280, 430);
 		// setBounds(100, 100, 1360, 500);
 		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -68,7 +68,7 @@ public class MainFrame extends JFrame implements Observer {
 		setBounds((dm.getWidth() - WIDTH) / 2, (dm.getHeight() - HEIGHT) / 2,
 				WIDTH, HEIGHT);
 
-		MenuBar menuBar = new MenuBar(db, sec, this);
+		MenuBar menuBar = new MenuBar(db, security, this);
 		setJMenuBar(menuBar);
 
 		contentPane = new JPanel();
@@ -166,7 +166,7 @@ public class MainFrame extends JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		String file;
 		if (sec != null) {
-			file = sec.getFile().getAbsolutePath();
+			file = sec.getDatabase();
 		} else {
 			file = db.getFile().getAbsolutePath();
 		}

@@ -5,20 +5,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
 
-public interface Security {
+public abstract class Security extends Observable {
 
-	public abstract Database openDatabase(String database,
-			String username, String password) throws Exception;
+	public abstract Database openNewDatabase(String database, String username,
+			String password) throws Exception;
 
-	public abstract void update(Observable o, Object arg);
-
-	public abstract boolean openFile(File selectedFile, Database db,
+	public abstract boolean openDatabase(String selectedDatabase, Database db,
 			String username, String password);
 
-	public abstract boolean saveFile(File toFile, String username,
-			String password);
+	public abstract boolean saveDatabase(String destinationDatabase,
+			String username, String password);
 
-	public abstract File getFile();
+	public abstract String getDatabase();
 
 	public abstract boolean addUser(String username, String password,
 			boolean admin);
@@ -41,5 +39,7 @@ public interface Security {
 	public abstract void close() throws SQLException;
 
 	public abstract boolean usersExist();
+	
+	public abstract void update(Observable o, Object arg);
 
 }

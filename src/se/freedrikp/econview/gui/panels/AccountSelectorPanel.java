@@ -27,7 +27,7 @@ public class AccountSelectorPanel extends JPanel implements Observer,
 	private JCheckBox total;
 	private JCheckBox[] accountBoxes;
 
-	public AccountSelectorPanel(SQLiteDatabase db, boolean startState,
+	public AccountSelectorPanel(Database db, boolean startState,
 			boolean includeTotal) {
 		super();
 		this.db = db;

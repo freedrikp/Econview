@@ -36,7 +36,7 @@ public class AccountsTab extends JPanel implements Observer {
 	private JLabel totalBalanceLabelText;
 	private JLabel totalHiddenBalanceLabelText;
 
-	public AccountsTab(final SQLiteDatabase db) {
+	public AccountsTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);

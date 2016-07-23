@@ -21,12 +21,13 @@ import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.SQLiteSecurity;
+import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.dialogs.AddUserDialog;
 import se.freedrikp.econview.gui.frames.ManageUsersFrame;
 
 public class UsersMenu extends JMenu {
 
-	public UsersMenu(final SQLiteSecurity sec) {
+	public UsersMenu(final Security security) {
 		super(Language.getString("MENUBAR_USERS"));
 
 		JMenuItem addUser = new JMenuItem(
@@ -34,7 +35,7 @@ public class UsersMenu extends JMenu {
 		add(addUser);
 		addUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AddUserDialog(sec, false).showDialog();
+				new AddUserDialog(security, false).showDialog();
 			}
 		});
 		JMenuItem changePassword = new JMenuItem(
@@ -46,7 +47,7 @@ public class UsersMenu extends JMenu {
 				promptPanel.setLayout(new GridLayout(4, 2, 0, 0));
 				promptPanel.add(new JLabel(Language
 						.getString("PROMPT_USERNAME") + ":"));
-				promptPanel.add(new JLabel(sec.getUser()));
+				promptPanel.add(new JLabel(security.getUser()));
 				promptPanel.add(new JLabel(Language
 						.getString("PROMPT_OLD_PASSWORD") + ":"));
 				JPasswordField oldPass = new JPasswordField(15);
@@ -72,7 +73,7 @@ public class UsersMenu extends JMenu {
 						return;
 					}
 					final LinkedList<File> files = new LinkedList<File>();
-					files.add(sec.getFile().getAbsoluteFile());
+					files.add(new File(security.getDatabase()).getAbsoluteFile());
 					JPanel filePanel = new JPanel();
 					filePanel.setLayout(new GridLayout(3, 1, 0, 0));
 					final JList fileList = new JList();
@@ -119,7 +120,7 @@ public class UsersMenu extends JMenu {
 						return;
 					}
 
-					if (!sec.changePassword(sec.getUser(),
+					if (!security.changePassword(security.getUser(),
 							new String(oldPass.getPassword()), new String(
 									passField.getPassword()), files)) {
 						JOptionPane.showMessageDialog(null,
@@ -135,8 +136,8 @@ public class UsersMenu extends JMenu {
 		add(manageUsers);
 		manageUsers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (sec.isAdmin()) {
-					new ManageUsersFrame(sec);
+				if (security.isAdmin()) {
+					new ManageUsersFrame(security);
 				}
 			}
 		});

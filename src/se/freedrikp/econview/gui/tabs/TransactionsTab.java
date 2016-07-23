@@ -46,7 +46,7 @@ public class TransactionsTab extends JPanel implements Observer {
 	private JDateChooser fromDateChooser;
 	private AccountSelectorPanel accountSelectorPanel;
 
-	public TransactionsTab(final SQLiteDatabase db) {
+	public TransactionsTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);

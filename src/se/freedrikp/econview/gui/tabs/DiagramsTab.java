@@ -65,7 +65,7 @@ public class DiagramsTab extends JPanel implements Observer {
 			.getInt("CUSTOM_DIAGRAM_HEIGHT");
 	private final SimpleDateFormat dateFormat;
 
-	public DiagramsTab(final SQLiteDatabase db) {
+	public DiagramsTab(final Database db) {
 		super();
 		this.db = db;
 		db.addObserver(this);

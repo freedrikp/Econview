@@ -29,7 +29,7 @@ public class StoredTransactionsMenu extends JMenu implements Observer {
 	private JMenuItem addStoredTransaction;
 	private JMenuItem removeStoredTransaction;
 
-	public StoredTransactionsMenu(final SQLiteDatabase db) {
+	public StoredTransactionsMenu(final Database db) {
 		super(Language.getString("MENUBAR_STORED_TRANSACTIONS"));
 		this.db = db;
 		db.addObserver(this);

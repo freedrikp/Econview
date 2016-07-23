@@ -14,7 +14,7 @@ import se.freedrikp.econview.gui.frames.SearchTransactionsFrame;
 public class SearchMenu extends JMenu {
 	private Database db;
 
-	public SearchMenu(final SQLiteDatabase db) {
+	public SearchMenu(final Database db) {
 		super(Language.getString("MENUBAR_SEARCH"));
 		this.db = db;
 

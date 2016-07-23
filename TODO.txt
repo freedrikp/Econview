@@ -6,7 +6,7 @@
 *Make transactiondialog work better when selecting account, dynamic update on typing.
 *Instead of showing all details in transactionDialog, only show name of stored transactions with button to edit.
 *Instead of Hidden, use categories.
-*Create client/server database. (Server authenticates when opeing a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl|Extract series of interfaces so that the client database implements both Security and Database.)
+*Create client/server database. (Server authenticates when opening a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl|Extract series of interfaces so that the client database implements both Security and Database.)
 *Create MySQL variants of the Database and Security classes
 *Remove all GUI parts from database (Progressmonitor)
 *Improve Configuration parsing with allowed values, example, DIAGRAMS_STYLE[SPLIT,TAB].
@@ -20,6 +20,10 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Created class SQLSecurity and abstracted away all common things from SQLiteSecurity. ---- v2.9
+
+*Added MySQL JDBC. ---- v2.9
+
 *Extracted interfaces for Database and Security. ---- v2.9
 
 *Renamed Database and Security to prepend with SQLite. ---- v2.9

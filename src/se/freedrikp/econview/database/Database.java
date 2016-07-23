@@ -8,8 +8,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
-public interface Database {
+public abstract class Database extends Observable{
 
 	public abstract void initdb();
 
