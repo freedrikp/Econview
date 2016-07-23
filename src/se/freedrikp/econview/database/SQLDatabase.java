@@ -1,16 +1,34 @@
 package se.freedrikp.econview.database;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 
-public abstract class Database extends Observable{
+public abstract class SQLDatabase extends Database{
+	protected Connection c;
+	protected String database;
+	protected int showHidden;
+	
+	public SQLDatabase(String database, String sqlClass, String connectionString) {
+		this.database = database;
+		showHidden = 0;
+		try {
+			Class.forName(sqlClass).newInstance();
+			c = DriverManager.getConnection(connectionString);
+			initdb();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+
+	protected abstract void initdb();
 
 	public abstract void addAccount(String accountName, double accountBalance,
 			boolean accountHidden);
@@ -68,7 +86,9 @@ public abstract class Database extends Observable{
 
 	public abstract void openDatabase(String database);
 
-	public abstract String getDatabase();
+	public String getDatabase() {
+		return database;
+	}
 
 	public abstract void setShowHidden(boolean showHidden);
 

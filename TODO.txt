@@ -20,6 +20,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Created class SQLDatabase and extracted some common things from SQLiteDatabase into it. --- v2.9
+
 *Created class SQLSecurity and abstracted away all common things from SQLiteSecurity. ---- v2.9
 
 *Added MySQL JDBC. ---- v2.9

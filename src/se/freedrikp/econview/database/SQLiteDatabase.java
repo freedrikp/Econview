@@ -24,50 +24,40 @@ import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
 
-public class SQLiteDatabase extends Database {
-	private Connection c;
-	private File dbfile;
-	private int showHidden;
+public class SQLiteDatabase extends SQLDatabase {
 
 	// private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 	// "yyyy-MM-dd");
 
-	public SQLiteDatabase(String dbfile) {
-		this.dbfile = new File(dbfile);
-		showHidden = 0;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-			if (!this.dbfile.exists() || this.dbfile.length() == 0) {
-				initdb();
-			}
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
+	public SQLiteDatabase(String database) {
+		super(database, "org.sqlite.JDBC", "jdbc:sqlite:" + database);
 	}
 
 	public void initdb() {
 		try {
-			c.setAutoCommit(false);
-			String sql = "CREATE TABLE Accounts("
-					+ "accountName TEXT PRIMARY KEY,"
-					+ "accountBalance REAL DEFAULT 0.0,"
-					+ "accountHidden INTEGER DEFAULT '1'" + ")";
-			AutoPreparedStatement.create(c, sql).executeUpdate();
-			sql = "CREATE TABLE Transactions("
-					+ "transactionID INTEGER PRIMARY KEY,"
-					+ "accountName TEXT," + "transactionAmount REAL,"
-					+ "transactionYear TEXT," + "transactionMonth TEXT,"
-					+ "transactionDay TEXT," + "transactionComment TEXT" + ")";
-			AutoPreparedStatement.create(c, sql).executeUpdate();
-			sql = "CREATE TABLE StoredTransactions("
-					+ "transactionID INTEGER PRIMARY KEY,"
-					+ "accountName TEXT," + "transactionAmount REAL,"
-					+ "transactionComment TEXT" + ")";
-			AutoPreparedStatement.create(c, sql).executeUpdate();
-			c.commit();
-			c.setAutoCommit(true);
+			File dbFile = new File(database);
+			if (!dbFile.exists() || dbFile.length() == 0) {
+				c.setAutoCommit(false);
+				String sql = "CREATE TABLE Accounts("
+						+ "accountName TEXT PRIMARY KEY,"
+						+ "accountBalance REAL DEFAULT 0.0,"
+						+ "accountHidden INTEGER DEFAULT '1'" + ")";
+				AutoPreparedStatement.create(c, sql).executeUpdate();
+				sql = "CREATE TABLE Transactions("
+						+ "transactionID INTEGER PRIMARY KEY,"
+						+ "accountName TEXT," + "transactionAmount REAL,"
+						+ "transactionYear TEXT," + "transactionMonth TEXT,"
+						+ "transactionDay TEXT," + "transactionComment TEXT"
+						+ ")";
+				AutoPreparedStatement.create(c, sql).executeUpdate();
+				sql = "CREATE TABLE StoredTransactions("
+						+ "transactionID INTEGER PRIMARY KEY,"
+						+ "accountName TEXT," + "transactionAmount REAL,"
+						+ "transactionComment TEXT" + ")";
+				AutoPreparedStatement.create(c, sql).executeUpdate();
+				c.commit();
+				c.setAutoCommit(true);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -485,7 +475,8 @@ public class SQLiteDatabase extends Database {
 	}
 
 	public Map<String, Map<Date, Double>> getCustomDiagramData(Date from,
-			Date to, Collection<String> accounts, boolean includeTotal, String totalAccountName) {
+			Date to, Collection<String> accounts, boolean includeTotal,
+			String totalAccountName) {
 		String selectedAccounts = "(";
 		int i = 1;
 		for (String a : accounts) {
@@ -523,14 +514,13 @@ public class SQLiteDatabase extends Database {
 				totalStartBalance += startBalance;
 				String accountName = accs.getString("accountName");
 				buildDiagramDataset(from, to, dataset, startBalance,
-						accountName, null,totalAccountName);
+						accountName, null, totalAccountName);
 				// System.out.println("AccountName: " + accountName +
 				// " AccountBalance: " + startBalance);
 			}
 			if (includeTotal) {
 				buildDiagramDataset(from, to, dataset, totalStartBalance,
-						totalAccountName,
-						selectedAccounts,totalAccountName);
+						totalAccountName, selectedAccounts, totalAccountName);
 				// HashMap<String,Double> total = new HashMap<String,Double>();
 				// for (Map<String,Double> map : dataset.values()){
 				// for (Map.Entry<String, Double> entry : map.entrySet()){
@@ -555,7 +545,8 @@ public class SQLiteDatabase extends Database {
 
 	private void buildDiagramDataset(Date from, Date to,
 			Map<String, Map<Date, Double>> dataset, double startBalance,
-			String accountName, String consideredAccounts,String totalAccountName) throws SQLException {
+			String accountName, String consideredAccounts,
+			String totalAccountName) throws SQLException {
 		Map<Date, Double> datapoints = new TreeMap<Date, Double>();
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		datapoints.put(to, startBalance);
@@ -854,7 +845,7 @@ public class SQLiteDatabase extends Database {
 		return 0.;
 	}
 
-	public void exportDatabase(OutputStream out,String exportMessage) {
+	public void exportDatabase(OutputStream out, String exportMessage) {
 		PrintWriter pw = new PrintWriter(out);
 		try {
 			AutoPreparedStatement ps = AutoPreparedStatement
@@ -875,8 +866,8 @@ public class SQLiteDatabase extends Database {
 				}
 			}
 			pw.println(totalCount);
-			ProgressMonitor pm = new ProgressMonitor(null,
-					exportMessage, "", 0, 100);
+			ProgressMonitor pm = new ProgressMonitor(null, exportMessage, "",
+					0, 100);
 			final float percent = 100.0f / totalCount;
 			float progress = 0;
 			pm.setMillisToPopup(0);
@@ -916,7 +907,7 @@ public class SQLiteDatabase extends Database {
 		}
 	}
 
-	public void importDatabase(InputStream in,String importMessage) {
+	public void importDatabase(InputStream in, String importMessage) {
 		try {
 			c.setAutoCommit(false);
 			Scanner scan = new Scanner(in);
@@ -924,7 +915,8 @@ public class SQLiteDatabase extends Database {
 			if (scan.hasNextLine()) {
 				totalCount = Long.parseLong(scan.nextLine());
 			}
-			ProgressMonitor pm = new ProgressMonitor(null,importMessage, "", 0, 100);
+			ProgressMonitor pm = new ProgressMonitor(null, importMessage, "",
+					0, 100);
 			pm.setMillisToPopup(0);
 			pm.setMillisToDecideToPopup(0);
 			final float percent = 100.0f / totalCount;
@@ -966,25 +958,18 @@ public class SQLiteDatabase extends Database {
 		notifyObservers();
 	}
 
-	public void openFile(File dbfile) {
-		this.dbfile = dbfile;
+	public void openDatabase(String database) {
+		this.database = database;
 		try {
 			close();
-			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-			if (!this.dbfile.exists() || this.dbfile.length() == 0) {// !this.dbfile.exists())
-																		// {
-				initdb();
-			}
+			c = DriverManager.getConnection("jdbc:sqlite:" + database);
+			initdb();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
 		setChanged();
 		notifyObservers();
-	}
-
-	public File getFile() {
-		return dbfile;
 	}
 
 	public void setShowHidden(boolean showHidden) {
@@ -1137,7 +1122,7 @@ public class SQLiteDatabase extends Database {
 	public void close() throws SQLException {
 		try {
 			c.close();
-			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+			c = DriverManager.getConnection("jdbc:sqlite:" + database);
 			AutoPreparedStatement.create(c, "VACUUM").executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

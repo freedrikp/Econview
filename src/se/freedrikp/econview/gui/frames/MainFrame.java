@@ -168,7 +168,7 @@ public class MainFrame extends JFrame implements Observer {
 		if (sec != null) {
 			file = sec.getDatabase();
 		} else {
-			file = db.getFile().getAbsolutePath();
+			file = db.getDatabase();
 		}
 		setTitle("EconView - " + file);
 		// repaint();

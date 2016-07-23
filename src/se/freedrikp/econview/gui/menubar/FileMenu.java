@@ -62,7 +62,7 @@ public class FileMenu extends JMenu {
 						}
 					}
 				} else {
-					db.openFile(fc.getSelectedFile());
+					db.openDatabase(fc.getSelectedFile().getAbsolutePath());
 				}
 			}
 		}
@@ -93,7 +93,7 @@ public class FileMenu extends JMenu {
 						}
 					}
 				} else {
-					File fromFile = db.getFile();
+					File fromFile = new File(db.getDatabase());
 					try {
 						FileInputStream fis = new FileInputStream(fromFile);
 						FileOutputStream fos = new FileOutputStream(toFile);
