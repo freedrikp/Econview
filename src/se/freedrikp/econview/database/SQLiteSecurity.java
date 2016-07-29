@@ -38,8 +38,6 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 	public SQLiteSecurity(String securityDatabase) {
 		super(securityDatabase,"org.sqlite.JDBC","jdbc:sqlite:"+securityDatabase);
 		try {
-			rand = new SecureRandom();
-			digest = MessageDigest.getInstance("SHA-256");
 			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
 			e.printStackTrace();

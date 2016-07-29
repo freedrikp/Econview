@@ -27,6 +27,19 @@ public abstract class SQLDatabase extends Database{
 			System.exit(0);
 		}
 	}
+	
+	public SQLDatabase(String database, String sqlClass, String connectionString, String user, String password) {
+		this.database = database;
+		showHidden = 0;
+		try {
+			Class.forName(sqlClass).newInstance();
+			c = DriverManager.getConnection(connectionString,user,password);
+			initdb();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
 
 	protected abstract void initdb();
 
@@ -67,7 +80,7 @@ public abstract class SQLDatabase extends Database{
 
 	public abstract List<Object[]> getTotalAccountRevenues(Date until);
 
-	public abstract Double getRevenue(Date from, Date to,
+	public abstract double getRevenue(Date from, Date to,
 			Collection<String> accounts);
 
 	public abstract Map<String, Map<Date, Double>> getCustomDiagramData(

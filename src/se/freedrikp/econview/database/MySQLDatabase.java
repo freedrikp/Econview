@@ -1,11 +1,10 @@
 package se.freedrikp.econview.database;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -16,7 +15,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -24,40 +22,60 @@ import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
 
-public class SQLiteDatabase extends SQLDatabase {
+public class MySQLDatabase extends SQLDatabase {
 
-	// private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-	// "yyyy-MM-dd");
+	public MySQLDatabase(String database, String user, String password) {
+		super(database, "com.mysql.jdbc.Driver", "jdbc:mysql://" + database,
+				user, password);
+	}
 
-	public SQLiteDatabase(String database) {
-		super(database, "org.sqlite.JDBC", "jdbc:sqlite:" + database);
+	private boolean tableExists(String tableName) {
+		PreparedStatement ps;
+		try {
+			ps = c.prepareStatement("SELECT count(*) as count FROM information_schema.TABLES WHERE (TABLE_SCHEMA = ?) AND (TABLE_NAME = ?)");
+			ps.setString(1, database.substring(database.lastIndexOf('/')+1));
+			ps.setString(2, tableName);
+			ResultSet results = ps.executeQuery();
+			if (results.next()) {
+				int count = results.getInt("count");
+				return count > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public void initdb() {
 		try {
-			File dbFile = new File(database);
-			if (!dbFile.exists() || dbFile.length() == 0) {
-				c.setAutoCommit(false);
+			c.setAutoCommit(false);
+			if (!tableExists("Accounts")) {
 				String sql = "CREATE TABLE Accounts("
-						+ "accountName TEXT PRIMARY KEY,"
+						+ "accountName varchar(100) PRIMARY KEY,"
 						+ "accountBalance REAL DEFAULT 0.0,"
 						+ "accountHidden INTEGER DEFAULT '1'" + ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
-				sql = "CREATE TABLE Transactions("
+			}
+			if (!tableExists("Transactions")) {
+				String sql = "CREATE TABLE Transactions("
 						+ "transactionID INTEGER PRIMARY KEY,"
-						+ "accountName TEXT," + "transactionAmount REAL,"
-						+ "transactionYear TEXT," + "transactionMonth TEXT,"
-						+ "transactionDay TEXT," + "transactionComment TEXT"
+						+ "accountName varchar(100),"
+						+ "transactionAmount REAL,"
+						+ "transactionYear char(4)," + "transactionMonth TEXT,"
+						+ "transactionDay char(2)," + "transactionComment TEXT"
 						+ ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
-				sql = "CREATE TABLE StoredTransactions("
-						+ "transactionID INTEGER PRIMARY KEY,"
-						+ "accountName TEXT," + "transactionAmount REAL,"
-						+ "transactionComment TEXT" + ")";
-				AutoPreparedStatement.create(c, sql).executeUpdate();
-				c.commit();
-				c.setAutoCommit(true);
 			}
+			if (!tableExists("StoredTransactions")) {
+				String sql = "CREATE TABLE StoredTransactions("
+						+ "transactionID INTEGER PRIMARY KEY,"
+						+ "accountName varchar(100),"
+						+ "transactionAmount REAL,"
+						+ "transactionComment varchar(500)" + ")";
+				AutoPreparedStatement.create(c, sql).executeUpdate();
+			}
+			c.commit();
+			c.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -621,8 +639,8 @@ public class SQLiteDatabase extends SQLDatabase {
 			fom = month.format(from);
 			fod = day.format(from);
 			yearClause += " AND transactionYear >= ?";
-			monthClause += "transactionYear == ?  AND transactionmonth < ?";
-			dayClause += "transactionYear == ? AND transactionMonth == ? AND transactionDay "
+			monthClause += "transactionYear = ?  AND transactionmonth < ?";
+			dayClause += "transactionYear = ? AND transactionMonth = ? AND transactionDay "
 					+ less + " ?";
 		}
 		if (to != null) {
@@ -631,9 +649,9 @@ public class SQLiteDatabase extends SQLDatabase {
 			tod = day.format(to);
 			yearClause += " AND transactionYear <= ?";
 			monthClause += (monthClause.isEmpty() ? "" : "OR ")
-					+ "transactionYear == ?  AND transactionmonth > ?";
+					+ "transactionYear = ?  AND transactionmonth > ?";
 			dayClause += (dayClause.isEmpty() ? "" : "OR ")
-					+ "transactionYear == ? AND transactionMonth == ? AND transactionDay "
+					+ "transactionYear = ? AND transactionMonth = ? AND transactionDay "
 					+ great + " ?";
 		}
 

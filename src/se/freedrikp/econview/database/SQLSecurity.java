@@ -3,6 +3,7 @@ package se.freedrikp.econview.database;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,15 +29,32 @@ public abstract class SQLSecurity extends Security {
 	public SQLSecurity(String securityDatabase, String sqlClass, String connectionString) {
 			this.securityDatabase = securityDatabase;
 			try {
+				rand = new SecureRandom();
+				digest = MessageDigest.getInstance("SHA-256");
 				Class.forName(sqlClass).newInstance();
 				c = DriverManager.getConnection(connectionString);
 				initdb();
 			} catch (InstantiationException | IllegalAccessException
-					| ClassNotFoundException | SQLException e) {
+					| ClassNotFoundException | SQLException | NoSuchAlgorithmException e) {
 				e.printStackTrace();
 				System.exit(0);
 			}
 	}
+	
+	public SQLSecurity(String securityDatabase, String sqlClass, String connectionString,String user,String password) {
+		this.securityDatabase = securityDatabase;
+		try {
+			rand = new SecureRandom();
+			digest = MessageDigest.getInstance("SHA-256");
+			Class.forName(sqlClass).newInstance();
+			c = DriverManager.getConnection(connectionString,user,password);
+			initdb();
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException | SQLException | NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+}
 	
 	protected abstract void initdb();
 	

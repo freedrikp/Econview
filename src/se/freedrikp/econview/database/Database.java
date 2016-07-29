@@ -49,7 +49,7 @@ public abstract class Database extends Observable{
 
 	public abstract List<Object[]> getTotalAccountRevenues(Date until);
 
-	public abstract Double getRevenue(Date from, Date to,
+	public abstract double getRevenue(Date from, Date to,
 			Collection<String> accounts);
 
 	public abstract Map<String, Map<Date, Double>> getCustomDiagramData(
