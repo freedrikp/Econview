@@ -62,7 +62,7 @@ public class FileMenu extends JMenu {
 						}
 					}
 				} else {
-					db.openDatabase(fc.getSelectedFile().getAbsolutePath());
+					db.openDatabase(fc.getSelectedFile().getAbsolutePath(),"NULL","NULL","NULL");
 				}
 			}
 		}

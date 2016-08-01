@@ -138,7 +138,7 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 				decrypt(encDB, tempDBFile);
 				found = true;
 			}
-			db.openDatabase(tempDBFile);
+			db.openDatabase(tempDBFile,"NULL","NULL",user);
 			if (!found) {
 				encrypt(encDB, tempDBFile);
 			}

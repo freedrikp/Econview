@@ -11,13 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Observable;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import com.mysql.jdbc.util.Base64Decoder;
 
 public abstract class SQLSecurity extends Security {
 	protected Connection c;
@@ -41,13 +37,13 @@ public abstract class SQLSecurity extends Security {
 			}
 	}
 	
-	public SQLSecurity(String securityDatabase, String sqlClass, String connectionString,String user,String password) {
+	public SQLSecurity(String securityDatabase, String sqlClass, String connectionString,String username,String password) {
 		this.securityDatabase = securityDatabase;
 		try {
 			rand = new SecureRandom();
 			digest = MessageDigest.getInstance("SHA-256");
 			Class.forName(sqlClass).newInstance();
-			c = DriverManager.getConnection(connectionString,user,password);
+			c = DriverManager.getConnection(connectionString,username,password);
 			initdb();
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException | SQLException | NoSuchAlgorithmException e) {
@@ -66,6 +62,9 @@ public abstract class SQLSecurity extends Security {
 		if (user.next()) {
 			String pass = user.getString("password");
 			String salt = user.getString("salt");
+			System.out.println(pass);
+			System.out.println(new String(digest.digest((password + salt)
+					.getBytes("UTF-8")), "UTF-8"));
 			if (pass.equals(new String(digest.digest((password + salt)
 					.getBytes("UTF-8")), "UTF-8"))) {
 				checkUserSpecifics(username, password, salt);

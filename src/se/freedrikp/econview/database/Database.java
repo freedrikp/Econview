@@ -66,7 +66,7 @@ public abstract class Database extends Observable{
 
 	public abstract void importDatabase(InputStream in, String importMessage);
 
-	public abstract void openDatabase(String database);
+	public abstract void openDatabase(String database,String dbUsername,String dbPassword,String username);
 
 	public abstract String getDatabase();
 

@@ -63,7 +63,7 @@ public class MySQLSecurity extends SQLSecurity {
 	}
 
 	public Database openNewDatabaseHelper(String database) throws Exception {
-		Database db = new MySQLDatabase(database,username,password);
+		Database db = new MySQLDatabase(database,username,password,user);
 		return db;
 	}
 
@@ -74,7 +74,7 @@ public class MySQLSecurity extends SQLSecurity {
 
 	public void openDatabaseHelper(String selectedDatabase, Database db)
 			throws Exception {
-			db.openDatabase(selectedDatabase);
+			db.openDatabase(selectedDatabase,username,password,user);
 	}
 
 	public boolean saveDatabase(String destinationDatabase, String username,
