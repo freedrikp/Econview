@@ -50,8 +50,9 @@ public class MySQLSecurity extends SQLSecurity {
 				if (count == 0) {
 					c.setAutoCommit(false);
 					String sql = "CREATE TABLE Users("
-							+ "username varchar(30) PRIMARY KEY," + "password TEXT,"
-							+ "salt TEXT," + "admin INTEGER DEFAULT 0)";
+							+ "username varchar(30) PRIMARY KEY," 
+							+ "password varbinary(100),"
+							+ "salt varbinary(100)," + "admin INTEGER DEFAULT 0)";
 					c.prepareStatement(sql).executeUpdate();
 					c.commit();
 					c.setAutoCommit(true);
@@ -98,8 +99,8 @@ public class MySQLSecurity extends SQLSecurity {
 	public void close() throws SQLException {
 		try {
 			c.close();
-			c = DriverManager.getConnection("jdbc:sqlite:" + securityDatabase);
-			c.prepareStatement("VACUUM").executeUpdate();
+//			c = DriverManager.getConnection("jdbc:sqlite:" + securityDatabase);
+//			c.prepareStatement("VACUUM").executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

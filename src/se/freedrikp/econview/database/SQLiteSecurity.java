@@ -51,8 +51,8 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 			try {
 				c.setAutoCommit(false);
 				String sql = "CREATE TABLE Users("
-						+ "username TEXT PRIMARY KEY," + "password TEXT,"
-						+ "salt TEXT," + "admin INTEGER DEFAULT 0)";
+						+ "username TEXT PRIMARY KEY," + "password BLOB,"
+						+ "salt BLOB," + "admin INTEGER DEFAULT 0)";
 				c.prepareStatement(sql).executeUpdate();
 				c.commit();
 				c.setAutoCommit(true);

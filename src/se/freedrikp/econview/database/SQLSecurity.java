@@ -60,11 +60,8 @@ public abstract class SQLSecurity extends Security {
 		ps.setString(1, username);
 		ResultSet user = ps.executeQuery();
 		if (user.next()) {
-			String pass = user.getString("password");
-			String salt = user.getString("salt");
-			System.out.println(pass);
-			System.out.println(new String(digest.digest((password + salt)
-					.getBytes("UTF-8")), "UTF-8"));
+			String pass = new String(user.getBytes("password"),"UTF-8");
+			String salt = new String(user.getBytes("salt"),"UTF-8");
 			if (pass.equals(new String(digest.digest((password + salt)
 					.getBytes("UTF-8")), "UTF-8"))) {
 				checkUserSpecifics(username, password, salt);
@@ -129,8 +126,8 @@ public abstract class SQLSecurity extends Security {
 			String sql = "INSERT INTO Users VALUES (?,?,?,?)";
 			PreparedStatement ps = c.prepareStatement(sql);
 			ps.setString(1, username);
-			ps.setString(2, password);
-			ps.setString(3, salt);
+			ps.setBytes(2, password.getBytes("UTF-8"));
+			ps.setBytes(3, salt.getBytes("UTF-8"));
 			int ad = admin ? 1 : 0;
 			ps.setInt(4, ad);
 			ps.executeUpdate();
@@ -244,8 +241,8 @@ public abstract class SQLSecurity extends Security {
 					.getBytes("UTF-8")), "UTF-8");
 			String sql = "UPDATE Users SET password=?, salt=? WHERE username=?";
 			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setString(1, password);
-			ps.setString(2, salt);
+			ps.setBytes(1, password.getBytes("UTF-8"));
+			ps.setBytes(2, salt.getBytes("UTF-8"));
 			ps.setString(3, username);
 			ps.executeUpdate();
 		} catch (Exception e) {

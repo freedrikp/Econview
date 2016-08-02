@@ -44,14 +44,14 @@ public class SQLiteDatabase extends SQLDatabase {
 						+ "accountHidden INTEGER DEFAULT '1'" + ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 				sql = "CREATE TABLE Transactions("
-						+ "transactionID INTEGER PRIMARY KEY AUTO_INCREMENT,"
+						+ "transactionID INTEGER PRIMARY KEY,"
 						+ "accountName TEXT," + "transactionAmount REAL,"
 						+ "transactionYear TEXT," + "transactionMonth TEXT,"
 						+ "transactionDay TEXT," + "transactionComment TEXT"
 						+ ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 				sql = "CREATE TABLE StoredTransactions("
-						+ "transactionID INTEGER PRIMARY KEY AUTO_INCREMENT,"
+						+ "transactionID INTEGER PRIMARY KEY,"
 						+ "accountName TEXT," + "transactionAmount REAL,"
 						+ "transactionComment TEXT" + ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();

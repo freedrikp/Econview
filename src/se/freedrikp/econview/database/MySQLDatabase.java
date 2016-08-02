@@ -61,7 +61,7 @@ public class MySQLDatabase extends SQLDatabase {
 			}
 			if (!tableExists("Transactions")) {
 				String sql = "CREATE TABLE Transactions("
-						+ "transactionID INTEGER PRIMARY KEY,"
+						+ "transactionID INTEGER PRIMARY KEY AUTO_INCREMENT,"
 						+ "accountName varchar(100),"
 						+ "transactionAmount REAL,"
 						+ "transactionYear char(4),"
@@ -75,7 +75,7 @@ public class MySQLDatabase extends SQLDatabase {
 			}
 			if (!tableExists("StoredTransactions")) {
 				String sql = "CREATE TABLE StoredTransactions("
-						+ "transactionID INTEGER PRIMARY KEY,"
+						+ "transactionID INTEGER PRIMARY KEY AUTO_INCREMENT,"
 						+ "accountName varchar(100),"
 						+ "transactionAmount REAL,"
 						+ "transactionComment varchar(500),"
