@@ -17,7 +17,6 @@ import javax.swing.MenuSelectionManager;
 
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.dialogs.NormalTransactionDialog;
 import se.freedrikp.econview.gui.dialogs.StoredTransactionDialog;
 import se.freedrikp.econview.gui.tables.StoredTransactionsTable;

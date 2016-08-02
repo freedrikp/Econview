@@ -5,15 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +30,8 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 	private String tempDBFile;
 
 	public SQLiteSecurity(String securityDatabase) {
-		super(securityDatabase,"org.sqlite.JDBC","jdbc:sqlite:"+securityDatabase);
+		super(securityDatabase, "org.sqlite.JDBC", "jdbc:sqlite:"
+				+ securityDatabase);
 		try {
 			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -61,7 +56,7 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 			}
 		}
 	}
-	
+
 	public Database openNewDatabaseHelper(String database) throws Exception {
 		tempDBFile = database;
 		String userDB;
@@ -86,8 +81,10 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 		return db;
 	}
 
-	protected void checkUserSpecifics(String username, String password, String salt) throws UnsupportedEncodingException {
-		byte[] temp = digest.digest((username + password + salt).getBytes("UTF-8"));
+	protected void checkUserSpecifics(String username, String password,
+			String salt) throws UnsupportedEncodingException {
+		byte[] temp = digest.digest((username + password + salt)
+				.getBytes("UTF-8"));
 		key = new SecretKeySpec(Arrays.copyOfRange(temp, 16, 32), "AES");
 		iv = new IvParameterSpec(Arrays.copyOfRange(temp, 0, 16));
 	}
@@ -129,8 +126,9 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 			e.printStackTrace();
 		}
 	}
-	
-	public void openDatabaseHelper(String selectedDatabase, Database db) throws Exception{
+
+	public void openDatabaseHelper(String selectedDatabase, Database db)
+			throws Exception {
 		if (new File(tempDBFile).delete()) {
 			encDB = new File(selectedDatabase);
 			boolean found = false;
@@ -138,14 +136,15 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 				decrypt(encDB, tempDBFile);
 				found = true;
 			}
-			db.openDatabase(tempDBFile,"NULL","NULL",user);
+			db.openDatabase(tempDBFile, "NULL", "NULL", user);
 			if (!found) {
 				encrypt(encDB, tempDBFile);
 			}
 		}
 	}
 
-	public boolean saveDatabase(String destinationDatabase, String username, String password) {
+	public boolean saveDatabase(String destinationDatabase, String username,
+			String password) {
 		try {
 			if (checkUser(username, password)) {
 				encrypt(new File(destinationDatabase), tempDBFile);
@@ -160,8 +159,9 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 	public String getDatabase() {
 		return encDB.getAbsolutePath();
 	}
-	
-	public boolean changePasswordHelper(String username, String newPass, List<File> files) throws Exception {
+
+	public boolean changePasswordHelper(String username, String newPass,
+			List<File> files) throws Exception {
 		HashMap<String, File> dec = new HashMap<String, File>();
 		for (File f : files) {
 			String dest = "econview_temp_" + f.getName();

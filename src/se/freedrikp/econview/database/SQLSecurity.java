@@ -13,55 +13,59 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.jdbc.util.Base64Decoder;
-
 public abstract class SQLSecurity extends Security {
 	protected Connection c;
 	protected SecureRandom rand;
 	protected MessageDigest digest;
 	protected String user;
 	protected String securityDatabase;
-	
-	public SQLSecurity(String securityDatabase, String sqlClass, String connectionString) {
-			this.securityDatabase = securityDatabase;
-			try {
-				rand = new SecureRandom();
-				digest = MessageDigest.getInstance("SHA-256");
-				Class.forName(sqlClass).newInstance();
-				c = DriverManager.getConnection(connectionString);
-				initdb();
-			} catch (InstantiationException | IllegalAccessException
-					| ClassNotFoundException | SQLException | NoSuchAlgorithmException e) {
-				e.printStackTrace();
-				System.exit(0);
-			}
-	}
-	
-	public SQLSecurity(String securityDatabase, String sqlClass, String connectionString,String username,String password) {
+
+	public SQLSecurity(String securityDatabase, String sqlClass,
+			String connectionString) {
 		this.securityDatabase = securityDatabase;
 		try {
 			rand = new SecureRandom();
 			digest = MessageDigest.getInstance("SHA-256");
 			Class.forName(sqlClass).newInstance();
-			c = DriverManager.getConnection(connectionString,username,password);
+			c = DriverManager.getConnection(connectionString);
 			initdb();
 		} catch (InstantiationException | IllegalAccessException
-				| ClassNotFoundException | SQLException | NoSuchAlgorithmException e) {
+				| ClassNotFoundException | SQLException
+				| NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
-}
-	
+	}
+
+	public SQLSecurity(String securityDatabase, String sqlClass,
+			String connectionString, String username, String password) {
+		this.securityDatabase = securityDatabase;
+		try {
+			rand = new SecureRandom();
+			digest = MessageDigest.getInstance("SHA-256");
+			Class.forName(sqlClass).newInstance();
+			c = DriverManager.getConnection(connectionString, username,
+					password);
+			initdb();
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException | SQLException
+				| NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+
 	protected abstract void initdb();
-	
-	protected boolean checkUser(String username, String password) throws SQLException, UnsupportedEncodingException {
+
+	protected boolean checkUser(String username, String password)
+			throws SQLException, UnsupportedEncodingException {
 		String sql = "SELECT password,salt FROM Users WHERE username= ?";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setString(1, username);
 		ResultSet user = ps.executeQuery();
 		if (user.next()) {
-			String pass = new String(user.getBytes("password"),"UTF-8");
-			String salt = new String(user.getBytes("salt"),"UTF-8");
+			String pass = new String(user.getBytes("password"), "UTF-8");
+			String salt = new String(user.getBytes("salt"), "UTF-8");
 			if (pass.equals(new String(digest.digest((password + salt)
 					.getBytes("UTF-8")), "UTF-8"))) {
 				checkUserSpecifics(username, password, salt);
@@ -74,8 +78,8 @@ public abstract class SQLSecurity extends Security {
 		return false;
 	}
 
-	protected abstract void checkUserSpecifics(String username, String password, String salt) throws UnsupportedEncodingException;
-
+	protected abstract void checkUserSpecifics(String username,
+			String password, String salt) throws UnsupportedEncodingException;
 
 	public Database openNewDatabase(String database, String username,
 			String password) throws Exception {
@@ -87,15 +91,16 @@ public abstract class SQLSecurity extends Security {
 		}
 		return null;
 	}
-	
-	public abstract Database openNewDatabaseHelper(String database) throws Exception;
 
-	public boolean openDatabase(String selectedDatabase, Database db, String username,
-			String password) {
+	public abstract Database openNewDatabaseHelper(String database)
+			throws Exception;
+
+	public boolean openDatabase(String selectedDatabase, Database db,
+			String username, String password) {
 		try {
 			if (checkUser(username, password)) {
 				db.close();
-				openDatabaseHelper(selectedDatabase,db);
+				openDatabaseHelper(selectedDatabase, db);
 				setChanged();
 				notifyObservers();
 				return true;
@@ -105,11 +110,12 @@ public abstract class SQLSecurity extends Security {
 		}
 		return false;
 	}
-	
-	public abstract void openDatabaseHelper(String selectedDatabase, Database db) throws Exception;
 
-	public abstract boolean saveDatabase(String destinationDatabase, String username,
-			String password);
+	public abstract void openDatabaseHelper(String selectedDatabase, Database db)
+			throws Exception;
+
+	public abstract boolean saveDatabase(String destinationDatabase,
+			String username, String password);
 
 	public abstract String getDatabase();
 
@@ -144,7 +150,7 @@ public abstract class SQLSecurity extends Security {
 			String newPass, List<File> files) {
 		try {
 			if (checkUser(username, oldPass)) {
-				if (!changePasswordHelper(username,newPass,files)){
+				if (!changePasswordHelper(username, newPass, files)) {
 					return false;
 				}
 				setChanged();
@@ -156,8 +162,9 @@ public abstract class SQLSecurity extends Security {
 		}
 		return false;
 	}
-	
-	public abstract boolean changePasswordHelper(String username, String newPass, List<File> files) throws Exception;
+
+	public abstract boolean changePasswordHelper(String username,
+			String newPass, List<File> files) throws Exception;
 
 	public String getUser() {
 		return user;

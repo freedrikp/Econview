@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -22,11 +21,11 @@ import javax.swing.ProgressMonitor;
 
 import se.freedrikp.econview.common.Common;
 
-public abstract class SQLDatabase extends Database{
+public abstract class SQLDatabase extends Database {
 	protected Connection c;
 	protected String database;
 	protected int showHidden;
-	
+
 	public SQLDatabase(String database, String sqlClass, String connectionString) {
 		this.database = database;
 		showHidden = 0;
@@ -34,20 +33,23 @@ public abstract class SQLDatabase extends Database{
 			Class.forName(sqlClass).newInstance();
 			c = DriverManager.getConnection(connectionString);
 			initdb();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
 	}
-	
-	public SQLDatabase(String database, String sqlClass, String connectionString, String user, String password) {
+
+	public SQLDatabase(String database, String sqlClass,
+			String connectionString, String user, String password) {
 		this.database = database;
 		showHidden = 0;
 		try {
 			Class.forName(sqlClass).newInstance();
-			c = DriverManager.getConnection(connectionString,user,password);
+			c = DriverManager.getConnection(connectionString, user, password);
 			initdb();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -78,7 +80,7 @@ public abstract class SQLDatabase extends Database{
 	public List<Object[]> getTransactions(Date fromDate, Date toDate,
 			Collection<String> accounts) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
-		if (accounts.isEmpty()){
+		if (accounts.isEmpty()) {
 			return list;
 		}
 		try {
@@ -95,7 +97,7 @@ public abstract class SQLDatabase extends Database{
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
 					"Where accountName IN " + selectedAccounts, "", fromDate,
-					toDate, true, showHidden, true,true);
+					toDate, true, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[5];
@@ -125,7 +127,7 @@ public abstract class SQLDatabase extends Database{
 					"SELECT transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC",
-					null, until, false, showHidden, true,true);
+					null, until, false, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -149,7 +151,7 @@ public abstract class SQLDatabase extends Database{
 					"SELECT transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY transactionYear ORDER BY transactionYear DESC",
-					null, until, false, showHidden, true,true);
+					null, until, false, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -172,7 +174,7 @@ public abstract class SQLDatabase extends Database{
 					"SELECT accountName,transactionYear,transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC",
-					null, until, false, showHidden, true,true);
+					null, until, false, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -197,7 +199,7 @@ public abstract class SQLDatabase extends Database{
 					"SELECT accountName,transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC",
-					null, until, false, showHidden, true,true);
+					null, until, false, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[3];
@@ -218,7 +220,7 @@ public abstract class SQLDatabase extends Database{
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as revenue FROM ", "", "",
-					null, until, false, showHidden, true,true);
+					null, until, false, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				return results.getDouble("revenue");
@@ -235,7 +237,7 @@ public abstract class SQLDatabase extends Database{
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT accountName,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"", ") GROUP BY accountName ORDER accountName ASC", null,
-					until, false, showHidden, true,true);
+					until, false, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				Object[] row = new Object[2];
@@ -250,7 +252,7 @@ public abstract class SQLDatabase extends Database{
 	}
 
 	public double getRevenue(Date from, Date to, Collection<String> accounts) {
-		if (accounts.isEmpty()){
+		if (accounts.isEmpty()) {
 			return 0.;
 		}
 		try {
@@ -268,7 +270,7 @@ public abstract class SQLDatabase extends Database{
 			ps = selectBetweenDates(
 					"Select SUM(transactionAmount) as revenue FROM",
 					"WHERE accountName IN " + selectedAccounts, "", from, to,
-					true, showHidden, true,true);
+					true, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
 				return results.getDouble("revenue");
@@ -293,7 +295,7 @@ public abstract class SQLDatabase extends Database{
 		}
 		selectedAccounts += ")";
 		Map<String, Map<Date, Double>> dataset = new TreeMap<String, Map<Date, Double>>();
-		if (accounts.isEmpty()){
+		if (accounts.isEmpty()) {
 			return dataset;
 		}
 		try {
@@ -301,12 +303,14 @@ public abstract class SQLDatabase extends Database{
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM",
 					"GROUP BY accName",
-					") as Future ON Accounts.accountName = Future.accName WHERE accountHidden <= ? " + helperClause + " AND accountName IN "
+					") as Future ON Accounts.accountName = Future.accName WHERE accountHidden <= ? "
+							+ helperClause
+							+ " AND accountName IN "
 							+ selectedAccounts, to, null, true, showHidden,
-					false,false);
+					false, false);
 			ps.setInt(showHidden);
-			if (helperClause.length() > 0){
-				ps.setString(helperValue());				
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
 			}
 			ResultSet accs = ps.executeQuery();
 			double totalStartBalance = 0;
@@ -326,7 +330,7 @@ public abstract class SQLDatabase extends Database{
 		}
 		return dataset;
 	}
-	
+
 	private void buildDiagramDataset(Date from, Date to,
 			Map<String, Map<Date, Double>> dataset, double startBalance,
 			String accountName, String consideredAccounts,
@@ -338,12 +342,12 @@ public abstract class SQLDatabase extends Database{
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
 					"WHERE accountName IN " + consideredAccounts, "", from, to,
-					false, showHidden, true,true);
+					false, showHidden, true, true);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
 					"WHERE accountName = ?", "", from, to, false, showHidden,
-					true,true);
+					true, true);
 			ps.setString(accountName);
 		}
 		ResultSet transactions = ps.executeQuery();
@@ -355,12 +359,12 @@ public abstract class SQLDatabase extends Database{
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"WHERE accountName IN " + consideredAccounts, "", from, to,
-					true, showHidden, true,true);
+					true, showHidden, true, true);
 		} else {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionYear,transactionMonth,transactionDay FROM",
 					"WHERE accountName = ?", "", from, to, true, showHidden,
-					true,true);
+					true, true);
 			ps.setString(accountName);
 		}
 		transactions = ps.executeQuery();
@@ -383,6 +387,8 @@ public abstract class SQLDatabase extends Database{
 	public abstract double getHiddenAccountBalanceSum(Date until);
 
 	public abstract void exportDatabase(OutputStream out, String exportMessage);
+
+	protected abstract void importDatabaseHelper(String table, String sql);
 
 	public void importDatabase(InputStream in, String importMessage) {
 		try {
@@ -419,9 +425,7 @@ public abstract class SQLDatabase extends Database{
 						}
 					}
 					sql += ")";
-					AutoPreparedStatement ps = AutoPreparedStatement.create(c,
-							sql);
-					ps.executeUpdate();
+					importDatabaseHelper(name, sql);
 					progress += percent;
 					pm.setProgress(Math.round(progress));
 				}
@@ -435,7 +439,8 @@ public abstract class SQLDatabase extends Database{
 		notifyObservers();
 	}
 
-	public abstract void openDatabase(String database,String dbUsername,String dbPassword,String username);
+	public abstract void openDatabase(String database, String dbUsername,
+			String dbPassword, String username);
 
 	public String getDatabase() {
 		return database;
@@ -465,7 +470,7 @@ public abstract class SQLDatabase extends Database{
 			String transactionComment);
 
 	public abstract void close() throws SQLException;
-	
+
 	protected abstract void deleteEntries(String table);
 
 	public void deleteAccounts() {
@@ -552,7 +557,8 @@ public abstract class SQLDatabase extends Database{
 		try {
 			ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment FROM",
-					sqlWhere, "", fromDate, toDate, true, showHidden, true,true);
+					sqlWhere, "", fromDate, toDate, true, showHidden, true,
+					true);
 			if (doID) {
 				ps.setLong(transactionId);
 			}
@@ -584,15 +590,15 @@ public abstract class SQLDatabase extends Database{
 		}
 		return list;
 	}
-	
+
 	protected abstract String helperClause();
 
 	protected abstract String helperValue();
-	
+
 	protected AutoPreparedStatement selectBetweenDates(String sqlSelect,
 			String sqlWhere, String sqlEnd, Date from, Date to,
-			boolean ascending, int showHidden, boolean inclusive, boolean doOrder)
-			throws SQLException {
+			boolean ascending, int showHidden, boolean inclusive,
+			boolean doOrder) throws SQLException {
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat day = new SimpleDateFormat("dd");
@@ -635,19 +641,26 @@ public abstract class SQLDatabase extends Database{
 				+ monthClause + ")");
 		dayClause = dayClause.isEmpty() ? ""
 				: (" WHERE NOT (" + dayClause + ")");
-		
+
 		String helperClause = helperClause();
 
-		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? " + helperClause
-				+ yearClause + ")";
-		String sqlMonths = "(SELECT * FROM " + sqlYears + " as Years" + monthClause + ")";
-		String sqlDays = "(SELECT * FROM " + sqlMonths+ " as Months" + dayClause + ")";
+		String sqlYears = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? "
+				+ helperClause + yearClause + ")";
+		String sqlMonths = "(SELECT * FROM " + sqlYears + " as Years"
+				+ monthClause + ")";
+		String sqlDays = "(SELECT * FROM " + sqlMonths + " as Months"
+				+ dayClause + ")";
 
-		String sql = sqlSelect + " " + sqlDays + " as Days " + sqlWhere
-				+  (doOrder ? " ORDER BY transactionYear " + order + ",transactionMonth "
-				+ order + ",transactionDay " + order + ",transactionID "
-				+ order : "") + " " + sqlEnd;
-		
+		String sql = sqlSelect
+				+ " "
+				+ sqlDays
+				+ " as Days "
+				+ sqlWhere
+				+ (doOrder ? " ORDER BY transactionYear " + order
+						+ ",transactionMonth " + order + ",transactionDay "
+						+ order + ",transactionID " + order : "") + " "
+				+ sqlEnd;
+
 		AutoPreparedStatement ps = AutoPreparedStatement.create(c, sql);
 
 		int index = 1;
@@ -657,8 +670,8 @@ public abstract class SQLDatabase extends Database{
 		}
 
 		ps.setPlacedInt(index++, showHidden);
-		if (helperClause.length() > 0){
-			ps.setPlacedString(index++, helperValue());	
+		if (helperClause.length() > 0) {
+			ps.setPlacedString(index++, helperValue());
 		}
 		if (from != null) {
 			ps.setPlacedString(index++, foy);

@@ -36,12 +36,13 @@ public class Main {
 						data.mkdirs();
 					}
 					if (secure) {
-//						Security security = new SQLiteSecurity(Configuration
-//								.getString("DATABASE_DIRECTORY")
-//								+ "/"
-//								+ Configuration
-//										.getString("USERS_DATABASE_FILE"));
-						Security security = new MySQLSecurity("freedrikp.se/econview","econview","dabest");
+						// Security security = new SQLiteSecurity(Configuration
+						// .getString("DATABASE_DIRECTORY")
+						// + "/"
+						// + Configuration
+						// .getString("USERS_DATABASE_FILE"));
+						Security security = new MySQLSecurity(
+								"freedrikp.se/econview", "econview", "dabest");
 						if (!security.usersExist()) {
 							new AddUserDialog(security, true).showDialog();
 						}
@@ -49,14 +50,15 @@ public class Main {
 						if (!ad.showDialog()) {
 							System.exit(0);
 						}
-//						Database db = security.openNewDatabase(
-//								Configuration.getString("DATABASE_DIRECTORY")
-//										+ "/"
-//										+ Configuration
-//												.getString("DATABASE_FILE"),
-//								ad.getUsername(), ad.getPassword());
-						Database db = security.openNewDatabase("freedrikp.se/econview",
-								ad.getUsername(), ad.getPassword());
+						// Database db = security.openNewDatabase(
+						// Configuration.getString("DATABASE_DIRECTORY")
+						// + "/"
+						// + Configuration
+						// .getString("DATABASE_FILE"),
+						// ad.getUsername(), ad.getPassword());
+						Database db = security.openNewDatabase(
+								"freedrikp.se/econview", ad.getUsername(),
+								ad.getPassword());
 						if (db == null) {
 							ad.showFailedDialog(true);
 						}

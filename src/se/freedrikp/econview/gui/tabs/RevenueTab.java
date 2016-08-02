@@ -26,7 +26,6 @@ import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.frames.MainFrame;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
 import se.freedrikp.econview.gui.panels.AccountSelectorPanel;

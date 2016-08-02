@@ -14,7 +14,6 @@ import javax.swing.JScrollPane;
 
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.panels.SearchTransactionsControlPanel;
 import se.freedrikp.econview.gui.tables.TransactionsTable;
 

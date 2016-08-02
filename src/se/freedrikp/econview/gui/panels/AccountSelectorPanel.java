@@ -16,7 +16,6 @@ import javax.swing.JSeparator;
 
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
 
 public class AccountSelectorPanel extends JPanel implements Observer,
 		ItemListener {

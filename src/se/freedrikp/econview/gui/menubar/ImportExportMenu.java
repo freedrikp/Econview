@@ -29,7 +29,8 @@ public class ImportExportMenu extends JMenu {
 					try {
 						FileInputStream fis = new FileInputStream(fc
 								.getSelectedFile());
-						db.importDatabase(fis,Language.getString("IMPORTING_DATABASE"));
+						db.importDatabase(fis,
+								Language.getString("IMPORTING_DATABASE"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -49,7 +50,8 @@ public class ImportExportMenu extends JMenu {
 					try {
 						FileOutputStream fos = new FileOutputStream(fc
 								.getSelectedFile());
-						db.exportDatabase(fos,Language.getString("EXPORTING_DATABASE"));
+						db.exportDatabase(fos,
+								Language.getString("EXPORTING_DATABASE"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

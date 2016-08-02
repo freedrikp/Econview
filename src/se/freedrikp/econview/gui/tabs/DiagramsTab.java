@@ -37,7 +37,6 @@ import se.freedrikp.econview.common.Common;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.panels.AccountSelectorPanel;
 
 import com.toedter.calendar.JDateChooser;
@@ -233,7 +232,8 @@ public class DiagramsTab extends JPanel implements Observer {
 			JPanel panel, int width, int height, Collection<String> accounts,
 			boolean includeTotal) {
 		Map<String, Map<Date, Double>> diagramData = db.getCustomDiagramData(
-				from, to, accounts, includeTotal,Language.getString("TOTAL_ACCOUNT_NAME"));
+				from, to, accounts, includeTotal,
+				Language.getString("TOTAL_ACCOUNT_NAME"));
 		TimeSeriesCollection collection = new TimeSeriesCollection();
 		for (Map.Entry<String, Map<Date, Double>> dataset : diagramData
 				.entrySet()) {

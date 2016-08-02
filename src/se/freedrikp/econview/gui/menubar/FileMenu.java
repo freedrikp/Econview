@@ -56,13 +56,15 @@ public class FileMenu extends JMenu {
 				if (sec != null) {
 					AuthenticationDialog ad = new AuthenticationDialog();
 					if (ad.showDialog()) {
-						if (!sec.openDatabase(fc.getSelectedFile().getAbsolutePath(), db,
-								ad.getUsername(), ad.getPassword())) {
+						if (!sec.openDatabase(fc.getSelectedFile()
+								.getAbsolutePath(), db, ad.getUsername(), ad
+								.getPassword())) {
 							ad.showFailedDialog(false);
 						}
 					}
 				} else {
-					db.openDatabase(fc.getSelectedFile().getAbsolutePath(),"NULL","NULL","NULL");
+					db.openDatabase(fc.getSelectedFile().getAbsolutePath(),
+							"NULL", "NULL", "NULL");
 				}
 			}
 		}
@@ -87,8 +89,8 @@ public class FileMenu extends JMenu {
 				if (sec != null) {
 					AuthenticationDialog ad = new AuthenticationDialog();
 					if (ad.showDialog()) {
-						if (!sec.saveDatabase(toFile.getAbsolutePath(), ad.getUsername(),
-								ad.getPassword())) {
+						if (!sec.saveDatabase(toFile.getAbsolutePath(),
+								ad.getUsername(), ad.getPassword())) {
 							ad.showFailedDialog(false);
 						}
 					}

@@ -21,7 +21,6 @@ import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteSecurity;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.frames.MainFrame.Model;
 

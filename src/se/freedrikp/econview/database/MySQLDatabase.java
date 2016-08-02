@@ -9,12 +9,9 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.ProgressMonitor;
 
@@ -23,7 +20,8 @@ import se.freedrikp.econview.common.Common;
 public class MySQLDatabase extends SQLDatabase {
 	private String username;
 
-	public MySQLDatabase(String database, String dbUsername, String dbPassword,String username) {
+	public MySQLDatabase(String database, String dbUsername, String dbPassword,
+			String username) {
 		super(database, "com.mysql.jdbc.Driver", "jdbc:mysql://" + database,
 				dbUsername, dbPassword);
 		this.username = username;
@@ -64,11 +62,9 @@ public class MySQLDatabase extends SQLDatabase {
 						+ "transactionID INTEGER PRIMARY KEY AUTO_INCREMENT,"
 						+ "accountName varchar(100),"
 						+ "transactionAmount REAL,"
-						+ "transactionYear char(4),"
-						+ "transactionMonth TEXT,"
+						+ "transactionYear char(4)," + "transactionMonth TEXT,"
 						+ "transactionDay char(2),"
-						+ "transactionComment TEXT,"
-						+ "username varchar(30),"
+						+ "transactionComment TEXT," + "username varchar(30),"
 						+ "FOREIGN KEY (username) REFERENCES Users(username)"
 						+ ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
@@ -117,8 +113,8 @@ public class MySQLDatabase extends SQLDatabase {
 			ps = selectBetweenDates(
 					"UPDATE Accounts SET accountName=?, accountBalance=? + COALESCE((SELECT SUM(transactionAmount) FROM",
 					"WHERE accountName = ? AND username = ?",
-					"),0) , accountHidden = ? WHERE accountName=? AND username = ?", until,
-					null, false, showHidden, false,true);
+					"),0) , accountHidden = ? WHERE accountName=? AND username = ?",
+					until, null, false, showHidden, false, true);
 			ps.setString(accountName);
 			ps.setDouble(accountBalance);
 			ps.setString(oldAccountName);
@@ -147,13 +143,15 @@ public class MySQLDatabase extends SQLDatabase {
 	public void removeAccount(String accountName) {
 		try {
 			c.setAutoCommit(false);
-			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
-					"DELETE FROM Transactions WHERE accountName=? AND username = ?");
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"DELETE FROM Transactions WHERE accountName=? AND username = ?");
 			ps.setString(accountName);
 			ps.setString(username);
 			ps.executeUpdate();
-			ps = AutoPreparedStatement.create(c,
-					"DELETE FROM Accounts WHERE accountName=? AND username = ?");
+			ps = AutoPreparedStatement
+					.create(c,
+							"DELETE FROM Accounts WHERE accountName=? AND username = ?");
 			ps.setString(accountName);
 			ps.setString(username);
 			ps.executeUpdate();
@@ -272,7 +270,7 @@ public class MySQLDatabase extends SQLDatabase {
 					"SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance,accountHidden FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM",
 					"GROUP BY accName",
 					") as FutureEvents ON accountName = accName WHERE accountHidden <= ? AND username = ? ORDER BY accountName ASC",
-					until, null, false, showHidden, false,false);
+					until, null, false, showHidden, false, false);
 			ps.setInt(showHidden);
 			ps.setString(username);
 			ResultSet results = ps.executeQuery();
@@ -307,11 +305,11 @@ public class MySQLDatabase extends SQLDatabase {
 		return list;
 	}
 
-	protected String helperClause(){
+	protected String helperClause() {
 		return " AND username = ? ";
 	}
 
-	protected String helperValue(){
+	protected String helperValue() {
 		return username;
 	}
 
@@ -319,8 +317,8 @@ public class MySQLDatabase extends SQLDatabase {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT SUM(accountBalance) - COALESCE((SELECT SUM(transactionAmount) FROM",
-					"", "),0) as balanceSum FROM Accounts WHERE username = ?", until, null, false,
-					1, false,true);
+					"", "),0) as balanceSum FROM Accounts WHERE username = ?",
+					until, null, false, 1, false, true);
 			ps.setString(username);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
@@ -338,7 +336,7 @@ public class MySQLDatabase extends SQLDatabase {
 					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
 					"WHERE accountHidden = 0",
 					") as VisibleTransactions),0) as balanceSum FROM Accounts WHERE accountHidden = 0 AND username = ?",
-					until, null, false, 1, false,true);
+					until, null, false, 1, false, true);
 			ps.setString(username);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
@@ -356,7 +354,7 @@ public class MySQLDatabase extends SQLDatabase {
 					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
 					"WHERE accountHidden = 1",
 					") as VisibleTransactions),0) as balanceSum FROM Accounts WHERE accountHidden = 1 AND username = ?",
-					until, null, false, 1, false,true);
+					until, null, false, 1, false, true);
 			ps.setString(username);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
@@ -430,12 +428,14 @@ public class MySQLDatabase extends SQLDatabase {
 		}
 	}
 
-	public void openDatabase(String database,String dbUsername,String dbPassword,String username) {
+	public void openDatabase(String database, String dbUsername,
+			String dbPassword, String username) {
 		this.database = database;
 		this.username = username;
 		try {
 			close();
-			c = DriverManager.getConnection("jdbc:mysql://" + database,dbUsername,dbPassword);
+			c = DriverManager.getConnection("jdbc:mysql://" + database,
+					dbUsername, dbPassword);
 			initdb();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -595,7 +595,8 @@ public class MySQLDatabase extends SQLDatabase {
 
 	protected void deleteEntries(String table) {
 		try {
-			AutoPreparedStatement ps = AutoPreparedStatement.create(c, "DELETE FROM " + table + "WHERE username = ?");
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
+					"DELETE FROM " + table + "WHERE username = ?");
 			ps.setString(username);
 			ps.executeUpdate();
 		} catch (SQLException e) {
@@ -690,7 +691,7 @@ public class MySQLDatabase extends SQLDatabase {
 					"SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM",
 					"WHERE accountName = ?",
 					"),0) as accountBalance FROM Accounts WHERE accountName = ? AND username = ?",
-					until, null, false, showHidden, false,true);
+					until, null, false, showHidden, false, true);
 			ps.setString(accountName);
 			ps.setString(accountName);
 			ps.setString(username);
@@ -702,5 +703,24 @@ public class MySQLDatabase extends SQLDatabase {
 			e.printStackTrace();
 		}
 		return 0;
+
+	}
+
+	protected void importDatabaseHelper(String name, String sql) {
+		try {
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
+					"ALTER TABLE " + name
+							+ " ALTER COLUMN username SET DEFAULT ?");
+			ps.setString(username);
+			ps.executeUpdate();
+			AutoPreparedStatement.create(c, sql).executeUpdate();
+			AutoPreparedStatement.create(
+					c,
+					"ALTER TABLE " + name
+							+ " ALTER COLUMN username DROP DEFAULT")
+					.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

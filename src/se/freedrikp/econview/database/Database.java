@@ -1,6 +1,5 @@
 package se.freedrikp.econview.database;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-public abstract class Database extends Observable{
+public abstract class Database extends Observable {
 
 	public abstract void addAccount(String accountName, double accountBalance,
 			boolean accountHidden);
@@ -66,7 +65,8 @@ public abstract class Database extends Observable{
 
 	public abstract void importDatabase(InputStream in, String importMessage);
 
-	public abstract void openDatabase(String database,String dbUsername,String dbPassword,String username);
+	public abstract void openDatabase(String database, String dbUsername,
+			String dbPassword, String username);
 
 	public abstract String getDatabase();
 

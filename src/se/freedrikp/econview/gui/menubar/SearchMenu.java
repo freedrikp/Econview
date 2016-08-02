@@ -8,7 +8,6 @@ import javax.swing.JMenuItem;
 
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
 import se.freedrikp.econview.gui.frames.SearchTransactionsFrame;
 
 public class SearchMenu extends JMenu {

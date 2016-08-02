@@ -1,24 +1,17 @@
 package se.freedrikp.econview.database;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Scanner;
-import java.util.TreeMap;
 
 import javax.swing.ProgressMonitor;
 
@@ -91,7 +84,7 @@ public class SQLiteDatabase extends SQLDatabase {
 					"UPDATE Accounts SET accountName=?, accountBalance=? + COALESCE((SELECT SUM(transactionAmount) FROM",
 					"WHERE accountName = ?",
 					"),0) , accountHidden = ? WHERE accountName=?", until,
-					null, false, showHidden, false,true);
+					null, false, showHidden, false, true);
 			ps.setString(accountName);
 			ps.setDouble(accountBalance);
 			ps.setString(accountName);
@@ -235,7 +228,7 @@ public class SQLiteDatabase extends SQLDatabase {
 					"SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance,accountHidden FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM",
 					"GROUP BY accName",
 					") ON accountName = accName WHERE accountHidden <= ? ORDER BY accountName ASC",
-					until, null, false, showHidden, false,true);
+					until, null, false, showHidden, false, true);
 			ps.setInt(showHidden);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -268,11 +261,11 @@ public class SQLiteDatabase extends SQLDatabase {
 		return list;
 	}
 
-	protected String helperClause(){
+	protected String helperClause() {
 		return "";
 	}
 
-	protected String helperValue(){
+	protected String helperValue() {
 		return "";
 	}
 
@@ -388,7 +381,7 @@ public class SQLiteDatabase extends SQLDatabase {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT SUM(accountBalance) - COALESCE((SELECT SUM(transactionAmount) FROM",
 					"", "),0) as balanceSum FROM Accounts", until, null, false,
-					1, false,true);
+					1, false, true);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -405,7 +398,7 @@ public class SQLiteDatabase extends SQLDatabase {
 					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
 					"WHERE accountHidden = 0",
 					")),0) as balanceSum FROM Accounts WHERE accountHidden = 0",
-					until, null, false, 1, false,true);
+					until, null, false, 1, false, true);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -422,7 +415,7 @@ public class SQLiteDatabase extends SQLDatabase {
 					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
 					"WHERE accountHidden = 1",
 					")),0) as balanceSum FROM Accounts WHERE accountHidden = 1",
-					until, null, false, 1, false,true);
+					until, null, false, 1, false, true);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
 				return result.getDouble("balanceSum");
@@ -494,8 +487,9 @@ public class SQLiteDatabase extends SQLDatabase {
 			e.printStackTrace();
 		}
 	}
-	
-	public void openDatabase(String database,String dbUsername,String dbPassword,String username) {
+
+	public void openDatabase(String database, String dbUsername,
+			String dbPassword, String username) {
 		this.database = database;
 		try {
 			close();
@@ -749,7 +743,7 @@ public class SQLiteDatabase extends SQLDatabase {
 					"SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM",
 					"WHERE accountName = ?",
 					"),0) as accountBalance FROM Accounts WHERE accountName = ?",
-					until, null, false, showHidden, false,true);
+					until, null, false, showHidden, false, true);
 			ps.setString(accountName);
 			ps.setString(accountName);
 			ResultSet results = ps.executeQuery();
@@ -760,6 +754,14 @@ public class SQLiteDatabase extends SQLDatabase {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	protected void importDatabaseHelper(String name, String sql) {
+		try {
+			AutoPreparedStatement.create(c, sql).executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -27,8 +27,6 @@ import javax.swing.table.TableColumn;
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
-import se.freedrikp.econview.database.SQLiteDatabase;
-import se.freedrikp.econview.database.SQLiteSecurity;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.menubar.MenuBar;
 import se.freedrikp.econview.gui.tabs.AccountsTab;

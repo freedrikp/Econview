@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import se.freedrikp.econview.common.Language;
-import se.freedrikp.econview.database.SQLiteSecurity;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.dialogs.AddUserDialog;
 import se.freedrikp.econview.gui.frames.ManageUsersFrame;
@@ -73,7 +72,8 @@ public class UsersMenu extends JMenu {
 						return;
 					}
 					final LinkedList<File> files = new LinkedList<File>();
-					files.add(new File(security.getDatabase()).getAbsoluteFile());
+					files.add(new File(security.getDatabase())
+							.getAbsoluteFile());
 					JPanel filePanel = new JPanel();
 					filePanel.setLayout(new GridLayout(3, 1, 0, 0));
 					final JList fileList = new JList();
