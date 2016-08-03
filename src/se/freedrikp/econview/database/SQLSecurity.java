@@ -95,12 +95,12 @@ public abstract class SQLSecurity extends Security {
 	public abstract Database openNewDatabaseHelper(String database)
 			throws Exception;
 
-	public boolean openDatabase(String selectedDatabase, Database db,
+	public boolean openDatabase(String selectedDatabase,String dbUsername, String dbPassword, Database db,
 			String username, String password) {
 		try {
 			if (checkUser(username, password)) {
 				db.close();
-				openDatabaseHelper(selectedDatabase, db);
+				openDatabaseHelper(selectedDatabase,dbUsername,dbPassword, db,username);
 				setChanged();
 				notifyObservers();
 				return true;
@@ -111,7 +111,7 @@ public abstract class SQLSecurity extends Security {
 		return false;
 	}
 
-	public abstract void openDatabaseHelper(String selectedDatabase, Database db)
+	public abstract void openDatabaseHelper(String selectedDatabase,String dbUsername, String dbPassword, Database db,String username)
 			throws Exception;
 
 	public abstract boolean saveDatabase(String destinationDatabase,

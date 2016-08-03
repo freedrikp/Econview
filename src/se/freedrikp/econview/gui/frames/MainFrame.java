@@ -186,7 +186,9 @@ public class MainFrame extends JFrame implements Observer {
 		public void windowClosing(WindowEvent e) {
 			try {
 				db.close();
-				if (sec != null) {
+				if (sec != null && Configuration.getString(
+						"DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals(
+						"SQLITE")) {
 					sec.close();
 					Files.delete(new File(Configuration
 							.getString("DATABASE_DIRECTORY")

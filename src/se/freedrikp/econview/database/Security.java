@@ -10,7 +10,7 @@ public abstract class Security extends Observable {
 	public abstract Database openNewDatabase(String database, String username,
 			String password) throws Exception;
 
-	public abstract boolean openDatabase(String selectedDatabase, Database db,
+	public abstract boolean openDatabase(String selectedDatabase,String dbUsername, String dbPassword, Database db,
 			String username, String password);
 
 	public abstract boolean saveDatabase(String destinationDatabase,

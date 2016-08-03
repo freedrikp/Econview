@@ -13,10 +13,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.ProgressMonitor;
 
+import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.common.Language;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.Security;
 import se.freedrikp.econview.gui.dialogs.AuthenticationDialog;
+import se.freedrikp.econview.gui.dialogs.DatabaseAuthenticationDialog;
 import se.freedrikp.econview.gui.frames.MainFrame;
 
 public class FileMenu extends JMenu {
@@ -32,10 +34,13 @@ public class FileMenu extends JMenu {
 		mntmOpenDatabase.addActionListener(new OpenDatabaseListener(gui));
 		add(mntmOpenDatabase);
 
-		JMenuItem mntmSaveDatabaseAs = new JMenuItem(
-				Language.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
-		mntmSaveDatabaseAs.addActionListener(new SaveDatabaseListener(gui));
-		add(mntmSaveDatabaseAs);
+		if (Configuration.getString("DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals(
+				"SQLITE")) {
+			JMenuItem mntmSaveDatabaseAs = new JMenuItem(
+					Language.getString("MENUBAR_FILE_SAVE_DATABASE_AS"));
+			mntmSaveDatabaseAs.addActionListener(new SaveDatabaseListener(gui));
+			add(mntmSaveDatabaseAs);
+		}
 	}
 
 	private class OpenDatabaseListener implements ActionListener {
@@ -46,6 +51,9 @@ public class FileMenu extends JMenu {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
+			if (Configuration.getString(
+					"DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals(
+					"SQLITE")){
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 			JFileChooser f = new JFileChooser();
 			f.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -57,7 +65,7 @@ public class FileMenu extends JMenu {
 					AuthenticationDialog ad = new AuthenticationDialog();
 					if (ad.showDialog()) {
 						if (!sec.openDatabase(fc.getSelectedFile()
-								.getAbsolutePath(), db, ad.getUsername(), ad
+								.getAbsolutePath(),"NULL", "NULL", db, ad.getUsername(), ad
 								.getPassword())) {
 							ad.showFailedDialog(false);
 						}
@@ -65,6 +73,25 @@ public class FileMenu extends JMenu {
 				} else {
 					db.openDatabase(fc.getSelectedFile().getAbsolutePath(),
 							"NULL", "NULL", "NULL");
+				}
+			}
+			}else if (Configuration.getString(
+					"DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals(
+					"MYSQL")){
+				DatabaseAuthenticationDialog dad = new DatabaseAuthenticationDialog();
+				if (dad.showDialog()){
+					if (sec != null) {
+						AuthenticationDialog ad = new AuthenticationDialog();
+						if (ad.showDialog()) {
+							if (!sec.openDatabase(dad.getDatabase(),dad.getUsername(),dad.getPassword(), db, ad.getUsername(), ad
+									.getPassword())) {
+								ad.showFailedDialog(false);
+							}
+						}
+					} else {
+						db.openDatabase(dad.getDatabase(),
+								dad.getUsername(), dad.getPassword(), "NOUSER");
+					}
 				}
 			}
 		}

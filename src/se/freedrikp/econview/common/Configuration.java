@@ -41,6 +41,7 @@ public class Configuration {
 		config.put("MYSQL_DATABASE", "MYSQL_DATABASE");
 		config.put("MYSQL_USERNAME", "MYSQL_USERNAME");
 		config.put("MYSQL_PASSWORD", "MYSQL_PASSWORD");
+		config.put("DATABASE_SYSTEM_SQLITE_OR_MYSQL", "SQLITE");
 	}
 
 	public static String getString(String key) {

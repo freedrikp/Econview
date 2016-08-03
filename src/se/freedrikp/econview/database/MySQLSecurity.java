@@ -54,9 +54,9 @@ public class MySQLSecurity extends SQLSecurity {
 		return;
 	}
 
-	public void openDatabaseHelper(String selectedDatabase, Database db)
+	public void openDatabaseHelper(String selectedDatabase,String dbUsername, String dbPassword, Database db,String username)
 			throws Exception {
-		db.openDatabase(selectedDatabase, username, password, user);
+		db.openDatabase(selectedDatabase, dbUsername, dbPassword, username);
 	}
 
 	public boolean saveDatabase(String destinationDatabase, String username,

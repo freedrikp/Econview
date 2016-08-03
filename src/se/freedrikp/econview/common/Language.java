@@ -143,6 +143,7 @@ public class Language {
 				"Specify search criteria for transactions to be deleted");
 		lan.put("PROMPT_DELETE_TRANSACTIONS_SEARCH_REVIEW",
 				"Review transactions to be deleted");
+		lan.put("PROMPT_DATABASE", "Database");
 
 		lang.put(Configuration.getString("LANGUAGE"), lan);
 	}
