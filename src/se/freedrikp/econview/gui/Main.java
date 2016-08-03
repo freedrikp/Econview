@@ -42,7 +42,7 @@ public class Main {
 						// + Configuration
 						// .getString("USERS_DATABASE_FILE"));
 						Security security = new MySQLSecurity(
-								"freedrikp.se/econview", "econview", "dabest");
+								Configuration.getString("MYSQL_DATABASE"), Configuration.getString("MYSQL_USERNAME"), Configuration.getString("MYSQL_PASSWORD"));
 						if (!security.usersExist()) {
 							new AddUserDialog(security, true).showDialog();
 						}
@@ -57,7 +57,7 @@ public class Main {
 						// .getString("DATABASE_FILE"),
 						// ad.getUsername(), ad.getPassword());
 						Database db = security.openNewDatabase(
-								"freedrikp.se/econview", ad.getUsername(),
+								Configuration.getString("MYSQL_DATABASE"), ad.getUsername(),
 								ad.getPassword());
 						if (db == null) {
 							ad.showFailedDialog(true);

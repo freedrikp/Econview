@@ -38,6 +38,9 @@ public class Configuration {
 		config.put("SEARCH_PANEL_WIDTH", "500");
 		config.put("SEARCH_PANEL_HEIGHT", "500");
 		config.put("DATABASE_DIRECTORY", "data");
+		config.put("MYSQL_DATABASE", "MYSQL_DATABASE");
+		config.put("MYSQL_USERNAME", "MYSQL_USERNAME");
+		config.put("MYSQL_PASSWORD", "MYSQL_PASSWORD");
 	}
 
 	public static String getString(String key) {
