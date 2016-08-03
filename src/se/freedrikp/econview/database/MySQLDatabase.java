@@ -371,7 +371,8 @@ public class MySQLDatabase extends SQLDatabase {
 		try {
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"SELECT TABLE_NAME as name FROM information_schema.TABLES WHERE TABLE_SCHEMA = ?");
+							"SELECT TABLE_NAME as name FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME <> 'Users'");
+			ps.setString(database.substring(database.lastIndexOf('/') + 1));
 			ResultSet rs = ps.executeQuery();
 			LinkedList<String> tableNames = new LinkedList<String>();
 			long totalCount = 0;
@@ -399,6 +400,9 @@ public class MySQLDatabase extends SQLDatabase {
 				ps = AutoPreparedStatement.create(c, "SELECT * FROM " + table);
 				ResultSet row = ps.executeQuery();
 				for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
+					if (row.getMetaData().getColumnLabel(i).equals(("username"))){
+						continue;
+					}
 					pw.print(row.getMetaData().getColumnLabel(i));
 					if (i < row.getMetaData().getColumnCount()) {
 						pw.print(",");
@@ -407,6 +411,9 @@ public class MySQLDatabase extends SQLDatabase {
 				pw.println();
 				while (row.next()) {
 					for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
+						if (row.getMetaData().getColumnLabel(i).equals(("username"))){
+							continue;
+						}
 						if (row.getMetaData().isAutoIncrement(i)) {
 							pw.print("NULL");
 						} else {
