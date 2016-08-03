@@ -2,6 +2,7 @@ package se.freedrikp.econview.gui;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.io.PrintStream;
 
 import javax.swing.UIManager;
 
@@ -29,6 +30,8 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					System.setErr(new PrintStream(Configuration.getString("LOGFILE_ERROR")));
+					System.setOut(new PrintStream(Configuration.getString("LOGFILE_OUT")));
 					boolean secure = Configuration
 							.getBoolean("SECURITY_TRUE_FALSE");
 					MainFrame frame;
