@@ -21,7 +21,7 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
-*Fixed export of MySQL so username is not included.
+*Fixed export of MySQL so username is not included. ---- v2.9
 
 *Created MySQL variants of the Database and Security classes. ---- v2.9
 
