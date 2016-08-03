@@ -21,6 +21,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Include MySQL JDBC in release script. ---- v3.0
+
 *Fixed export of MySQL so username is not included. ---- v2.9
 
 *Created MySQL variants of the Database and Security classes. ---- v2.9
