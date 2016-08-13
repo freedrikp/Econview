@@ -6,6 +6,8 @@ import java.io.PrintStream;
 
 import javax.swing.UIManager;
 
+import org.apache.commons.io.output.TeeOutputStream;
+
 import se.freedrikp.econview.common.Configuration;
 import se.freedrikp.econview.database.Database;
 import se.freedrikp.econview.database.MySQLDatabase;
@@ -30,8 +32,10 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					System.setErr(new PrintStream(Configuration.getString("LOGFILE_ERROR")));
-					System.setOut(new PrintStream(Configuration.getString("LOGFILE_OUT")));
+					TeeOutputStream stdout = new TeeOutputStream(System.out, new PrintStream(Configuration.getString("LOGFILE_OUT")));
+					TeeOutputStream stderr = new TeeOutputStream(System.err, new PrintStream(Configuration.getString("LOGFILE_ERROR")));
+					System.setOut(new PrintStream(stdout));
+					System.setErr(new PrintStream(stderr));
 					boolean secure = Configuration
 							.getBoolean("SECURITY_TRUE_FALSE");
 					MainFrame frame;

@@ -21,6 +21,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Added Apache Commons IO to use TeeOutpuStream for stdout and stderr. ---- v3.1
+
 *Switched to one column for dates in the databases. ---- v3.1
 
 *Creates logfiles. ---- v3.1 
