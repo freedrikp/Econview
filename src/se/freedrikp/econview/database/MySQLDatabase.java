@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,12 +20,14 @@ import se.freedrikp.econview.common.Common;
 
 public class MySQLDatabase extends SQLDatabase {
 	private String username;
+	private boolean foreign;
 
 	public MySQLDatabase(String database, String dbUsername, String dbPassword,
-			String username) {
+			String username, boolean foreign) {
 		super(database, "com.mysql.jdbc.Driver", "jdbc:mysql://" + database,
 				dbUsername, dbPassword);
 		this.username = username;
+		this.foreign = foreign;
 	}
 
 	private boolean tableExists(String tableName) {
@@ -52,21 +55,23 @@ public class MySQLDatabase extends SQLDatabase {
 						+ "accountName varchar(100),"
 						+ "accountBalance REAL DEFAULT 0.0,"
 						+ "accountHidden INTEGER DEFAULT '1',"
-						+ "username varchar(30),"
-						+ "FOREIGN KEY (username) REFERENCES Users(username),"
-						+ "PRIMARY KEY (accountName,username)" + ")";
+						+ "username varchar(30),";
+				if (foreign) {
+					sql += "FOREIGN KEY (username) REFERENCES Users(username),";
+				}
+				sql += "PRIMARY KEY (accountName,username)" + ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 			}
 			if (!tableExists("Transactions")) {
 				String sql = "CREATE TABLE Transactions("
 						+ "transactionID INTEGER PRIMARY KEY AUTO_INCREMENT,"
 						+ "accountName varchar(100),"
-						+ "transactionAmount REAL,"
-						+ "transactionYear char(4)," + "transactionMonth TEXT,"
-						+ "transactionDay char(2),"
-						+ "transactionComment TEXT," + "username varchar(30),"
-						+ "FOREIGN KEY (username) REFERENCES Users(username)"
-						+ ")";
+						+ "transactionAmount REAL," + "transactionDate DATE,"
+						+ "transactionComment TEXT," + "username varchar(30)";
+				if (foreign) {
+					sql += ",FOREIGN KEY (username) REFERENCES Users(username)";
+				}
+				sql += ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 			}
 			if (!tableExists("StoredTransactions")) {
@@ -75,9 +80,11 @@ public class MySQLDatabase extends SQLDatabase {
 						+ "accountName varchar(100),"
 						+ "transactionAmount REAL,"
 						+ "transactionComment varchar(500),"
-						+ "username varchar(30),"
-						+ "FOREIGN KEY (username) REFERENCES Users(username)"
-						+ ")";
+						+ "username varchar(30)";
+				if (foreign) {
+					sql += ",FOREIGN KEY (username) REFERENCES Users(username)";
+				}
+				sql += ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 			}
 			c.commit();
@@ -170,15 +177,10 @@ public class MySQLDatabase extends SQLDatabase {
 			c.setAutoCommit(false);
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"INSERT INTO Transactions(accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment,username) VALUES (?,?,?,?,?,?,?)");
+							"INSERT INTO Transactions(accountName,transactionAmount,transactionDate,transactionComment,username) VALUES (?,?,?,?,?)");
 			ps.setString(accountName);
 			ps.setDouble(transactionAmount);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("MM");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("dd");
-			ps.setString(sdf.format(transactionDate));
+			ps.setDate(transactionDate);
 			ps.setString(transactionComment);
 			ps.setString(username);
 			ps.executeUpdate();
@@ -212,15 +214,10 @@ public class MySQLDatabase extends SQLDatabase {
 			ps.executeUpdate();
 			ps = AutoPreparedStatement
 					.create(c,
-							"UPDATE Transactions SET accountName = ?,transactionAmount = ?,transactionYear = ?,transactionMonth = ?,transactionDay = ?,transactionComment = ? WHERE transactionID = ?");
+							"UPDATE Transactions SET accountName = ?,transactionAmount = ?,transactionDate = ?,transactionComment = ? WHERE transactionID = ?");
 			ps.setString(accountName);
 			ps.setDouble(transactionAmount);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("MM");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("dd");
-			ps.setString(sdf.format(transactionDate));
+			ps.setDate(transactionDate);
 			ps.setString(transactionComment);
 			ps.setLong(transactionID);
 			ps.executeUpdate();
@@ -400,7 +397,8 @@ public class MySQLDatabase extends SQLDatabase {
 				ps = AutoPreparedStatement.create(c, "SELECT * FROM " + table);
 				ResultSet row = ps.executeQuery();
 				for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
-					if (row.getMetaData().getColumnLabel(i).equals(("username"))){
+					if (row.getMetaData().getColumnLabel(i)
+							.equals(("username"))) {
 						continue;
 					}
 					pw.print(row.getMetaData().getColumnLabel(i));
@@ -411,7 +409,8 @@ public class MySQLDatabase extends SQLDatabase {
 				pw.println();
 				while (row.next()) {
 					for (int i = 1; i <= row.getMetaData().getColumnCount(); i++) {
-						if (row.getMetaData().getColumnLabel(i).equals(("username"))){
+						if (row.getMetaData().getColumnLabel(i)
+								.equals(("username"))) {
 							continue;
 						}
 						if (row.getMetaData().isAutoIncrement(i)) {
@@ -513,51 +512,23 @@ public class MySQLDatabase extends SQLDatabase {
 
 	private Date getTransactionDate(String sql) {
 		try {
-			String year = "SELECT "
+			String query = "SELECT "
 					+ sql
-					+ "(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ? AND username = ?";
-			String month = "SELECT "
-					+ sql
-					+ "(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("
-					+ year + ") AND accountHidden <= ? AND username = ?";
-			String day = "SELECT "
-					+ sql
-					+ "(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("
-					+ month + ") AND transactionYear IN (" + year
-					+ ") AND accountHidden <= ? AND username = ?";
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionYear as year,transactionMonth as month,transactionDay as day FROM Transactions NATURAL JOIN Accounts WHERE transactionYear IN ("
-									+ year
-									+ ") AND transactionMonth IN ("
-									+ month
-									+ ") AND transactionDay IN ("
-									+ day
-									+ ")");
-			ps.setInt(showHidden);
-			ps.setString(username);
-			ps.setInt(showHidden);
-			ps.setString(username);
-			ps.setInt(showHidden);
-			ps.setString(username);
-			ps.setInt(showHidden);
-			ps.setString(username);
-			ps.setInt(showHidden);
-			ps.setString(username);
-			ps.setInt(showHidden);
-			ps.setString(username);
+					+ "(transactionDate) as transactionDate FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ? AND username = ?";
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c, query);
 			ps.setInt(showHidden);
 			ps.setString(username);
 			ResultSet result = ps.executeQuery();
 			Date date = null;
 			while (result.next()) {
-				Calendar cal = Common.getFlattenCalendar(null);
-				cal.set(result.getInt("year"), result.getInt("month") - 1,
-						result.getInt("day"));
-				date = cal.getTime();
+				String d = result.getString("transactionDate");
+				if (d == null){
+					return null;
+				}
+				date = dateFormat.parse(d);
 			}
 			return date;
-		} catch (SQLException e) {
+		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -569,11 +540,9 @@ public class MySQLDatabase extends SQLDatabase {
 		try {
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear = ? AND transactionMonth = ? AND transactionDay = ? AND transactionComment = ? AND username = ?");
+							"SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionDate = ? AND transactionComment = ? AND username = ?");
 			ps.setInt(showHidden);
-			ps.setString(new SimpleDateFormat("yyyy").format(transactionDate));
-			ps.setString(new SimpleDateFormat("MM").format(transactionDate));
-			ps.setString(new SimpleDateFormat("dd").format(transactionDate));
+			ps.setDate(transactionDate);
 			ps.setString(transactionComment);
 			ps.setString(username);
 
@@ -729,5 +698,13 @@ public class MySQLDatabase extends SQLDatabase {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected String monthGrouper(String column) {
+		return "MONTH(" + column + ")";
+	}
+
+	protected String yearGrouper(String column) {
+		return "YEAR(" + column + ")";
 	}
 }

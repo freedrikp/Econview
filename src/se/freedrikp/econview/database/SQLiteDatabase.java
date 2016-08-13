@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,8 +40,7 @@ public class SQLiteDatabase extends SQLDatabase {
 				sql = "CREATE TABLE Transactions("
 						+ "transactionID INTEGER PRIMARY KEY,"
 						+ "accountName TEXT," + "transactionAmount REAL,"
-						+ "transactionYear TEXT," + "transactionMonth TEXT,"
-						+ "transactionDay TEXT," + "transactionComment TEXT"
+						+ "transactionDate DATE," + "transactionComment TEXT"
 						+ ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 				sql = "CREATE TABLE StoredTransactions("
@@ -133,15 +133,10 @@ public class SQLiteDatabase extends SQLDatabase {
 			c.setAutoCommit(false);
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"INSERT INTO Transactions(accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment) VALUES (?,?,?,?,?,?)");
+							"INSERT INTO Transactions(accountName,transactionAmount,transactionDate,transactionComment) VALUES (?,?,?,?)");
 			ps.setString(accountName);
 			ps.setDouble(transactionAmount);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("MM");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("dd");
-			ps.setString(sdf.format(transactionDate));
+			ps.setDate(transactionDate);
 			ps.setString(transactionComment);
 			ps.executeUpdate();
 			ps = AutoPreparedStatement
@@ -172,15 +167,10 @@ public class SQLiteDatabase extends SQLDatabase {
 			ps.executeUpdate();
 			ps = AutoPreparedStatement
 					.create(c,
-							"UPDATE Transactions SET accountName = ?,transactionAmount = ?,transactionYear = ?,transactionMonth = ?,transactionDay = ?,transactionComment = ? WHERE transactionID = ?");
+							"UPDATE Transactions SET accountName = ?,transactionAmount = ?,transactionDate = ?,transactionComment = ? WHERE transactionID = ?");
 			ps.setString(accountName);
 			ps.setDouble(transactionAmount);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("MM");
-			ps.setString(sdf.format(transactionDate));
-			sdf = new SimpleDateFormat("dd");
-			ps.setString(sdf.format(transactionDate));
+			ps.setDate(transactionDate);
 			ps.setString(transactionComment);
 			ps.setLong(transactionID);
 			ps.executeUpdate();
@@ -565,49 +555,19 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	private Date getTransactionDate(String sql) {
 		try {
-			String year = "SELECT "
+			String query = "SELECT "
 					+ sql
-					+ "(transactionYear) FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
-			String month = "SELECT "
-					+ sql
-					+ "(transactionMonth) FROM Accounts NATURAL JOIN Transactions WHERE transactionYear IN ("
-					+ year + ") AND accountHidden <= ?";
-			String day = "SELECT "
-					+ sql
-					+ "(transactionDay) FROM Accounts NATURAL JOIN Transactions WHERE transactionMonth IN ("
-					+ month + ") AND transactionYear IN (" + year
-					+ ") AND accountHidden <= ?";
-			// PreparedStatement ps = c
-			// .prepareStatement("SELECT "
-			// + sql
-			// +
-			// " FROM Transactions NATURAL JOIN Accounts WHERE accountIncluded >= ?");
+					+ "(transactionDate) as date FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
 			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionYear as year,transactionMonth as month,transactionDay as day FROM Transactions NATURAL JOIN Accounts WHERE transactionYear IN ("
-									+ year
-									+ ") AND transactionMonth IN ("
-									+ month
-									+ ") AND transactionDay IN ("
-									+ day
-									+ ")");
-			ps.setInt(showHidden);
-			ps.setInt(showHidden);
-			ps.setInt(showHidden);
-			ps.setInt(showHidden);
-			ps.setInt(showHidden);
-			ps.setInt(showHidden);
+					.create(c,query);
 			ps.setInt(showHidden);
 			ResultSet result = ps.executeQuery();
 			Date date = null;
 			while (result.next()) {
-				Calendar cal = Common.getFlattenCalendar(null);
-				cal.set(result.getInt("year"), result.getInt("month") - 1,
-						result.getInt("day"));
-				date = cal.getTime();
+				date = dateFormat.parse(result.getString("date"));
 			}
 			return date;
-		} catch (SQLException e) {
+		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -619,11 +579,9 @@ public class SQLiteDatabase extends SQLDatabase {
 		try {
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionYear = ? AND transactionMonth = ? AND transactionDay = ? AND transactionComment = ?");
+							"SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionDate = ? AND transactionComment = ?");
 			ps.setInt(showHidden);
-			ps.setString(new SimpleDateFormat("yyyy").format(transactionDate));
-			ps.setString(new SimpleDateFormat("MM").format(transactionDate));
-			ps.setString(new SimpleDateFormat("dd").format(transactionDate));
+			ps.setDate(transactionDate);
 			ps.setString(transactionComment);
 
 			ResultSet results = ps.executeQuery();
@@ -762,6 +720,14 @@ public class SQLiteDatabase extends SQLDatabase {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected String monthGrouper(String column) {
+		return "strftime('%m'," + column + ")";
+	}
+
+	protected String yearGrouper(String column) {
+		return "strftime('%Y'," + column + ")";
 	}
 
 }

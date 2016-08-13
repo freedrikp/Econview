@@ -96,7 +96,7 @@ public class Main {
 							db = new MySQLDatabase(Configuration
 									.getString("MYSQL_DATABASE"), Configuration
 									.getString("MYSQL_USERNAME"), Configuration
-									.getString("MYSQL_PASSWORD"), "NOUSER");
+									.getString("MYSQL_PASSWORD"), "NOUSER",secure);
 
 						}
 						frame = new MainFrame(db, null);

@@ -1,0 +1,19 @@
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Kort','54194.0','0')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Konto','16514.0','0')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Fredrik','15771.5','0')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Secret','5000000.0','1')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Hej','509135.0','0')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Testing','-497.0','0')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Hejsan','39.0','0')
+Hej
+INSERT INTO Accounts (accountName,accountBalance,accountHidden) VALUES ('Löken','1364.0','0')
+Hej
+INSERT INTO Transactions (transactionID,accountName,transactionAmount,transactionComment,transactionDate) VALUES (NULL,'Kort','1500.0','hej','2015-09-10')
+Hej

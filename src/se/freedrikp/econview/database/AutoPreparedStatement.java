@@ -1,9 +1,11 @@
 package se.freedrikp.econview.database;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
 public class AutoPreparedStatement {
@@ -55,5 +57,16 @@ public class AutoPreparedStatement {
 	public void setPlacedString(int index, String s) throws SQLException {
 		indices.remove(indices.indexOf(index));
 		ps.setString(index, s);
+	}
+	
+	public void setDate(Date d) throws SQLException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		ps.setString(indices.removeFirst(), dateFormat.format(d));
+	}
+	
+	public void setPlacedDate(int index, Date d) throws SQLException {
+		indices.remove(indices.indexOf(index));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		ps.setString(index, dateFormat.format(d));
 	}
 }

@@ -1,0 +1,61 @@
+51
+Accounts
+accountName,accountBalance,accountHidden
+Kort,54154.0,0
+Konto,16554.0,0
+Fredrik,15771.5,0
+Secret,5000000.0,1
+Hej,509135.0,0
+Testing,24999503.0,0
+Hejsan,39.0,0
+Löken,1364.0,0
+
+Transactions
+transactionID,accountName,transactionAmount,transactionYear,transactionMonth,transactionDay,transactionComment
+1,Kort,1500.0,2015,09,10,hej
+2,Fredrik,590.0,2015,01,02,Something
+3,Fredrik,543.0,2015,01,02,Something2
+4,Konto,15000.0,2015,05,02,Hej
+5,Kort,-5.0,2015,10,02,Chokladboll
+6,Kort,-30.0,2015,10,02,hej
+7,Konto,-49.0,2015,10,02,Fredd
+8,Kort,50000.0,2015,10,04,LÃ–Ã–Ã–Ã–N
+9,Konto,53.0,2015,10,17,eg
+10,Fredrik,52.5,2015,10,17,gjgh
+11,Fredrik,52.0,2015,10,22,one
+12,Fredrik,534.0,2015,10,25,hej
+13,Kort,342.0,2015,04,28,Test1
+14,Hej,1500.0,2014,11,09,Hej
+15,Testing,-549.0,2016,01,03,Multi
+16,Kort,897.0,2016,01,03,Multi
+17,Hej,-3520.0,2016,01,06,Oj
+18,Löken,51.0,2016,01,06,över
+19,Löken,51.0,2016,01,06,Hej
+20,Hej,1.0,2016,01,06,Hej
+21,Hejsan,2.0,2016,01,06,Hej
+22,Löken,3.0,2016,01,06,Hej
+23,Hejsan,3.0,2016,01,06,Hejsan
+24,Löken,25.0,2016,01,03,Multi
+25,Kort,-10.0,2016,01,07,XtraSpar
+26,Konto,10.0,2016,01,07,XtraSpar
+27,Hej,511111.0,2016,01,06,Hej
+28,Testing,5000000.0,2016,02,07,Future Sum
+29,Kort,-10.0,2016,02,07,Spar
+30,Konto,10.0,2016,02,07,Spar
+31,Testing,5000000.0,2016,02,07,Future Sum
+32,Testing,5000000.0,2016,02,07,Future Sum
+33,Testing,5000000.0,2016,02,07,Future Sum
+34,Kort,-10.0,2016,02,07,Spar
+35,Konto,10.0,2016,02,07,Spar
+36,Kort,-10.0,2016,02,07,Spar
+37,Konto,10.0,2016,02,07,Spar
+38,Kort,-10.0,2016,02,07,Spar
+39,Konto,10.0,2016,02,07,Spar
+40,Testing,5000000.0,2016,02,08,Future Sum
+
+StoredTransactions
+transactionID,accountName,transactionAmount,transactionComment
+1,Kort,-10.0,Spar
+2,Konto,10.0,Spar
+3,Testing,5000000.0,Future Sum
+
