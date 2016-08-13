@@ -557,14 +557,18 @@ public class SQLiteDatabase extends SQLDatabase {
 		try {
 			String query = "SELECT "
 					+ sql
-					+ "(transactionDate) as date FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
+					+ "(transactionDate) as transactionDate FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?";
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,query);
 			ps.setInt(showHidden);
 			ResultSet result = ps.executeQuery();
 			Date date = null;
 			while (result.next()) {
-				date = dateFormat.parse(result.getString("date"));
+				String d = result.getString("transactionDate");
+				if (d == null){
+					return null;
+				}
+				date = dateFormat.parse(d);
 			}
 			return date;
 		} catch (SQLException | ParseException e) {
