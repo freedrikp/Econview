@@ -699,25 +699,6 @@ public class SQLiteDatabase extends SQLDatabase {
 		return res;
 	}
 
-	public double getAccountBalance(String accountName, Date until) {
-		try {
-			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM",
-					"WHERE accountName = ?",
-					"),0) as accountBalance FROM Accounts WHERE accountName = ?",
-					until, null, false, showHidden, false, true);
-			ps.setString(accountName);
-			ps.setString(accountName);
-			ResultSet results = ps.executeQuery();
-			if (results.next()) {
-				return results.getDouble("accountBalance");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
 	protected void importDatabaseHelper(String name, String sql) {
 		try {
 			AutoPreparedStatement.create(c, sql).executeUpdate();

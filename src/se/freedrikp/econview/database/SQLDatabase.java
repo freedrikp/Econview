@@ -610,7 +610,29 @@ public abstract class SQLDatabase extends Database {
 
 	public abstract List<Object[]> getStoredTransactions();
 
-	public abstract double getAccountBalance(String accountName, Date until);
+	public double getAccountBalance(String accountName, Date until) {
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = selectBetweenDates(
+					"SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM",
+					"AND accountName = ?",
+					"),0) as accountBalance FROM Accounts WHERE accountName = ? " + helperClause,
+					until, null, false, showHidden, false, true);
+			ps.setString(accountName);
+			ps.setString(accountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ResultSet results = ps.executeQuery();
+			if (results.next()) {
+				return results.getDouble("accountBalance");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+
+	}
 
 	public List<Object[]> searchTransactions(long transactionId, boolean doID,
 			String accountName, double transactionAmount, boolean doAmount,
@@ -706,7 +728,8 @@ public abstract class SQLDatabase extends Database {
 				+ (doOrder ? " ORDER BY transactionDate " + order
 						+ ",transactionID " + order : "") + " "
 				+ sqlEnd;
-
+System.out.println(sql);
+		
 		AutoPreparedStatement ps = AutoPreparedStatement.create(c, sql);
 		
 		int index = 1;
