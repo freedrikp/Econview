@@ -555,7 +555,24 @@ public abstract class SQLDatabase extends Database {
 
 	public abstract void close() throws SQLException;
 
-	protected abstract void deleteEntries(String table);
+	protected void deleteEntries(String table) {
+		try {
+			String helperClause = helperClause();
+			if (helperClause.length() > 0) {
+				helperClause = helperClause.replaceAll("AND", "WHERE");
+			}
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
+					"DELETE FROM " + table + helperClause);
+		if (helperClause.length() > 0) {
+			ps.setString(helperValue());
+		}
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
 	public void deleteAccounts() {
 		deleteEntries("Accounts");
@@ -569,8 +586,27 @@ public abstract class SQLDatabase extends Database {
 		deleteEntries("StoredTransactions");
 	}
 
-	public abstract void addStoredTransaction(String accountName,
-			double transactionAmount, String transactionComment);
+	public void addStoredTransaction(String accountName,
+			double transactionAmount, String transactionComment) {
+		try {
+			String helperAdd = helperAdd();
+			String helperAddValue = helperAddValue();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"INSERT INTO StoredTransactions(accountName,transactionAmount,transactionComment" + helperAdd + ") VALUES (?,?,?" + helperAddValue + ")");
+			ps.setString(accountName);
+			ps.setDouble(transactionAmount);
+			ps.setString(transactionComment);
+			if (helperAdd.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
 	public void editStoredTransaction(long transactionID, String accountName,
 			double transactionAmount, String transactionComment) {
@@ -765,6 +801,10 @@ public abstract class SQLDatabase extends Database {
 	protected abstract String helperClause();
 
 	protected abstract String helperValue();
+	
+	protected abstract String helperAdd();
+
+	protected abstract String helperAddValue();
 
 	protected AutoPreparedStatement selectBetweenDates(String sqlSelect,
 			String sqlWhere, String sqlEnd, Date from, Date to,

@@ -258,6 +258,14 @@ public class SQLiteDatabase extends SQLDatabase {
 	protected String helperValue() {
 		return "";
 	}
+	
+	protected String helperAdd() {
+		return "";
+	}
+
+	protected String helperAddValue() {
+		return "";
+	}
 
 	// private AutoPreparedStatement selectBetweenDates(String sqlSelect,
 	// String sqlWhere,String sqlEnd, Date from, Date to,boolean ascending,int
@@ -611,34 +619,6 @@ public class SQLiteDatabase extends SQLDatabase {
 			e.printStackTrace();
 		}
 		c.close();
-	}
-
-	protected void deleteEntries(String table) {
-		try {
-			AutoPreparedStatement.create(c, "DELETE FROM " + table)
-					.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		setChanged();
-		notifyObservers();
-	}
-
-	public void addStoredTransaction(String accountName,
-			double transactionAmount, String transactionComment) {
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"INSERT INTO StoredTransactions(accountName,transactionAmount,transactionComment) VALUES (?,?,?)");
-			ps.setString(accountName);
-			ps.setDouble(transactionAmount);
-			ps.setString(transactionComment);
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		setChanged();
-		notifyObservers();
 	}
 
 	protected void importDatabaseHelper(String name, String sql) {

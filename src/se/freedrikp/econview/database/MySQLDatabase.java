@@ -309,6 +309,14 @@ public class MySQLDatabase extends SQLDatabase {
 	protected String helperValue() {
 		return username;
 	}
+	
+	protected String helperAdd() {
+		return ",username";
+	}
+
+	protected String helperAddValue() {
+		return ",?";
+	}
 
 	public double getTotalAccountBalanceSum(Date until) {
 		try {
@@ -567,37 +575,6 @@ public class MySQLDatabase extends SQLDatabase {
 			e.printStackTrace();
 		}
 		c.close();
-	}
-
-	protected void deleteEntries(String table) {
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
-					"DELETE FROM " + table + "WHERE username = ?");
-			ps.setString(username);
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		setChanged();
-		notifyObservers();
-	}
-
-	public void addStoredTransaction(String accountName,
-			double transactionAmount, String transactionComment) {
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"INSERT INTO StoredTransactions(accountName,transactionAmount,transactionComment,username) VALUES (?,?,?,?)");
-			ps.setString(accountName);
-			ps.setDouble(transactionAmount);
-			ps.setString(transactionComment);
-			ps.setString(username);
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		setChanged();
-		notifyObservers();
 	}
 
 	protected void importDatabaseHelper(String name, String sql) {
