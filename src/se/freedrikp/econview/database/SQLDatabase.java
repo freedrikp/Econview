@@ -527,8 +527,7 @@ public abstract class SQLDatabase extends Database {
 						}
 					}
 					sql += ")";
-					System.out.println(sql);
-					//importDatabaseHelper(name, sql);
+					importDatabaseHelper(name, sql);
 					progress += percent;
 					pm.setProgress(Math.round(progress));
 				}
