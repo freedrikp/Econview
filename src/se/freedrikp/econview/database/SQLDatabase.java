@@ -103,7 +103,7 @@ public abstract class SQLDatabase extends Database {
 			selectedAccounts += ")";
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT transactionID,accountName,transactionAmount,transactionDate,transactionComment FROM",
-					"Where accountName IN " + selectedAccounts, "", fromDate,
+					"AND accountName IN " + selectedAccounts, "", fromDate,
 					toDate, true, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -272,7 +272,7 @@ public abstract class SQLDatabase extends Database {
 			AutoPreparedStatement ps;
 			ps = selectBetweenDates(
 					"Select SUM(transactionAmount) as revenue FROM",
-					"WHERE accountName IN " + selectedAccounts, "", from, to,
+					"AND accountName IN " + selectedAccounts, "", from, to,
 					true, showHidden, true, true);
 			ResultSet results = ps.executeQuery();
 			while (results.next()) {
@@ -344,12 +344,12 @@ public abstract class SQLDatabase extends Database {
 		if (accountName.equals(totalAccountName)) {
 			ps = selectBetweenDates(
 					"SELECT sum(transactionAmount) as Amount FROM",
-					"WHERE accountName IN " + consideredAccounts, "", from, to,
+					"AND accountName IN " + consideredAccounts, "", from, to,
 					false, showHidden, true, true);
 		} else {
 			ps = selectBetweenDates(
 					"SELECT SUM(transactionAmount) as Amount FROM",
-					"WHERE accountName = ?", "", from, to, false, showHidden,
+					"AND accountName = ?", "", from, to, false, showHidden,
 					true, true);
 			ps.setString(accountName);
 		}
@@ -361,12 +361,12 @@ public abstract class SQLDatabase extends Database {
 		if (accountName.equals(totalAccountName)) {
 			ps = selectBetweenDates(
 					"SELECT transactionAmount,transactionDate FROM",
-					"WHERE accountName IN " + consideredAccounts, "", from, to,
+					"AND accountName IN " + consideredAccounts, "", from, to,
 					true, showHidden, true, true);
 		} else {
 			ps = selectBetweenDates(
 					"Select transactionAmount,transactionDate FROM",
-					"WHERE accountName = ?", "", from, to, true, showHidden,
+					"AND accountName = ?", "", from, to, true, showHidden,
 					true, true);
 			ps.setString(accountName);
 		}
@@ -616,7 +616,7 @@ public abstract class SQLDatabase extends Database {
 			String accountName, double transactionAmount, boolean doAmount,
 			String transactionComment, Date fromDate, Date toDate) {
 		List<Object[]> list = new LinkedList<Object[]>();
-		String sqlWhere = "WHERE ";
+		String sqlWhere = "AND ";
 		if (doID) {
 			sqlWhere += "transactionID = ? AND ";
 		}
@@ -634,7 +634,7 @@ public abstract class SQLDatabase extends Database {
 		if (sqlWhere.endsWith("AND ")) {
 			sqlWhere = sqlWhere.substring(0, sqlWhere.length() - 4);
 		}
-		if (sqlWhere.equals("WHERE ")) {
+		if (sqlWhere.equals("AND ")) {
 			sqlWhere = "";
 		}
 		AutoPreparedStatement ps;
@@ -694,21 +694,21 @@ public abstract class SQLDatabase extends Database {
 
 		String helperClause = helperClause();
 
-		String sqlDate = "(SELECT * FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? "
-				+ helperClause + clause + ")";
+		String sqlDate = " Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? "
+				+ helperClause + clause;
 	
 
 		String sql = sqlSelect
 				+ " "
 				+ sqlDate
-				+ " as Data "
+				+ " "
 				+ sqlWhere
 				+ (doOrder ? " ORDER BY transactionDate " + order
 						+ ",transactionID " + order : "") + " "
 				+ sqlEnd;
 
 		AutoPreparedStatement ps = AutoPreparedStatement.create(c, sql);
-
+		
 		int index = 1;
 		int temp = 0;
 		while ((temp = 1 + sqlSelect.indexOf('?', temp)) > 0) {

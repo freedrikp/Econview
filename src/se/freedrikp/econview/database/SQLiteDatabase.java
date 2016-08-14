@@ -385,9 +385,9 @@ public class SQLiteDatabase extends SQLDatabase {
 	public double getVisibleAccountBalanceSum(Date until) {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
-					"WHERE accountHidden = 0",
-					")),0) as balanceSum FROM Accounts WHERE accountHidden = 0",
+					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM ",
+					"AND accountHidden = 0",
+					"),0) as balanceSum FROM Accounts WHERE accountHidden = 0",
 					until, null, false, 1, false, true);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {
@@ -402,9 +402,9 @@ public class SQLiteDatabase extends SQLDatabase {
 	public double getHiddenAccountBalanceSum(Date until) {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
-					"WHERE accountHidden = 1",
-					")),0) as balanceSum FROM Accounts WHERE accountHidden = 1",
+					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM ",
+					"AND accountHidden = 1",
+					"),0) as balanceSum FROM Accounts WHERE accountHidden = 1",
 					until, null, false, 1, false, true);
 			ResultSet result = ps.executeQuery();
 			while (result.next()) {

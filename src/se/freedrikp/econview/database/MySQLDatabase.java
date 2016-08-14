@@ -330,9 +330,9 @@ public class MySQLDatabase extends SQLDatabase {
 	public double getVisibleAccountBalanceSum(Date until) {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
-					"WHERE accountHidden = 0",
-					") as VisibleTransactions),0) as balanceSum FROM Accounts WHERE accountHidden = 0 AND username = ?",
+					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM ",
+					"AND accountHidden = 0",
+					"),0) as balanceSum FROM Accounts WHERE accountHidden = 0 AND username = ?",
 					until, null, false, 1, false, true);
 			ps.setString(username);
 			ResultSet result = ps.executeQuery();
@@ -348,9 +348,9 @@ public class MySQLDatabase extends SQLDatabase {
 	public double getHiddenAccountBalanceSum(Date until) {
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM Accounts Natural JOIN (SELECT * FROM",
-					"WHERE accountHidden = 1",
-					") as VisibleTransactions),0) as balanceSum FROM Accounts WHERE accountHidden = 1 AND username = ?",
+					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM ",
+					"AND accountHidden = 1",
+					"),0) as balanceSum FROM Accounts WHERE accountHidden = 1 AND username = ?",
 					until, null, false, 1, false, true);
 			ps.setString(username);
 			ResultSet result = ps.executeQuery();
