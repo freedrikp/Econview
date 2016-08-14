@@ -410,7 +410,7 @@ public class MySQLDatabase extends SQLDatabase {
 						continue;
 					}
 					pw.print(row.getMetaData().getColumnLabel(i));
-					if (i < row.getMetaData().getColumnCount()) {
+					if (i < row.getMetaData().getColumnCount()-1) {
 						pw.print(",");
 					}
 				}
@@ -426,7 +426,7 @@ public class MySQLDatabase extends SQLDatabase {
 						} else {
 							pw.print(row.getString(i));
 						}
-						if (i < row.getMetaData().getColumnCount()) {
+						if (i < row.getMetaData().getColumnCount()-1) {
 							pw.print(",");
 						}
 					}

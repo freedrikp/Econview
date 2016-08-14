@@ -27,7 +27,7 @@ public abstract class SQLDatabase extends Database {
 	protected String database;
 	protected int showHidden;
 	protected static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-	 "yyyy-MM-dd");
+			"yyyy-MM-dd");
 
 	public SQLDatabase(String database, String sqlClass, String connectionString) {
 		this.database = database;
@@ -57,9 +57,9 @@ public abstract class SQLDatabase extends Database {
 			System.exit(0);
 		}
 	}
-	
+
 	protected abstract String monthGrouper(String column);
-	
+
 	protected abstract String yearGrouper(String column);
 
 	protected abstract void initdb();
@@ -110,7 +110,7 @@ public abstract class SQLDatabase extends Database {
 				Object[] row = new Object[5];
 				row[0] = results.getLong("transactionID");
 				row[1] = results.getString("accountName");
-				row[2] = results.getDouble("transactionAmount");				
+				row[2] = results.getDouble("transactionAmount");
 				row[3] = dateFormat.parse(results.getString("transactionDate"));
 				row[4] = results.getString("transactionComment");
 				list.add(row);
@@ -127,7 +127,11 @@ public abstract class SQLDatabase extends Database {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT " + yearGrouper("transactionDate") + "as transactionYear," + monthGrouper("transactionDate") + "as transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
+					"SELECT "
+							+ yearGrouper("transactionDate")
+							+ "as transactionYear,"
+							+ monthGrouper("transactionDate")
+							+ "as transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY transactionYear, transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC",
 					null, until, false, showHidden, true, true);
@@ -151,7 +155,9 @@ public abstract class SQLDatabase extends Database {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT " + yearGrouper("transactionDate") + "as transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
+					"SELECT "
+							+ yearGrouper("transactionDate")
+							+ "as transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY transactionYear ORDER BY transactionYear DESC",
 					null, until, false, showHidden, true, true);
@@ -174,7 +180,11 @@ public abstract class SQLDatabase extends Database {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT accountName," + yearGrouper("transactionDate") + "as transactionYear," + monthGrouper("transactionDate") + "as transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
+					"SELECT accountName,"
+							+ yearGrouper("transactionDate")
+							+ "as transactionYear,"
+							+ monthGrouper("transactionDate")
+							+ "as transactionMonth,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY accountName,transactionYear,transactionMonth ORDER BY transactionYear DESC, transactionMonth DESC, accountName ASC",
 					null, until, false, showHidden, true, true);
@@ -199,7 +209,9 @@ public abstract class SQLDatabase extends Database {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		try {
 			AutoPreparedStatement ps = selectBetweenDates(
-					"SELECT accountName," + yearGrouper("transactionDate") + "as transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
+					"SELECT accountName,"
+							+ yearGrouper("transactionDate")
+							+ "as transactionYear,SUM(transactionAmount) as revenue FROM Accounts NATURAL JOIN (SELECT * FROM ",
 					"",
 					") as FutureTransactions GROUP BY accountName,transactionYear ORDER BY transactionYear DESC, accountName ASC",
 					null, until, false, showHidden, true, true);
@@ -375,7 +387,8 @@ public abstract class SQLDatabase extends Database {
 			// Fix this GUI dependency
 			startBalance += transactions.getDouble("transactionAmount");
 			try {
-				datapoints.put(dateFormat.parse(transactions.getString("transactionDate")), startBalance);
+				datapoints.put(dateFormat.parse(transactions
+						.getString("transactionDate")), startBalance);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -441,7 +454,7 @@ public abstract class SQLDatabase extends Database {
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	public void importDatabase(InputStream in, String importMessage) {
 		try {
 			c.setAutoCommit(false);
@@ -463,37 +476,42 @@ public abstract class SQLDatabase extends Database {
 				int yearIndex = -1;
 				int monthIndex = -1;
 				int dayIndex = -1;
-				if (name.equals("Transactions")){
+				if (name.equals("Transactions")) {
 					String[] headerParts = header.split(",");
 					String newHeader = "";
-					for (int i = 0; i < headerParts.length; i++){
-						if (headerParts[i].equals("transactionDay")){
+					for (int i = 0; i < headerParts.length; i++) {
+						if (headerParts[i].equals("transactionDay")) {
 							dayIndex = i;
-						}else if (headerParts[i].equals("transactionMonth")){
+						} else if (headerParts[i].equals("transactionMonth")) {
 							monthIndex = i;
-						}else if (headerParts[i].equals("transactionYear")){
+						} else if (headerParts[i].equals("transactionYear")) {
 							yearIndex = i;
-						}else{
-							newHeader += headerParts[i]+ ",";
+						} else {
+							newHeader += headerParts[i] + ",";
 						}
 					}
-					newHeader += "transactionDate";
-					header = newHeader;
+					if (yearIndex >= 0 && monthIndex >= 0 && dayIndex >= 0) {
+						newHeader += "transactionDate";
+						header = newHeader;
+					}
 				}
 				String line;
 				while (scan.hasNextLine()
 						&& !(line = scan.nextLine()).isEmpty()) {
 					String[] row = line.split(",");
-					if (name.equals("Transactions") && yearIndex >= 0 && monthIndex >= 0 && dayIndex >= 0){
-						String newRow[] = new String[row.length-2];
-						for (int i = 0,j=0; i < row.length; i++){
-							if (i != yearIndex && i != monthIndex && i != dayIndex){
-								newRow[j]=row[i];
+					if (name.equals("Transactions") && yearIndex >= 0
+							&& monthIndex >= 0 && dayIndex >= 0) {
+						String newRow[] = new String[row.length - 2];
+						for (int i = 0, j = 0; i < row.length; i++) {
+							if (i != yearIndex && i != monthIndex
+									&& i != dayIndex) {
+								newRow[j] = row[i];
 								j++;
 							}
 						}
-						String date = row[yearIndex] + "-" + row[monthIndex] + "-" + row[dayIndex];
-						newRow[newRow.length-1] = date;
+						String date = row[yearIndex] + "-" + row[monthIndex]
+								+ "-" + row[dayIndex];
+						newRow[newRow.length - 1] = date;
 						row = newRow;
 					}
 					String sql = "INSERT INTO " + name + " (" + header + ")"
@@ -509,7 +527,8 @@ public abstract class SQLDatabase extends Database {
 						}
 					}
 					sql += ")";
-					importDatabaseHelper(name, sql);
+					System.out.println(sql);
+					//importDatabaseHelper(name, sql);
 					progress += percent;
 					pm.setProgress(Math.round(progress));
 				}
@@ -563,9 +582,9 @@ public abstract class SQLDatabase extends Database {
 			}
 			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
 					"DELETE FROM " + table + helperClause);
-		if (helperClause.length() > 0) {
-			ps.setString(helperValue());
-		}
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -593,7 +612,10 @@ public abstract class SQLDatabase extends Database {
 			String helperAddValue = helperAddValue();
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"INSERT INTO StoredTransactions(accountName,transactionAmount,transactionComment" + helperAdd + ") VALUES (?,?,?" + helperAddValue + ")");
+							"INSERT INTO StoredTransactions(accountName,transactionAmount,transactionComment"
+									+ helperAdd
+									+ ") VALUES (?,?,?"
+									+ helperAddValue + ")");
 			ps.setString(accountName);
 			ps.setDouble(transactionAmount);
 			ps.setString(transactionComment);
@@ -646,9 +668,9 @@ public abstract class SQLDatabase extends Database {
 			if (helperClause.length() > 0) {
 				helperClause = helperClause.replaceAll("AND", "WHERE");
 			}
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionComment FROM StoredTransactions "+ helperClause +" GROUP BY transactionComment");
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
+					"SELECT transactionComment FROM StoredTransactions "
+							+ helperClause + " GROUP BY transactionComment");
 			if (helperClause.length() > 0) {
 				ps.setString(helperValue());
 			}
@@ -668,7 +690,8 @@ public abstract class SQLDatabase extends Database {
 			String helperClause = helperClause();
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"SELECT transactionID,accountName,transactionAmount FROM StoredTransactions WHERE transactionComment=?" + helperClause);
+							"SELECT transactionID,accountName,transactionAmount FROM StoredTransactions WHERE transactionComment=?"
+									+ helperClause);
 			ps.setString(transactionComment);
 			if (helperClause.length() > 0) {
 				ps.setString(helperValue());
@@ -696,7 +719,8 @@ public abstract class SQLDatabase extends Database {
 			}
 			AutoPreparedStatement ps = AutoPreparedStatement
 					.create(c,
-							"SELECT transactionID,accountName,transactionAmount,transactionComment FROM StoredTransactions" + helperClause);
+							"SELECT transactionID,accountName,transactionAmount,transactionComment FROM StoredTransactions"
+									+ helperClause);
 			if (helperClause.length() > 0) {
 				ps.setString(helperValue());
 			}
@@ -721,8 +745,9 @@ public abstract class SQLDatabase extends Database {
 			AutoPreparedStatement ps = selectBetweenDates(
 					"SELECT accountBalance-COALESCE((SELECT SUM(transactionAmount) FROM",
 					"AND accountName = ?",
-					"),0) as accountBalance FROM Accounts WHERE accountName = ? " + helperClause,
-					until, null, false, showHidden, false, true);
+					"),0) as accountBalance FROM Accounts WHERE accountName = ? "
+							+ helperClause, until, null, false, showHidden,
+					false, true);
 			ps.setString(accountName);
 			ps.setString(accountName);
 			if (helperClause.length() > 0) {
@@ -801,7 +826,7 @@ public abstract class SQLDatabase extends Database {
 	protected abstract String helperClause();
 
 	protected abstract String helperValue();
-	
+
 	protected abstract String helperAdd();
 
 	protected abstract String helperAddValue();
@@ -827,7 +852,6 @@ public abstract class SQLDatabase extends Database {
 
 		String sqlDate = " Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? "
 				+ helperClause + clause;
-	
 
 		String sql = sqlSelect
 				+ " "
@@ -835,11 +859,10 @@ public abstract class SQLDatabase extends Database {
 				+ " "
 				+ sqlWhere
 				+ (doOrder ? " ORDER BY transactionDate " + order
-						+ ",transactionID " + order : "") + " "
-				+ sqlEnd;
+						+ ",transactionID " + order : "") + " " + sqlEnd;
 
 		AutoPreparedStatement ps = AutoPreparedStatement.create(c, sql);
-		
+
 		int index = 1;
 		int temp = 0;
 		while ((temp = 1 + sqlSelect.indexOf('?', temp)) > 0) {
