@@ -603,12 +603,81 @@ public abstract class SQLDatabase extends Database {
 		notifyObservers();
 	}
 
-	public abstract List<String> getStoredTransactionNames();
+	public List<String> getStoredTransactionNames() {
+		List<String> res = new ArrayList<String>();
+		try {
+			String helperClause = helperClause();
+			if (helperClause.length() > 0) {
+				helperClause = helperClause.replaceAll("AND", "WHERE");
+			}
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT transactionComment FROM StoredTransactions "+ helperClause +" GROUP BY transactionComment");
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				res.add(results.getString("transactionComment"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
 
-	public abstract List<Object[]> getStoredTransaction(
-			String transactionComment);
+	public List<Object[]> getStoredTransaction(String transactionComment) {
+		List<Object[]> res = new ArrayList<Object[]>();
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT transactionID,accountName,transactionAmount FROM StoredTransactions WHERE transactionComment=?" + helperClause);
+			ps.setString(transactionComment);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] entry = new Object[3];
+				entry[0] = results.getLong("transactionID");
+				entry[1] = results.getString("accountName");
+				entry[2] = results.getDouble("transactionAmount");
+				res.add(entry);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
 
-	public abstract List<Object[]> getStoredTransactions();
+	public List<Object[]> getStoredTransactions() {
+		List<Object[]> res = new ArrayList<Object[]>();
+		try {
+			String helperClause = helperClause();
+			if (helperClause.length() > 0) {
+				helperClause = helperClause.replaceAll("AND", "WHERE");
+			}
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT transactionID,accountName,transactionAmount,transactionComment FROM StoredTransactions" + helperClause);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] entry = new Object[4];
+				entry[0] = results.getLong("transactionID");
+				entry[1] = results.getString("accountName");
+				entry[2] = results.getDouble("transactionAmount");
+				entry[3] = results.getString("transactionComment");
+				res.add(entry);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
 
 	public double getAccountBalance(String accountName, Date until) {
 		try {
@@ -703,8 +772,8 @@ public abstract class SQLDatabase extends Database {
 			boolean doOrder) throws SQLException {
 
 		String order = ascending ? "ASC" : "DESC";
-		String less = inclusive ? "<" : "<=";
-		String great = inclusive ? ">" : ">=";
+		String less = inclusive ? "<=" : "<";
+		String great = inclusive ? ">=" : ">";
 
 		String clause = "";
 		if (from != null) {
@@ -728,8 +797,7 @@ public abstract class SQLDatabase extends Database {
 				+ (doOrder ? " ORDER BY transactionDate " + order
 						+ ",transactionID " + order : "") + " "
 				+ sqlEnd;
-System.out.println(sql);
-		
+
 		AutoPreparedStatement ps = AutoPreparedStatement.create(c, sql);
 		
 		int index = 1;

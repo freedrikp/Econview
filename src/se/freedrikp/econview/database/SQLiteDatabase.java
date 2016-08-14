@@ -641,64 +641,6 @@ public class SQLiteDatabase extends SQLDatabase {
 		notifyObservers();
 	}
 
-	public List<String> getStoredTransactionNames() {
-		List<String> res = new ArrayList<String>();
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionComment FROM StoredTransactions GROUP BY transactionComment");
-			ResultSet results = ps.executeQuery();
-			while (results.next()) {
-				res.add(results.getString("transactionComment"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-
-	public List<Object[]> getStoredTransaction(String transactionComment) {
-		List<Object[]> res = new ArrayList<Object[]>();
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionID,accountName,transactionAmount FROM StoredTransactions WHERE transactionComment=?");
-			ps.setString(transactionComment);
-			ResultSet results = ps.executeQuery();
-			while (results.next()) {
-				Object[] entry = new Object[3];
-				entry[0] = results.getLong("transactionID");
-				entry[1] = results.getString("accountName");
-				entry[2] = results.getDouble("transactionAmount");
-				res.add(entry);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-
-	public List<Object[]> getStoredTransactions() {
-		List<Object[]> res = new ArrayList<Object[]>();
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionID,accountName,transactionAmount,transactionComment FROM StoredTransactions");
-			ResultSet results = ps.executeQuery();
-			while (results.next()) {
-				Object[] entry = new Object[4];
-				entry[0] = results.getLong("transactionID");
-				entry[1] = results.getString("accountName");
-				entry[2] = results.getDouble("transactionAmount");
-				entry[3] = results.getString("transactionComment");
-				res.add(entry);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-
 	protected void importDatabaseHelper(String name, String sql) {
 		try {
 			AutoPreparedStatement.create(c, sql).executeUpdate();
