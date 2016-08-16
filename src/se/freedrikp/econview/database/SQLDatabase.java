@@ -568,8 +568,33 @@ public abstract class SQLDatabase extends Database {
 
 	public abstract Date getNewestTransactionDate();
 
-	public abstract List<Object[]> getMultiTransactions(Date transactionDate,
-			String transactionComment);
+	public List<Object[]> getMultiTransactions(Date transactionDate,
+			String transactionComment) {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionDate = ? AND transactionComment = ?" + helperClause);
+			ps.setInt(showHidden);
+			ps.setDate(transactionDate);
+			ps.setString(transactionComment);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] row = new Object[3];
+				row[0] = results.getLong("transactionID");
+				row[1] = results.getString("accountName");
+				row[2] = results.getDouble("transactionAmount");
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	public abstract void close() throws SQLException;
 

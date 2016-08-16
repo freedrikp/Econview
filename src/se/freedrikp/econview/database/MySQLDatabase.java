@@ -542,32 +542,6 @@ public class MySQLDatabase extends SQLDatabase {
 		return null;
 	}
 
-	public List<Object[]> getMultiTransactions(Date transactionDate,
-			String transactionComment) {
-		ArrayList<Object[]> list = new ArrayList<Object[]>();
-		try {
-			AutoPreparedStatement ps = AutoPreparedStatement
-					.create(c,
-							"SELECT transactionID,accountName,transactionAmount FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionDate = ? AND transactionComment = ? AND username = ?");
-			ps.setInt(showHidden);
-			ps.setDate(transactionDate);
-			ps.setString(transactionComment);
-			ps.setString(username);
-
-			ResultSet results = ps.executeQuery();
-			while (results.next()) {
-				Object[] row = new Object[3];
-				row[0] = results.getLong("transactionID");
-				row[1] = results.getString("accountName");
-				row[2] = results.getDouble("transactionAmount");
-				list.add(row);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
 	public void close() throws SQLException {
 		try {
 			c.close();
