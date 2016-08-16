@@ -10,7 +10,6 @@
 *Create client/server database. (Server authenticates when opening a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl|Extract series of interfaces so that the client database implements both Security and Database.)
 *Remove all GUI parts from database (Progressmonitor)
 *Improve Configuration parsing with allowed values, example, DIAGRAMS_STYLE[SPLIT,TAB].
-*Refactor database classes and remove duplicated code.
 
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
@@ -22,6 +21,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Refactored database classes and remove duplicated code. ---- v3.1
+
 *Added Apache Commons IO to use TeeOutpuStream for stdout and stderr. ---- v3.1
 
 *Switched to one column for dates in the databases. ---- v3.1
