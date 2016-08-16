@@ -64,25 +64,235 @@ public abstract class SQLDatabase extends Database {
 
 	protected abstract void initdb();
 
-	public abstract void addAccount(String accountName, double accountBalance,
-			boolean accountHidden);
+	public void addAccount(String accountName, double accountBalance,
+			boolean accountHidden) {
+		try {
+			String helperAddValue = helperAddValue();
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
+					"INSERT INTO Accounts VALUES (?,?,?" + helperAddValue +")");
+			ps.setString(accountName);
+			ps.setDouble(accountBalance);
+			int hidden = accountHidden ? 1 : 0;
+			ps.setInt(hidden);
+			if (helperAddValue.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
-	public abstract void editAccount(String oldAccountName, String accountName,
-			double accountBalance, boolean accountHidden, Date until);
+	public void editAccount(String oldAccountName, String accountName,
+			double accountBalance, boolean accountHidden, Date until) {
+		AutoPreparedStatement ps;
+		try {
+			String helperClause = helperClause();
+			c.setAutoCommit(false);
+			ps = selectBetweenDates(
+					"UPDATE Accounts SET accountName=?, accountBalance=? + COALESCE((SELECT * FROM (SELECT SUM(transactionAmount) FROM",
+					"AND accountName = ?" + helperClause,
+					") as Future),0) , accountHidden = ? WHERE accountName=?" + helperClause,
+					until, null, false, showHidden, false, true);
+			ps.setString(accountName);
+			ps.setDouble(accountBalance);
+			ps.setString(oldAccountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			int hidden = accountHidden ? 1 : 0;
+			ps.setInt(hidden);
+			ps.setString(oldAccountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+			ps = AutoPreparedStatement
+					.create(c,
+							"UPDATE Transactions SET accountName=? WHERE accountName=?" + helperClause);
+			ps.setString(accountName);
+			ps.setString(oldAccountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
-	public abstract void removeAccount(String accountName);
+	public void removeAccount(String accountName) {
+		try {
+			String helperClause = helperClause();
+			c.setAutoCommit(false);
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"DELETE FROM Transactions WHERE accountName=?" + helperClause);
+			ps.setString(accountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+			ps = AutoPreparedStatement
+					.create(c,
+							"DELETE FROM Accounts WHERE accountName=?" + helperClause);
+			ps.setString(accountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
-	public abstract void addTransaction(String accountName,
+	public void addTransaction(String accountName, double transactionAmount,
+			Date transactionDate, String transactionComment) {
+		try {
+			String helperAdd = helperAdd();
+			c.setAutoCommit(false);
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"INSERT INTO Transactions(accountName,transactionAmount,transactionDate,transactionComment"+ helperAdd +") VALUES (?,?,?,?"+ helperAddValue()+")");
+			ps.setString(accountName);
+			ps.setDouble(transactionAmount);
+			ps.setDate(transactionDate);
+			ps.setString(transactionComment);
+			if (helperAdd.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+			String helperClause = helperClause();
+			ps = AutoPreparedStatement
+					.create(c,
+							"UPDATE Accounts SET accountBalance=accountBalance + ? WHERE accountName=?" + helperClause);
+			ps.setDouble(transactionAmount);
+			ps.setString(accountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public void editTransaction(long transactionID, String accountName,
 			double transactionAmount, Date transactionDate,
-			String transactionComment);
+			String transactionComment) {
+		try {
+			String helperClause = helperClause();
+			c.setAutoCommit(false);
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"UPDATE Accounts SET accountBalance=accountBalance - (SELECT transactionAmount FROM Transactions WHERE transactionID = ?) WHERE accountName=(SELECT accountName FROM Transactions WHERE transactionID = ?)" + helperClause);
+			ps.setLong(transactionID);
+			ps.setLong(transactionID);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}				ps.executeUpdate();
+			ps = AutoPreparedStatement
+					.create(c,
+							"UPDATE Transactions SET accountName = ?,transactionAmount = ?,transactionDate = ?,transactionComment = ? WHERE transactionID = ?");
+			ps.setString(accountName);
+			ps.setDouble(transactionAmount);
+			ps.setDate(transactionDate);
+			ps.setString(transactionComment);
+			ps.setLong(transactionID);
+			ps.executeUpdate();
+			ps = AutoPreparedStatement
+					.create(c,
+							"UPDATE Accounts SET accountBalance=accountBalance + ? WHERE accountName=?" + helperClause);
+			ps.setDouble(transactionAmount);
+			ps.setString(accountName);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}				ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
-	public abstract void editTransaction(long transactionID,
-			String accountName, double transactionAmount, Date transactionDate,
-			String transactionComment);
+	public void removeTransaction(long transactionID) {
+		try {
+			String helperClause = helperClause();
+			c.setAutoCommit(false);
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"UPDATE Accounts SET accountBalance=accountBalance - (SELECT transactionAmount FROM Transactions WHERE transactionID = ?) WHERE accountName=(SELECT accountName FROM Transactions WHERE transactionID = ?)" + helperClause);
+			ps.setLong(transactionID);
+			ps.setLong(transactionID);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}				ps.executeUpdate();
+			ps = AutoPreparedStatement.create(c,
+					"DELETE FROM Transactions WHERE transactionID = ?");
+			ps.setLong(transactionID);
+			ps.executeUpdate();
+			c.commit();
+			c.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 
-	public abstract void removeTransaction(long transactionID);
+	public List<Object[]> getAccounts(Date until) {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = selectBetweenDates(
+					"SELECT accountName,accountBalance-COALESCE(future,0) as accountBalance,accountHidden FROM Accounts LEFT OUTER JOIN (SELECT SUM(transactionAmount) as future,accountName as accName FROM",
+					"GROUP BY accName",
+					") as FutureEvents ON accountName = accName WHERE accountHidden <= ? "+ helperClause + " ORDER BY accountName ASC",
+					until, null, false, showHidden, false, false);
+			ps.setInt(showHidden);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				Object[] row = new Object[3];
+				row[0] = results.getString("accountName");
+				row[1] = results.getDouble("accountBalance");
+				row[2] = results.getInt("accountHidden") == 1;
+				list.add(row);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
-	public abstract List<Object[]> getAccounts(Date until);
+	public List<String> getAccountNames() {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT accountName FROM Accounts WHERE accountHidden <= ? " + helperClause + " ORDER BY accountName ASC");
+			ps.setInt(showHidden);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ResultSet results = ps.executeQuery();
+			while (results.next()) {
+				list.add(results.getString("accountName"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	public List<Object[]> getTransactions(Date fromDate, Date toDate,
 			Collection<String> accounts) {
@@ -121,7 +331,6 @@ public abstract class SQLDatabase extends Database {
 		return list;
 	}
 
-	public abstract List<String> getAccountNames();
 
 	public List<Object[]> getMonthlyRevenues(Date until) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
@@ -396,11 +605,70 @@ public abstract class SQLDatabase extends Database {
 		dataset.put(accountName, datapoints);
 	}
 
-	public abstract double getTotalAccountBalanceSum(Date until);
+	public double getTotalAccountBalanceSum(Date until) {
+		try {
+			String helperClause = helperClause();
+			if (helperClause.length() > 0) {
+				helperClause = helperClause.replaceAll("AND", "WHERE");
+			}
+			AutoPreparedStatement ps = selectBetweenDates(
+					"SELECT SUM(accountBalance) - COALESCE((SELECT SUM(transactionAmount) FROM",
+					"", "),0) as balanceSum FROM Accounts" + helperClause,
+					until, null, false, 1, false, true);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}	
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				return result.getDouble("balanceSum");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0.;
+	}
 
-	public abstract double getVisibleAccountBalanceSum(Date until);
+	public double getVisibleAccountBalanceSum(Date until) {
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = selectBetweenDates(
+					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM ",
+					"AND accountHidden = 0",
+					"),0) as balanceSum FROM Accounts WHERE accountHidden = 0" + helperClause,
+					until, null, false, 1, false, true);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}	
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				return result.getDouble("balanceSum");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0.;
+	}
 
-	public abstract double getHiddenAccountBalanceSum(Date until);
+	public double getHiddenAccountBalanceSum(Date until) {
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = selectBetweenDates(
+					"SELECT SUM(accountBalance) -  COALESCE((SELECT SUM(transactionAmount) FROM ",
+					"AND accountHidden = 1",
+					"),0) as balanceSum FROM Accounts WHERE accountHidden = 1" + helperClause,
+					until, null, false, 1, false, true);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}	
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				return result.getDouble("balanceSum");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0.;
+	}
 
 	public abstract void exportDatabase(OutputStream out, String exportMessage);
 
@@ -558,15 +826,98 @@ public abstract class SQLDatabase extends Database {
 		return showHidden > 0 ? true : false;
 	}
 
-	public abstract long getNumberOfTransactions();
+	public long getNumberOfTransactions() {
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ?" + helperClause);
+			ps.setInt(showHidden);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			
+			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				return result.getLong("number");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0L;
+	}
 
-	public abstract long getNumberOfDeposits();
+	public long getNumberOfDeposits() {
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionAmount > 0" + helperClause);
+			ps.setInt(showHidden);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				return result.getLong("number");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0L;
+	}
 
-	public abstract long getNumberOfWithdrawals();
+	public long getNumberOfWithdrawals() {
+		try {
+			String helperClause = helperClause();
+			AutoPreparedStatement ps = AutoPreparedStatement
+					.create(c,
+							"SELECT COUNT(*) as number FROM Transactions NATURAL JOIN Accounts WHERE accountHidden <= ? AND transactionAmount < 0" + helperClause);
+			ps.setInt(showHidden);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}			ResultSet result = ps.executeQuery();
+			while (result.next()) {
+				return result.getLong("number");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0L;
+	}
 
-	public abstract Date getOldestTransactionDate();
+	public Date getOldestTransactionDate() {
+		return getTransactionDate("MIN");
+	}
 
-	public abstract Date getNewestTransactionDate();
+	public Date getNewestTransactionDate() {
+		return getTransactionDate("MAX");
+	}
+
+	private Date getTransactionDate(String sql) {
+		try {
+			String helperClause = helperClause();
+			String query = "SELECT "
+					+ sql
+					+ "(transactionDate) as transactionDate FROM Accounts NATURAL JOIN Transactions WHERE accountHidden <= ?" + helperClause;
+			AutoPreparedStatement ps = AutoPreparedStatement.create(c, query);
+			ps.setInt(showHidden);
+			if (helperClause.length() > 0) {
+				ps.setString(helperValue());
+			}
+			ResultSet result = ps.executeQuery();
+			Date date = null;
+			while (result.next()) {
+				String d = result.getString("transactionDate");
+				if (d == null){
+					return null;
+				}
+				date = dateFormat.parse(d);
+			}
+			return date;
+		} catch (SQLException | ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public List<Object[]> getMultiTransactions(Date transactionDate,
 			String transactionComment) {
@@ -884,7 +1235,7 @@ public abstract class SQLDatabase extends Database {
 				+ sqlWhere
 				+ (doOrder ? " ORDER BY transactionDate " + order
 						+ ",transactionID " + order : "") + " " + sqlEnd;
-
+		
 		AutoPreparedStatement ps = AutoPreparedStatement.create(c, sql);
 
 		int index = 1;
