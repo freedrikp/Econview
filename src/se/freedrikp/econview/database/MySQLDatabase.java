@@ -6,17 +6,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.ProgressMonitor;
-
-import se.freedrikp.econview.common.Common;
 
 public class MySQLDatabase extends SQLDatabase {
 	private String username;
@@ -101,7 +93,7 @@ public class MySQLDatabase extends SQLDatabase {
 	protected String helperValue() {
 		return username;
 	}
-	
+
 	protected String helperAdd() {
 		return ",username";
 	}
@@ -149,7 +141,7 @@ public class MySQLDatabase extends SQLDatabase {
 						continue;
 					}
 					pw.print(row.getMetaData().getColumnLabel(i));
-					if (i < row.getMetaData().getColumnCount()-1) {
+					if (i < row.getMetaData().getColumnCount() - 1) {
 						pw.print(",");
 					}
 				}
@@ -165,7 +157,7 @@ public class MySQLDatabase extends SQLDatabase {
 						} else {
 							pw.print(row.getString(i));
 						}
-						if (i < row.getMetaData().getColumnCount()-1) {
+						if (i < row.getMetaData().getColumnCount() - 1) {
 							pw.print(",");
 						}
 					}

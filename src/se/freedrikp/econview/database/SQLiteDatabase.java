@@ -6,22 +6,11 @@ import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.ProgressMonitor;
 
-import se.freedrikp.econview.common.Common;
-
 public class SQLiteDatabase extends SQLDatabase {
-
-	// private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-	// "yyyy-MM-dd");
 
 	public SQLiteDatabase(String database) {
 		super(database, "org.sqlite.JDBC", "jdbc:sqlite:" + database);
@@ -63,7 +52,7 @@ public class SQLiteDatabase extends SQLDatabase {
 	protected String helperValue() {
 		return "";
 	}
-	
+
 	protected String helperAdd() {
 		return "";
 	}

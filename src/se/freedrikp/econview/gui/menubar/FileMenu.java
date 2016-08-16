@@ -51,46 +51,46 @@ public class FileMenu extends JMenu {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
-			if (Configuration.getString(
-					"DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals(
-					"SQLITE")){
-			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-			JFileChooser f = new JFileChooser();
-			f.setDialogType(JFileChooser.OPEN_DIALOG);
-			String text = f.getUI().getApproveButtonText(f);
-			fc.setDialogTitle(text);
-			int result = fc.showDialog(gui, text);
-			if (result == JFileChooser.APPROVE_OPTION) {
-				if (sec != null) {
-					AuthenticationDialog ad = new AuthenticationDialog();
-					if (ad.showDialog()) {
-						if (!sec.openDatabase(fc.getSelectedFile()
-								.getAbsolutePath(),"NULL", "NULL", db, ad.getUsername(), ad
-								.getPassword())) {
-							ad.showFailedDialog(false);
-						}
-					}
-				} else {
-					db.openDatabase(fc.getSelectedFile().getAbsolutePath(),
-							"NULL", "NULL", "NULL");
-				}
-			}
-			}else if (Configuration.getString(
-					"DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals(
-					"MYSQL")){
-				DatabaseAuthenticationDialog dad = new DatabaseAuthenticationDialog();
-				if (dad.showDialog()){
+			if (Configuration.getString("DATABASE_SYSTEM_SQLITE_OR_MYSQL")
+					.equals("SQLITE")) {
+				JFileChooser fc = new JFileChooser(
+						System.getProperty("user.dir"));
+				JFileChooser f = new JFileChooser();
+				f.setDialogType(JFileChooser.OPEN_DIALOG);
+				String text = f.getUI().getApproveButtonText(f);
+				fc.setDialogTitle(text);
+				int result = fc.showDialog(gui, text);
+				if (result == JFileChooser.APPROVE_OPTION) {
 					if (sec != null) {
 						AuthenticationDialog ad = new AuthenticationDialog();
 						if (ad.showDialog()) {
-							if (!sec.openDatabase(dad.getDatabase(),dad.getUsername(),dad.getPassword(), db, ad.getUsername(), ad
-									.getPassword())) {
+							if (!sec.openDatabase(fc.getSelectedFile()
+									.getAbsolutePath(), "NULL", "NULL", db, ad
+									.getUsername(), ad.getPassword())) {
 								ad.showFailedDialog(false);
 							}
 						}
 					} else {
-						db.openDatabase(dad.getDatabase(),
-								dad.getUsername(), dad.getPassword(), "NOUSER");
+						db.openDatabase(fc.getSelectedFile().getAbsolutePath(),
+								"NULL", "NULL", "NULL");
+					}
+				}
+			} else if (Configuration.getString(
+					"DATABASE_SYSTEM_SQLITE_OR_MYSQL").equals("MYSQL")) {
+				DatabaseAuthenticationDialog dad = new DatabaseAuthenticationDialog();
+				if (dad.showDialog()) {
+					if (sec != null) {
+						AuthenticationDialog ad = new AuthenticationDialog();
+						if (ad.showDialog()) {
+							if (!sec.openDatabase(dad.getDatabase(),
+									dad.getUsername(), dad.getPassword(), db,
+									ad.getUsername(), ad.getPassword())) {
+								ad.showFailedDialog(false);
+							}
+						}
+					} else {
+						db.openDatabase(dad.getDatabase(), dad.getUsername(),
+								dad.getPassword(), "NOUSER");
 					}
 				}
 			}

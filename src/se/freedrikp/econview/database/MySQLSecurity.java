@@ -45,7 +45,8 @@ public class MySQLSecurity extends SQLSecurity {
 	}
 
 	public Database openNewDatabaseHelper(String database) throws Exception {
-		Database db = new MySQLDatabase(database, username, password, user,true);
+		Database db = new MySQLDatabase(database, username, password, user,
+				true);
 		return db;
 	}
 
@@ -54,8 +55,8 @@ public class MySQLSecurity extends SQLSecurity {
 		return;
 	}
 
-	public void openDatabaseHelper(String selectedDatabase,String dbUsername, String dbPassword, Database db,String username)
-			throws Exception {
+	public void openDatabaseHelper(String selectedDatabase, String dbUsername,
+			String dbPassword, Database db, String username) throws Exception {
 		db.openDatabase(selectedDatabase, dbUsername, dbPassword, username);
 	}
 

@@ -127,8 +127,8 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 		}
 	}
 
-	public void openDatabaseHelper(String selectedDatabase,String dbUsername, String dbPassword, Database db,String username)
-			throws Exception {
+	public void openDatabaseHelper(String selectedDatabase, String dbUsername,
+			String dbPassword, Database db, String username) throws Exception {
 		if (new File(tempDBFile).delete()) {
 			encDB = new File(selectedDatabase);
 			boolean found = false;

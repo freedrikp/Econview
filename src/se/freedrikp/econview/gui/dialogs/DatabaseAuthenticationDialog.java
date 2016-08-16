@@ -18,8 +18,8 @@ public class DatabaseAuthenticationDialog {
 	public DatabaseAuthenticationDialog() {
 
 	}
-	
-	public String getDatabase(){
+
+	public String getDatabase() {
 		return database;
 	}
 
@@ -35,7 +35,7 @@ public class DatabaseAuthenticationDialog {
 		JPanel promptPanel = new JPanel();
 		promptPanel.setLayout(new GridLayout(3, 2, 0, 0));
 		promptPanel
-		.add(new JLabel(Language.getString("PROMPT_DATABASE") + ":"));
+				.add(new JLabel(Language.getString("PROMPT_DATABASE") + ":"));
 		JTextField databaseField = new JTextField(15);
 		promptPanel.add(databaseField);
 		promptPanel

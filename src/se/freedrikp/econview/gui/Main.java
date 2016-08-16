@@ -32,8 +32,12 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TeeOutputStream stdout = new TeeOutputStream(System.out, new PrintStream(Configuration.getString("LOGFILE_OUT")));
-					TeeOutputStream stderr = new TeeOutputStream(System.err, new PrintStream(Configuration.getString("LOGFILE_ERROR")));
+					TeeOutputStream stdout = new TeeOutputStream(System.out,
+							new PrintStream(Configuration
+									.getString("LOGFILE_OUT")));
+					TeeOutputStream stderr = new TeeOutputStream(System.err,
+							new PrintStream(Configuration
+									.getString("LOGFILE_ERROR")));
 					System.setOut(new PrintStream(stdout));
 					System.setErr(new PrintStream(stderr));
 					boolean secure = Configuration
@@ -100,7 +104,8 @@ public class Main {
 							db = new MySQLDatabase(Configuration
 									.getString("MYSQL_DATABASE"), Configuration
 									.getString("MYSQL_USERNAME"), Configuration
-									.getString("MYSQL_PASSWORD"), "NOUSER",secure);
+									.getString("MYSQL_PASSWORD"), "NOUSER",
+									secure);
 
 						}
 						frame = new MainFrame(db, null);
