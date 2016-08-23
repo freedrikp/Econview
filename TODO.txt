@@ -10,6 +10,8 @@
 *Create client/server database. (Server authenticates when opening a socket and closes it if faulty credentials.|Start with standard sockets then switch to ssl|Extract series of interfaces so that the client database implements both Security and Database.)
 *Remove all GUI parts from database (Progressmonitor)
 *Improve Configuration parsing with allowed values, example, DIAGRAMS_STYLE[SPLIT,TAB].
+*Switch double click button in transactions.
+*Double click on account should open transactiondialog with account filled in.
 
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
@@ -27,7 +29,7 @@
 
 *Switched to one column for dates in the databases. ---- v3.1
 
-*Creates logfiles. ---- v3.1 
+*Creates logfiles. ---- v3.1
 
 *Include MySQL JDBC in release script. ---- v3.0
 
