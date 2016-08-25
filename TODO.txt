@@ -12,6 +12,7 @@
 *Improve Configuration parsing with allowed values, example, DIAGRAMS_STYLE[SPLIT,TAB].
 *Switch double click button in transactions.
 *Double click on account should open transactiondialog with account filled in.
+*Add foreign key constraints between transactions and accounts. Remove reinvented code from database classes and switch to ON UPDATE/DELETE CASCADE/NO ACTION.
 
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
