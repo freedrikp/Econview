@@ -22,7 +22,7 @@ public class MySQLSecurity extends SQLSecurity {
 	protected void initdb() {
 		try {
 			PreparedStatement ps = c
-					.prepareStatement("SELECT count(*) as count FROM information_schema.TABLES WHERE (TABLE_SCHEMA = 'econview') AND (TABLE_NAME = 'Users')");
+					.prepareStatement("SELECT count(*) as count FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '"+c.getCatalog() + "') AND (TABLE_NAME = 'Users')");
 			ResultSet results;
 			results = ps.executeQuery();
 			if (results.next()) {
@@ -51,7 +51,7 @@ public class MySQLSecurity extends SQLSecurity {
 	}
 
 	protected void checkUserSpecifics(String username, String password,
-			String salt) throws UnsupportedEncodingException {
+			byte[] salt) throws UnsupportedEncodingException {
 		return;
 	}
 

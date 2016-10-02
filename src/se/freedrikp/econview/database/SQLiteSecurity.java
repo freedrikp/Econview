@@ -82,9 +82,10 @@ public class SQLiteSecurity extends SQLSecurity implements Observer {
 	}
 
 	protected void checkUserSpecifics(String username, String password,
-			String salt) throws UnsupportedEncodingException {
-		byte[] temp = digest.digest((username + password + salt)
+			byte[] salt) throws UnsupportedEncodingException {
+		digest.update((username + password)
 				.getBytes("UTF-8"));
+		byte[] temp = digest.digest(salt);
 		key = new SecretKeySpec(Arrays.copyOfRange(temp, 16, 32), "AES");
 		iv = new IvParameterSpec(Arrays.copyOfRange(temp, 0, 16));
 	}

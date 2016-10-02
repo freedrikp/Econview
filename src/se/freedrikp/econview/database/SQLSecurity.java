@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class SQLSecurity extends Security {
@@ -64,10 +65,11 @@ public abstract class SQLSecurity extends Security {
 		ps.setString(1, username);
 		ResultSet user = ps.executeQuery();
 		if (user.next()) {
-			String pass = new String(user.getBytes("password"), "UTF-8");
-			String salt = new String(user.getBytes("salt"), "UTF-8");
-			if (pass.equals(new String(digest.digest((password + salt)
-					.getBytes("UTF-8")), "UTF-8"))) {
+			byte[] pass = user.getBytes("password");
+			byte[] salt = user.getBytes("salt");
+			digest.update(password.getBytes("UTF-8"));
+			digest.update(salt);
+			if (Arrays.equals(pass, digest.digest())) {
 				checkUserSpecifics(username, password, salt);
 				this.user = username;
 				setChanged();
@@ -79,7 +81,7 @@ public abstract class SQLSecurity extends Security {
 	}
 
 	protected abstract void checkUserSpecifics(String username,
-			String password, String salt) throws UnsupportedEncodingException;
+			String password, byte[] salt) throws UnsupportedEncodingException;
 
 	public Database openNewDatabase(String database, String username,
 			String password) throws Exception {
@@ -123,19 +125,17 @@ public abstract class SQLSecurity extends Security {
 
 	public boolean addUser(String username, String password, boolean admin) {
 		try {
-			byte[] temp = new byte[10];
-			rand.nextBytes(temp);
-			String salt;
-			salt = new String(temp, "UTF-8");
-
-			password = new String(digest.digest((password + salt)
-					.getBytes("UTF-8")), "UTF-8");
+			byte[] salt = new byte[10];
+			rand.nextBytes(salt);
+			
+			digest.update(password.getBytes("UTF-8"));
+			digest.update(salt);
 
 			String sql = "INSERT INTO Users VALUES (?,?,?,?)";
 			PreparedStatement ps = c.prepareStatement(sql);
 			ps.setString(1, username);
-			ps.setBytes(2, password.getBytes("UTF-8"));
-			ps.setBytes(3, salt.getBytes("UTF-8"));
+			ps.setBytes(2, digest.digest());
+			ps.setBytes(3, salt);
 			int ad = admin ? 1 : 0;
 			ps.setInt(4, ad);
 			ps.executeUpdate();
@@ -240,18 +240,16 @@ public abstract class SQLSecurity extends Security {
 
 	public void changePasswordAdmin(String username, String password) {
 		try {
-			byte[] temp = new byte[10];
-			rand.nextBytes(temp);
-			String salt;
-
-			salt = new String(temp, "UTF-8");
-
-			password = new String(digest.digest((password + salt)
-					.getBytes("UTF-8")), "UTF-8");
+			byte[] salt = new byte[10];
+			rand.nextBytes(salt);
+			
+			digest.update(password.getBytes("UTF-8"));
+			digest.update(salt);
+			
 			String sql = "UPDATE Users SET password=?, salt=? WHERE username=?";
 			PreparedStatement ps = c.prepareStatement(sql);
-			ps.setBytes(1, password.getBytes("UTF-8"));
-			ps.setBytes(2, salt.getBytes("UTF-8"));
+			ps.setBytes(1, digest.digest());
+			ps.setBytes(2, salt);
 			ps.setString(3, username);
 			ps.executeUpdate();
 		} catch (Exception e) {
