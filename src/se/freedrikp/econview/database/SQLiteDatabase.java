@@ -14,6 +14,11 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	public SQLiteDatabase(String database) {
 		super(database, "org.sqlite.JDBC", "jdbc:sqlite:" + database);
+		try {
+			c.createStatement().execute("PRAGMA foreign_keys = ON");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void initdb() {
@@ -29,13 +34,16 @@ public class SQLiteDatabase extends SQLDatabase {
 				sql = "CREATE TABLE Transactions("
 						+ "transactionID INTEGER PRIMARY KEY,"
 						+ "accountName TEXT," + "transactionAmount REAL,"
-						+ "transactionDate DATE," + "transactionComment TEXT"
+						+ "transactionDate DATE," + "transactionComment TEXT,"
+						+ "FOREIGN KEY (accountName) REFERENCES Accounts(accountName) ON UPDATE CASCADE ON DELETE RESTRICT"
 						+ ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 				sql = "CREATE TABLE StoredTransactions("
 						+ "transactionID INTEGER PRIMARY KEY,"
 						+ "accountName TEXT," + "transactionAmount REAL,"
-						+ "transactionComment TEXT" + ")";
+						+ "transactionComment TEXT,"
+						+ "FOREIGN KEY (accountName) REFERENCES Accounts(accountName) ON UPDATE CASCADE ON DELETE CASCADE"
+						+ ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 				c.commit();
 				c.setAutoCommit(true);

@@ -91,7 +91,6 @@ public abstract class SQLDatabase extends Database {
 		AutoPreparedStatement ps;
 		try {
 			String helperClause = helperClause();
-			c.setAutoCommit(false);
 			ps = selectBetweenDates(
 					"UPDATE Accounts SET accountName=?, accountBalance=? + COALESCE((SELECT * FROM (SELECT SUM(transactionAmount) FROM",
 					"AND accountName = ?" + helperClause,
@@ -111,17 +110,6 @@ public abstract class SQLDatabase extends Database {
 				ps.setString(helperValue());
 			}
 			ps.executeUpdate();
-			ps = AutoPreparedStatement.create(c,
-					"UPDATE Transactions SET accountName=? WHERE accountName=?"
-							+ helperClause);
-			ps.setString(accountName);
-			ps.setString(oldAccountName);
-			if (helperClause.length() > 0) {
-				ps.setString(helperValue());
-			}
-			ps.executeUpdate();
-			c.commit();
-			c.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -132,24 +120,13 @@ public abstract class SQLDatabase extends Database {
 	public void removeAccount(String accountName) {
 		try {
 			String helperClause = helperClause();
-			c.setAutoCommit(false);
 			AutoPreparedStatement ps = AutoPreparedStatement.create(c,
-					"DELETE FROM Transactions WHERE accountName=?"
-							+ helperClause);
-			ps.setString(accountName);
-			if (helperClause.length() > 0) {
-				ps.setString(helperValue());
-			}
-			ps.executeUpdate();
-			ps = AutoPreparedStatement.create(c,
 					"DELETE FROM Accounts WHERE accountName=?" + helperClause);
 			ps.setString(accountName);
 			if (helperClause.length() > 0) {
 				ps.setString(helperValue());
 			}
 			ps.executeUpdate();
-			c.commit();
-			c.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -12,7 +12,6 @@
 *Improve Configuration parsing with allowed values, example, DIAGRAMS_STYLE[SPLIT,TAB].
 *Switch double click button in transactions.
 *Double click on account should open transactiondialog with account filled in.
-*Add foreign key constraints between transactions and accounts. Remove reinvented code from database classes and switch to ON UPDATE/DELETE CASCADE/NO ACTION.
 
 ----------------------------------------------------------------------------------
 *Set better tick count, start of weeks/months. (dont know if this makes sense)
@@ -24,6 +23,8 @@
 *Refactor code base for GUI ---- v1.0
 
 === DONE ===
+*Add foreign key constraints between transactions and accounts. Remove reinvented code from database classes and switch to ON UPDATE/DELETE CASCADE/RESTRICT. ---- v3.1
+
 *Refactored database classes and remove duplicated code. ---- v3.1
 
 *Added Apache Commons IO to use TeeOutpuStream for stdout and stderr. ---- v3.1

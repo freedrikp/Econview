@@ -64,7 +64,7 @@ public abstract class SQLSecurity extends Security {
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setString(1, username);
 		ResultSet user = ps.executeQuery();
-		if (user.next()) {
+		if (user.next()){
 			byte[] pass = user.getBytes("password");
 			byte[] salt = user.getBytes("salt");
 			digest.update(password.getBytes("UTF-8"));

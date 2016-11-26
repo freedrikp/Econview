@@ -63,7 +63,7 @@ public class MySQLDatabase extends SQLDatabase {
 				if (foreign) {
 					sql += ",FOREIGN KEY (username) REFERENCES Users(username)";
 				}
-				sql += ")";
+				sql += ",FOREIGN KEY (accountName) REFERENCES Accounts(accountName) ON UPDATE CASCADE ON DELETE RESTRICT" + ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 			}
 			if (!tableExists("StoredTransactions")) {
@@ -76,7 +76,7 @@ public class MySQLDatabase extends SQLDatabase {
 				if (foreign) {
 					sql += ",FOREIGN KEY (username) REFERENCES Users(username)";
 				}
-				sql += ")";
+				sql += ",FOREIGN KEY (accountName) REFERENCES Accounts(accountName) ON UPDATE CASCADE ON DELETE CASCADE" + ")";
 				AutoPreparedStatement.create(c, sql).executeUpdate();
 			}
 			c.commit();
